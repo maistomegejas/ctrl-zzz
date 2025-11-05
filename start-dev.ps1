@@ -1,6 +1,9 @@
 Write-Host "Starting CTRL-ZZZ Backend and Frontend..." -ForegroundColor Green
 Write-Host ""
 
+# Save original location
+$originalLocation = Get-Location
+
 # Start backend in background job
 Write-Host "Starting backend..." -ForegroundColor Yellow
 $backend = Start-Job -ScriptBlock {
@@ -29,5 +32,6 @@ try {
     Write-Host "Stopping services..." -ForegroundColor Yellow
     Stop-Job $backend
     Remove-Job $backend
+    Set-Location $originalLocation
     Write-Host "All services stopped." -ForegroundColor Green
 }
