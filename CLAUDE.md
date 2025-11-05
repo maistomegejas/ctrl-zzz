@@ -457,7 +457,7 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "5173:5173"
+      - "3001:3001"
     depends_on:
       - api
 ```

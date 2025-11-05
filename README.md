@@ -34,13 +34,13 @@ npm run dev
 
 ### Test the Setup
 
-1. Open http://localhost:5173 in your browser
+1. Open http://localhost:3001 in your browser
 2. Click "Roll Dice" button
 3. You should see a random number (1-6) from the backend
 
 ### API Endpoints
 
-- **Frontend**: http://localhost:5173
+- **Frontend**: http://localhost:3001
 - **Backend API**: http://localhost:5000
 - **Swagger UI**: http://localhost:5000/swagger
 - `GET /api/dice` - Returns a random dice roll (1-6)

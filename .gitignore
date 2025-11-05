@@ -4,11 +4,13 @@ obj/
 *.user
 *.suo
 .vs/
+*.sln
 
 # Frontend
 node_modules/
 dist/
 .vscode/
+package-lock.json
 
 # Environment
 .env
