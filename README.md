@@ -31,7 +31,7 @@ This will start:
 
 **Backend:**
 ```bash
-cd src/CtrlZzz.Web
+cd backend/CtrlZzz.Web
 dotnet run
 ```
 

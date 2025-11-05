@@ -3,7 +3,7 @@ version: '3.8'
 services:
   api:
     build:
-      context: ./src/CtrlZzz.Web
+      context: ./backend/CtrlZzz.Web
       dockerfile: Dockerfile
     ports:
       - "5000:80"

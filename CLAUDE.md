@@ -103,7 +103,7 @@ CTRL-ZZZ is a modern project management system inspired by Jira. The system allo
 
 ### Backend Structure
 ```
-src/
+backend/
 ├── CtrlZzz.Core/              # Domain + Application
 │   ├── Entities/              # Domain entities
 │   ├── Enums/                 # Enumerations
@@ -446,7 +446,7 @@ services:
       - "1433:1433"
 
   api:
-    build: ./src/CtrlZzz.Web
+    build: ./backend/CtrlZzz.Web
     ports:
       - "5000:80"
     environment:
