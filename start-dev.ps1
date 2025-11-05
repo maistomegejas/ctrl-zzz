@@ -4,6 +4,24 @@ Write-Host ""
 # Save original location
 $originalLocation = Get-Location
 
+# Run database migrations
+Write-Host "Checking database migrations..." -ForegroundColor Yellow
+$migrationsFolder = "$PWD/backend/CtrlZzz.Infrastructure/Migrations"
+
+# Check if migrations exist, if not create initial migration
+if (-not (Test-Path $migrationsFolder) -or (Get-ChildItem $migrationsFolder -Filter "*.cs" | Measure-Object).Count -eq 0) {
+    Write-Host "No migrations found. Creating initial migration..." -ForegroundColor Yellow
+    Set-Location backend/CtrlZzz.Web
+    dotnet ef migrations add InitialCreate --project ../CtrlZzz.Infrastructure --startup-project . --output-dir Migrations
+    Set-Location $originalLocation
+}
+
+# Apply migrations to database
+Write-Host "Applying database migrations..." -ForegroundColor Yellow
+Set-Location backend/CtrlZzz.Web
+dotnet ef database update --project ../CtrlZzz.Infrastructure --startup-project .
+Set-Location $originalLocation
+
 # Start backend process
 Write-Host "Starting backend..." -ForegroundColor Yellow
 $backendProcess = Start-Process -FilePath "dotnet" -ArgumentList "run" -WorkingDirectory "$PWD/backend/CtrlZzz.Web" -PassThru -WindowStyle Hidden
