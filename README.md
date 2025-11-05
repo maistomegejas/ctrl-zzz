@@ -13,9 +13,13 @@ This is a minimal setup to verify the stack works before building the full appli
 
 ## Running Locally (Recommended)
 
-### Option 1: Easy Start (Windows)
+### Option 1: Easy Start (Windows PowerShell)
 
-Just double-click `start-dev.bat` - it will open both backend and frontend in separate windows.
+```powershell
+.\start-dev.ps1
+```
+
+This runs both backend and frontend in one terminal. Press Ctrl+C to stop both.
 
 ### Option 2: Manual Start
 
