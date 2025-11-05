@@ -11,7 +11,7 @@
 - **FluentResults** - Result pattern
 - **Ardalis.Specification** - Query specifications
 - **JWT Bearer** - Authentication
-- **SignalR** - Real-time updates
+- **SignalR** - Real-time updates (for future AI features only)
 - **Serilog** - Logging
 
 ## Solution Structure
@@ -99,8 +99,8 @@ src/
 │   │   ├── WorkItemsController.cs
 │   │   └── SprintsController.cs
 │   │
-│   ├── Hubs/
-│   │   └── NotificationHub.cs
+│   ├── Hubs/                          # (FUTURE - for AI features)
+│   │   └── AIHub.cs
 │   │
 │   ├── Middleware/
 │   │   └── ExceptionHandlingMiddleware.cs
@@ -487,8 +487,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// SignalR
-builder.Services.AddSignalR();
+// SignalR (FUTURE - for AI features)
+// builder.Services.AddSignalR();
 
 // CORS
 builder.Services.AddCors(options =>
@@ -516,7 +516,9 @@ app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.MapHub<NotificationHub>("/hubs/notifications");
+
+// SignalR Hub (FUTURE - for AI features)
+// app.MapHub<AIHub>("/hubs/ai");
 
 app.Run();
 ```
@@ -603,39 +605,25 @@ public class ExceptionHandlingMiddleware
 }
 ```
 
-## SignalR Hub
+## SignalR Hub (FUTURE - for AI features only)
+
+**DO NOT implement SignalR now. It's only needed later for real-time AI suggestions.**
 
 ```csharp
-public class NotificationHub : Hub
+// Hubs/AIHub.cs (FUTURE IMPLEMENTATION)
+// This will be used when AI features are added
+public class AIHub : Hub
 {
-    public async Task JoinProject(string projectId)
+    public async Task SubscribeToAISuggestions(string userId)
     {
-        await Groups.AddToGroupAsync(Context.ConnectionId, $"project-{projectId}");
-    }
-
-    public async Task LeaveProject(string projectId)
-    {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"project-{projectId}");
+        await Groups.AddToGroupAsync(Context.ConnectionId, $"user-{userId}");
     }
 }
 
-// Usage in handler
-public class UpdateWorkItemHandler : IRequestHandler<UpdateWorkItemCommand, Result<WorkItemDto>>
-{
-    private readonly IHubContext<NotificationHub> _hubContext;
-
-    public async Task<Result<WorkItemDto>> Handle(...)
-    {
-        // Update logic...
-
-        // Notify connected clients
-        await _hubContext.Clients
-            .Group($"project-{workItem.ProjectId}")
-            .SendAsync("WorkItemUpdated", dto);
-
-        return Result.Ok(dto);
-    }
-}
+// Example usage in future AI handler:
+// await _hubContext.Clients
+//     .Group($"user-{userId}")
+//     .SendAsync("AISuggestionReady", suggestion);
 ```
 
 ## Database Configuration

@@ -2,7 +2,9 @@
 ## High-Level Architecture Documentation
 
 ## Overview
-CTRL-ZZZ is a modern project management system inspired by Jira, with built-in AI capabilities to enhance workflow efficiency. The system allows teams to manage tasks, bugs, stories, epics, sprints, and all standard project management entities with intelligent automation and insights.
+CTRL-ZZZ is a modern project management system inspired by Jira. The system allows teams to manage tasks, bugs, stories, epics, sprints, and all standard project management entities.
+
+**IMPORTANT: This is a Jira clone first. AI features are FUTURE plans only - not part of current implementation.**
 
 ## Technology Stack
 
@@ -23,7 +25,7 @@ CTRL-ZZZ is a modern project management system inspired by Jira, with built-in A
 - **FluentResults** (or similar) - Result pattern
 - **Ardalis.Specification** - Query specifications
 - **JWT Bearer** - Authentication
-- **SignalR** - Real-time updates
+- **SignalR** - Real-time updates (for future AI features)
 
 ### Database
 - **Microsoft SQL Server** (with PostgreSQL compatibility)
@@ -339,21 +341,27 @@ public abstract class BaseEntity
 }
 ```
 
-## AI Integration (Future)
+## AI Integration (FUTURE ONLY - NOT CURRENT SCOPE)
 
-### Planned Features
+**DO NOT implement AI features now. Focus on building the Jira clone first.**
+
+### Future AI Plans (for later):
 1. **Smart Summaries**: Generate sprint/epic summaries
 2. **Priority Suggestions**: AI predicts priority based on content
 3. **Similar Ticket Detection**: Find related work items
 4. **Time Estimation**: Suggest story points
 5. **Anomaly Detection**: Identify stuck tasks
 
-### Architecture
+### Why SignalR is included:
+- SignalR will be useful when AI features are added later
+- Real-time AI suggestions and updates
+- For now, it's just part of the architecture plan
+
+### When implementing AI (future):
 - Separate service interfaces in `CtrlZzz.AI` project
 - Inject through dependency injection
 - Feature flags to enable/disable
 - Async processing for AI operations
-- System works without AI enabled
 
 ## Authentication
 
@@ -362,11 +370,11 @@ public abstract class BaseEntity
 - Tokens stored in localStorage (frontend)
 - Authorization header: `Bearer {token}`
 
-## Real-time Updates
+## Real-time Updates (for future AI features)
 
-- **SignalR** for live collaboration
-- Join project groups: `connection.invoke('JoinProject', projectId)`
-- Receive updates: `connection.on('WorkItemUpdated', callback)`
+- **SignalR** will be used later for real-time AI suggestions
+- For now, regular REST API calls are sufficient
+- When AI is added: `connection.on('AISuggestionReady', callback)`
 
 ## Development Workflow
 
@@ -409,7 +417,7 @@ services:
       - api
 ```
 
-## Next Steps
+## Next Steps (Focus on Jira Clone)
 
 1. Setup solution structure
 2. Create domain entities
@@ -419,8 +427,8 @@ services:
 6. Setup React + Redux + DaisyUI
 7. Create basic UI components
 8. Implement boards with drag & drop
-9. Add SignalR for real-time
-10. Add AI features later
+9. Complete all Jira features (sprints, work items, etc.)
+10. **LATER:** Add AI features and SignalR real-time updates
 
 ---
 

@@ -11,7 +11,7 @@
 - **DaisyUI + Tailwind CSS** - UI components and styling
 - **Axios** - HTTP client
 - **React Hook Form + Zod** - Forms & validation
-- **@microsoft/signalr** - Real-time updates
+- **@microsoft/signalr** - Real-time updates (for future AI features only)
 
 ## Project Structure
 
@@ -468,17 +468,20 @@ export default function ProtectedRoute() {
 }
 ```
 
-## SignalR Setup
+## SignalR Setup (FUTURE - for AI features only)
+
+**DO NOT implement SignalR now. It's only needed later for real-time AI suggestions.**
+
+For now, use regular REST API calls and refetch data as needed.
 
 ```typescript
-// services/signalr.ts
+// services/signalr.ts (FUTURE IMPLEMENTATION)
+// This will be used when AI features are added
 import * as signalR from '@microsoft/signalr';
 
-let connection: signalR.HubConnection | null = null;
-
 export const createSignalRConnection = (token: string) => {
-  connection = new signalR.HubConnectionBuilder()
-    .withUrl(`${import.meta.env.VITE_API_URL}/hubs/notifications`, {
+  const connection = new signalR.HubConnectionBuilder()
+    .withUrl(`${import.meta.env.VITE_API_URL}/hubs/ai`, {
       accessTokenFactory: () => token,
     })
     .withAutomaticReconnect()
@@ -487,41 +490,10 @@ export const createSignalRConnection = (token: string) => {
   return connection;
 };
 
-export const getConnection = () => connection;
-```
-
-```typescript
-// hooks/useSignalR.ts
-import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { createSignalRConnection } from '@/services/signalr';
-import { fetchWorkItems } from '@/features/workitems/workItemsSlice';
-
-export const useSignalR = (projectId: string) => {
-  const dispatch = useAppDispatch();
-  const { accessToken } = useAppSelector((state) => state.auth);
-
-  useEffect(() => {
-    if (!accessToken) return;
-
-    const connection = createSignalRConnection(accessToken);
-
-    connection.start().then(() => {
-      connection.invoke('JoinProject', projectId);
-
-      // Listen for work item updates
-      connection.on('WorkItemUpdated', (workItem) => {
-        // Refresh work items or update specific item
-        dispatch(fetchWorkItems(projectId));
-      });
-    });
-
-    return () => {
-      connection.invoke('LeaveProject', projectId);
-      connection.stop();
-    };
-  }, [accessToken, projectId, dispatch]);
-};
+// Example usage when AI is added:
+// connection.on('AISuggestionReady', (suggestion) => {
+//   dispatch(addAISuggestion(suggestion));
+// });
 ```
 
 ## DaisyUI Components
