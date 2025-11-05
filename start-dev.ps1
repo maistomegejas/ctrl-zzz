@@ -39,7 +39,7 @@ try {
     Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 
     # Kill all dotnet processes (backend)
-    Get-Process dotnet -ErrorAction SilentlyContinue | Where-Object { $_.Path -like "*CtrlZzz*" } | Stop-Process -Force -ErrorAction SilentlyContinue
+    Get-Process dotnet -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 
     Set-Location $originalLocation
     Write-Host "All services stopped." -ForegroundColor Green
