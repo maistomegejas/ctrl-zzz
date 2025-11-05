@@ -4,13 +4,9 @@ Write-Host ""
 # Save original location
 $originalLocation = Get-Location
 
-# Start backend in background job
+# Start backend process
 Write-Host "Starting backend..." -ForegroundColor Yellow
-$backend = Start-Job -ScriptBlock {
-    Set-Location $using:PWD
-    Set-Location backend/CtrlZzz.Web
-    dotnet run
-}
+$backendProcess = Start-Process -FilePath "dotnet" -ArgumentList "run" -WorkingDirectory "$PWD/backend/CtrlZzz.Web" -PassThru -WindowStyle Hidden
 
 # Wait a bit for backend to start
 Start-Sleep -Seconds 3
@@ -24,22 +20,29 @@ Write-Host ""
 Write-Host "Press Ctrl+C to stop all services" -ForegroundColor Gray
 Write-Host ""
 
+# Track frontend process
+$frontendProcess = $null
+
 try {
     Set-Location frontend
-    npm run dev
+    $frontendProcess = Start-Process -FilePath "npm" -ArgumentList "run", "dev" -PassThru -NoNewWindow -Wait
 } finally {
     Write-Host ""
     Write-Host "Stopping services..." -ForegroundColor Yellow
 
-    # Kill backend job
-    Stop-Job $backend -ErrorAction SilentlyContinue
-    Remove-Job $backend -ErrorAction SilentlyContinue
+    # Kill backend process and its children
+    if ($backendProcess -and !$backendProcess.HasExited) {
+        Stop-Process -Id $backendProcess.Id -Force -ErrorAction SilentlyContinue
+        # Kill child dotnet processes spawned by the main process
+        Get-CimInstance Win32_Process | Where-Object { $_.ParentProcessId -eq $backendProcess.Id } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+    }
 
-    # Kill all node processes (frontend)
-    Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-
-    # Kill all dotnet processes (backend)
-    Get-Process dotnet -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+    # Kill frontend process and its children
+    if ($frontendProcess -and !$frontendProcess.HasExited) {
+        Stop-Process -Id $frontendProcess.Id -Force -ErrorAction SilentlyContinue
+        # Kill child node processes spawned by npm
+        Get-CimInstance Win32_Process | Where-Object { $_.ParentProcessId -eq $frontendProcess.Id } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+    }
 
     Set-Location $originalLocation
     Write-Host "All services stopped." -ForegroundColor Green
