@@ -40,13 +40,19 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// Always enable Swagger (for development convenience)
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors();
+
+// Health check endpoint
+app.MapGet("/api/health", () => new
+{
+    status = "healthy",
+    timestamp = DateTime.UtcNow,
+    environment = app.Environment.EnvironmentName
+}).WithTags("Health");
 
 app.MapControllers();
 
