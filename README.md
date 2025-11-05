@@ -6,15 +6,31 @@ AI-Enhanced project management system inspired by Jira.
 
 This is a minimal setup to verify the stack works before building the full application.
 
-### Run with Docker Compose
+## Prerequisites
 
+- **.NET 8 SDK**: https://dotnet.microsoft.com/download/dotnet/8.0
+- **Node.js (LTS)**: https://nodejs.org/
+
+## Running Locally (Recommended)
+
+### Option 1: Easy Start (Windows)
+
+Just double-click `start-dev.bat` - it will open both backend and frontend in separate windows.
+
+### Option 2: Manual Start
+
+**Terminal 1 - Backend:**
 ```bash
-docker-compose up --build
+cd backend/CtrlZzz.Web
+dotnet run
 ```
 
-This will start:
-- **Backend API** on http://localhost:5000
-- **Frontend** on http://localhost:5173
+**Terminal 2 - Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
 ### Test the Setup
 
@@ -24,23 +40,24 @@ This will start:
 
 ### API Endpoints
 
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:5000
+- **Swagger UI**: http://localhost:5000/swagger
 - `GET /api/dice` - Returns a random dice roll (1-6)
-- Swagger UI available at http://localhost:5000/swagger (when running locally)
 
-### Development (without Docker)
+## Running with Docker (Optional)
 
-**Backend:**
 ```bash
-cd backend/CtrlZzz.Web
-dotnet run
+# With Docker Compose
+docker-compose up --build
+
+# With Podman Compose
+podman-compose up --build
+# OR
+python -m podman_compose up --build
 ```
 
-**Frontend:**
-```bash
-cd frontend
-npm install
-npm run dev
-```
+**Note**: Docker/Podman may have issues on corporate networks. Local development works reliably.
 
 ## Next Steps
 
