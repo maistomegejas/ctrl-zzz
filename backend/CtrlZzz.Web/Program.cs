@@ -1,5 +1,15 @@
+using CtrlZzz.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
+// Add DbContext
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        b => b.MigrationsAssembly("CtrlZzz.Infrastructure")));
+
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -24,12 +34,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors();
 
-// Dice roll endpoint
-app.MapGet("/api/dice", () =>
-{
-    var random = new Random();
-    var roll = random.Next(1, 7); // 1-6
-    return Results.Ok(new { roll, timestamp = DateTime.UtcNow });
-});
+app.MapControllers();
 
 app.Run();
