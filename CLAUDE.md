@@ -387,6 +387,48 @@ public abstract class BaseEntity
 7. **Frontend: Add Redux slice** and async thunks
 8. **Frontend: Create components** and hook up to Redux
 
+## Unit Testing (CRITICAL)
+
+**Unit tests are VERY IMPORTANT and MUST be written for all business logic.**
+
+### Test Project Structure
+```
+backend/
+├── CtrlZzz.Core.Tests/          # Tests for Core layer
+├── CtrlZzz.Infrastructure.Tests/ # Tests for Infrastructure
+└── CtrlZzz.Web.Tests/           # Integration tests for API
+```
+
+### Testing Requirements
+
+1. **Separate test projects** - DO NOT mix tests with source code
+2. **Run tests BEFORE every commit** - Tests must pass before pushing
+3. **Test coverage for**:
+   - MediatR command/query handlers
+   - Validators
+   - Domain entity logic
+   - Repository implementations
+   - API endpoints (integration tests)
+
+### Testing Stack
+- **xUnit** - Test framework
+- **Moq** - Mocking library
+- **FluentAssertions** - Assertion library
+- **AutoFixture** - Test data generation
+
+### Pre-Commit Checklist
+```bash
+# Run all tests
+dotnet test
+
+# Only commit if all tests pass
+git add -A
+git commit -m "Your message"
+git push
+```
+
+**NEVER commit code without running tests first.**
+
 ## Git Workflow (IMPORTANT)
 
 **ALWAYS push changes to a feature branch, NEVER directly to main.**
@@ -464,16 +506,18 @@ services:
 
 ## Next Steps (Focus on Jira Clone)
 
-1. Setup solution structure
-2. Create domain entities
+1. ✅ Setup solution structure
+2. ✅ Create domain entities
 3. Setup EF Core + migrations
-4. Implement auth with JWT
-5. Create first MediatR handlers (Projects CRUD)
-6. Setup React + Redux + DaisyUI
-7. Create basic UI components
-8. Implement boards with drag & drop
-9. Complete all Jira features (sprints, work items, etc.)
-10. **LATER:** Add AI features and SignalR real-time updates
+4. Setup unit test projects (xUnit)
+5. Implement auth with JWT
+6. Create first MediatR handlers (Projects CRUD)
+7. Write unit tests for handlers and validators
+8. Setup React + Redux + DaisyUI
+9. Create basic UI components
+10. Implement boards with drag & drop
+11. Complete all Jira features (sprints, work items, etc.)
+12. **LATER:** Add AI features and SignalR real-time updates
 
 ---
 
