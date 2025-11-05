@@ -387,6 +387,51 @@ public abstract class BaseEntity
 7. **Frontend: Add Redux slice** and async thunks
 8. **Frontend: Create components** and hook up to Redux
 
+## Git Workflow (IMPORTANT)
+
+**ALWAYS push changes to a feature branch, NEVER directly to main.**
+
+### Branch Naming Convention
+All feature branches MUST follow this pattern:
+```
+claude/<feature-name>-<session-id>
+```
+
+Example: `claude/dice-roll-setup-011CUpMxvoWCSRdtoGde9Z5x`
+
+### Workflow Steps
+
+1. **Create feature branch** from main:
+```bash
+git checkout -b claude/<feature-name>-011CUpMxvoWCSRdtoGde9Z5x
+```
+
+2. **Make changes and commit**:
+```bash
+git add -A
+git commit -m "Descriptive commit message"
+```
+
+3. **Push to remote feature branch** (REQUIRED after every change):
+```bash
+git push -u origin claude/<feature-name>-011CUpMxvoWCSRdtoGde9Z5x
+```
+
+4. **User merges to main** via Pull Request or manually
+
+5. **Delete feature branch** after merge:
+```bash
+git branch -d claude/<feature-name>-011CUpMxvoWCSRdtoGde9Z5x
+git push origin --delete claude/<feature-name>-011CUpMxvoWCSRdtoGde9Z5x
+```
+
+### Important Notes
+- ❌ NEVER push directly to `main` - it will fail with 403 error
+- ✅ ALWAYS push to `claude/*-sessionId` branches
+- ✅ Push to remote after EVERY significant change
+- ✅ This makes changes visible on GitHub immediately
+- User handles merging to main and branch cleanup
+
 ## Docker Setup
 
 ```yaml
