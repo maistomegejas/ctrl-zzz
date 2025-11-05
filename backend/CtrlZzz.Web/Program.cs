@@ -1,4 +1,7 @@
+using CtrlZzz.Core.Interfaces;
 using CtrlZzz.Infrastructure.Data;
+using CtrlZzz.Infrastructure.Repositories;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +11,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         b => b.MigrationsAssembly("CtrlZzz.Infrastructure")));
+
+// Add MediatR
+builder.Services.AddMediatR(cfg => {
+    cfg.RegisterServicesFromAssembly(typeof(CtrlZzz.Core.Entities.BaseEntity).Assembly);
+});
+
+// Add FluentValidation
+builder.Services.AddValidatorsFromAssembly(typeof(CtrlZzz.Core.Entities.BaseEntity).Assembly);
+
+// Add Repositories
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
