@@ -1,867 +1,715 @@
 # Frontend Architecture - CTRL-ZZZ
-## React + TypeScript + Vite
+## Vite + React + TypeScript + Redux + DaisyUI
 
-## Technology Stack
+## Tech Stack
 
-### Core Technologies
-- **React 18.3+** - UI library with concurrent features
-- **TypeScript 5.3+** - Type safety and developer experience
-- **Vite 5+** - Fast build tool and dev server
-- **React Router 6** - Client-side routing
-
-### State Management
-- **Zustand** - Lightweight global state management
-- **React Query (TanStack Query)** - Server state management, caching, and synchronization
-- **Context API** - For theme, auth context, and other cross-cutting concerns
-
-### UI/Component Library
-- **Tailwind CSS** - Utility-first CSS framework
-- **Headless UI** or **Radix UI** - Accessible component primitives
-- **React DnD** or **dnd-kit** - Drag and drop for boards
-- **Lucide React** - Icon library
-- **Framer Motion** - Animations
-
-### Forms & Validation
-- **React Hook Form** - Performant form management
-- **Zod** - TypeScript-first schema validation
-
-### Data Visualization
-- **Recharts** or **Chart.js with React** - For reports, burndown charts, velocity charts
-
-### Additional Tools
-- **Axios** - HTTP client with interceptors
-- **date-fns** - Date manipulation (lightweight alternative to moment.js)
-- **React Hot Toast** or **Sonner** - Toast notifications
-- **clsx** - Conditional className utility
-- **SignalR Client** - Real-time updates
-
-### Development Tools
-- **ESLint** - Code linting
-- **Prettier** - Code formatting
-- **Vitest** - Unit testing
-- **React Testing Library** - Component testing
-- **Playwright** - E2E testing
-- **MSW (Mock Service Worker)** - API mocking for development and tests
+- **Vite** - Build tool
+- **React 18+** - UI library
+- **TypeScript** - Type safety
+- **React Router 6** - Routing
+- **Redux Toolkit** - State management
+- **DaisyUI + Tailwind CSS** - UI components and styling
+- **Axios** - HTTP client
+- **React Hook Form + Zod** - Forms & validation
+- **@microsoft/signalr** - Real-time updates
 
 ## Project Structure
 
 ```
 frontend/
-├── public/                        # Static assets
-│   ├── favicon.ico
-│   └── assets/                   # Images, fonts, etc.
-│
 ├── src/
-│   ├── components/                # Reusable components
-│   │   ├── common/               # Generic UI components
-│   │   │   ├── Button/
-│   │   │   │   ├── Button.tsx
-│   │   │   │   ├── Button.test.tsx
-│   │   │   │   └── index.ts
-│   │   │   ├── Input/
-│   │   │   ├── Select/
-│   │   │   ├── Modal/
-│   │   │   ├── Dropdown/
-│   │   │   ├── Avatar/
-│   │   │   ├── Badge/
-│   │   │   ├── Card/
-│   │   │   ├── Table/
-│   │   │   ├── Pagination/
-│   │   │   ├── Spinner/
-│   │   │   ├── ErrorBoundary/
-│   │   │   └── index.ts
-│   │   │
-│   │   ├── layout/               # Layout components
-│   │   │   ├── Header/
-│   │   │   ├── Sidebar/
-│   │   │   ├── Breadcrumb/
-│   │   │   ├── MainLayout/
-│   │   │   └── index.ts
-│   │   │
-│   │   └── domain/               # Domain-specific reusable components
-│   │       ├── WorkItemCard/
-│   │       ├── WorkItemList/
-│   │       ├── UserAvatar/
-│   │       ├── PriorityBadge/
-│   │       ├── StatusBadge/
-│   │       ├── AssigneeSelect/
-│   │       └── index.ts
+│   ├── components/                # Reusable UI components
+│   │   ├── common/
+│   │   │   ├── Button.tsx
+│   │   │   ├── Input.tsx
+│   │   │   ├── Modal.tsx
+│   │   │   ├── Card.tsx
+│   │   │   └── ...
+│   │   └── layout/
+│   │       ├── Header.tsx
+│   │       ├── Sidebar.tsx
+│   │       └── MainLayout.tsx
 │   │
-│   ├── features/                  # Feature modules (co-located by domain)
-│   │   │
+│   ├── features/                  # Feature modules
 │   │   ├── auth/
 │   │   │   ├── components/
 │   │   │   │   ├── LoginForm.tsx
-│   │   │   │   ├── RegisterForm.tsx
-│   │   │   │   └── ForgotPasswordForm.tsx
-│   │   │   ├── hooks/
-│   │   │   │   ├── useAuth.ts
-│   │   │   │   └── useLogin.ts
-│   │   │   ├── pages/
-│   │   │   │   ├── LoginPage.tsx
-│   │   │   │   └── RegisterPage.tsx
-│   │   │   ├── services/
-│   │   │   │   └── authService.ts
-│   │   │   ├── store/
-│   │   │   │   └── authStore.ts
-│   │   │   └── types/
-│   │   │       └── auth.types.ts
+│   │   │   │   └── RegisterForm.tsx
+│   │   │   ├── authSlice.ts      # Redux slice
+│   │   │   ├── authService.ts    # API calls
+│   │   │   └── types.ts
 │   │   │
 │   │   ├── projects/
 │   │   │   ├── components/
 │   │   │   │   ├── ProjectCard.tsx
-│   │   │   │   ├── ProjectForm.tsx
-│   │   │   │   ├── ProjectSettings.tsx
-│   │   │   │   └── ProjectList.tsx
-│   │   │   ├── hooks/
-│   │   │   │   ├── useProjects.ts
-│   │   │   │   ├── useProject.ts
-│   │   │   │   └── useCreateProject.ts
-│   │   │   ├── pages/
-│   │   │   │   ├── ProjectsPage.tsx
-│   │   │   │   ├── ProjectDetailPage.tsx
-│   │   │   │   └── ProjectSettingsPage.tsx
-│   │   │   ├── services/
-│   │   │   │   └── projectService.ts
-│   │   │   └── types/
-│   │   │       └── project.types.ts
+│   │   │   │   ├── ProjectList.tsx
+│   │   │   │   └── ProjectForm.tsx
+│   │   │   ├── projectsSlice.ts
+│   │   │   ├── projectService.ts
+│   │   │   └── types.ts
 │   │   │
 │   │   ├── workitems/
 │   │   │   ├── components/
-│   │   │   │   ├── WorkItemForm.tsx
+│   │   │   │   ├── WorkItemCard.tsx
+│   │   │   │   ├── WorkItemList.tsx
 │   │   │   │   ├── WorkItemDetail.tsx
-│   │   │   │   ├── WorkItemComments.tsx
-│   │   │   │   ├── WorkItemActivity.tsx
-│   │   │   │   ├── WorkItemAttachments.tsx
-│   │   │   │   ├── CreateTaskModal.tsx
-│   │   │   │   ├── CreateBugModal.tsx
-│   │   │   │   ├── CreateStoryModal.tsx
-│   │   │   │   └── CreateEpicModal.tsx
-│   │   │   ├── hooks/
-│   │   │   │   ├── useWorkItems.ts
-│   │   │   │   ├── useWorkItem.ts
-│   │   │   │   ├── useCreateWorkItem.ts
-│   │   │   │   └── useUpdateWorkItem.ts
-│   │   │   ├── pages/
-│   │   │   │   ├── WorkItemsListPage.tsx
-│   │   │   │   └── WorkItemDetailPage.tsx
-│   │   │   ├── services/
-│   │   │   │   └── workItemService.ts
-│   │   │   └── types/
-│   │   │       └── workitem.types.ts
+│   │   │   │   ├── WorkItemForm.tsx
+│   │   │   │   └── CommentsList.tsx
+│   │   │   ├── workItemsSlice.ts
+│   │   │   ├── workItemService.ts
+│   │   │   └── types.ts
 │   │   │
 │   │   ├── boards/
 │   │   │   ├── components/
 │   │   │   │   ├── KanbanBoard.tsx
-│   │   │   │   ├── ScrumBoard.tsx
 │   │   │   │   ├── BoardColumn.tsx
-│   │   │   │   ├── BoardCard.tsx
-│   │   │   │   ├── BoardFilters.tsx
-│   │   │   │   └── BoardSettings.tsx
-│   │   │   ├── hooks/
-│   │   │   │   ├── useBoard.ts
-│   │   │   │   └── useDragDrop.ts
-│   │   │   ├── pages/
-│   │   │   │   └── BoardPage.tsx
-│   │   │   ├── services/
-│   │   │   │   └── boardService.ts
-│   │   │   └── types/
-│   │   │       └── board.types.ts
+│   │   │   │   └── BoardCard.tsx
+│   │   │   ├── boardsSlice.ts
+│   │   │   └── types.ts
 │   │   │
-│   │   ├── sprints/
-│   │   │   ├── components/
-│   │   │   │   ├── SprintList.tsx
-│   │   │   │   ├── SprintForm.tsx
-│   │   │   │   ├── SprintBacklog.tsx
-│   │   │   │   └── SprintProgress.tsx
-│   │   │   ├── hooks/
-│   │   │   │   ├── useSprints.ts
-│   │   │   │   └── useActiveSprint.ts
-│   │   │   ├── pages/
-│   │   │   │   ├── SprintsPage.tsx
-│   │   │   │   └── SprintDetailPage.tsx
-│   │   │   ├── services/
-│   │   │   │   └── sprintService.ts
-│   │   │   └── types/
-│   │   │       └── sprint.types.ts
-│   │   │
-│   │   ├── backlog/
-│   │   │   ├── components/
-│   │   │   │   ├── BacklogList.tsx
-│   │   │   │   ├── EpicSection.tsx
-│   │   │   │   └── BacklogPrioritization.tsx
-│   │   │   ├── hooks/
-│   │   │   │   └── useBacklog.ts
-│   │   │   ├── pages/
-│   │   │   │   └── BacklogPage.tsx
-│   │   │   └── types/
-│   │   │       └── backlog.types.ts
-│   │   │
-│   │   ├── reports/
-│   │   │   ├── components/
-│   │   │   │   ├── BurndownChart.tsx
-│   │   │   │   ├── VelocityChart.tsx
-│   │   │   │   ├── CumulativeFlowDiagram.tsx
-│   │   │   │   ├── SprintReport.tsx
-│   │   │   │   └── TeamPerformance.tsx
-│   │   │   ├── hooks/
-│   │   │   │   └── useReportData.ts
-│   │   │   ├── pages/
-│   │   │   │   └── ReportsPage.tsx
-│   │   │   └── types/
-│   │   │       └── report.types.ts
-│   │   │
-│   │   ├── teams/
-│   │   │   ├── components/
-│   │   │   │   ├── TeamList.tsx
-│   │   │   │   ├── TeamForm.tsx
-│   │   │   │   └── TeamMembersList.tsx
-│   │   │   ├── hooks/
-│   │   │   │   └── useTeams.ts
-│   │   │   ├── pages/
-│   │   │   │   └── TeamsPage.tsx
-│   │   │   └── types/
-│   │   │       └── team.types.ts
-│   │   │
-│   │   ├── users/
-│   │   │   ├── components/
-│   │   │   │   ├── UserProfile.tsx
-│   │   │   │   └── UserSettings.tsx
-│   │   │   ├── hooks/
-│   │   │   │   └── useUser.ts
-│   │   │   ├── pages/
-│   │   │   │   └── ProfilePage.tsx
-│   │   │   └── types/
-│   │   │       └── user.types.ts
-│   │   │
-│   │   └── notifications/
+│   │   └── sprints/
 │   │       ├── components/
-│   │       │   ├── NotificationBell.tsx
-│   │       │   └── NotificationList.tsx
-│   │       ├── hooks/
-│   │       │   └── useNotifications.ts
-│   │       └── types/
-│   │           └── notification.types.ts
+│   │       │   ├── SprintList.tsx
+│   │       │   └── SprintForm.tsx
+│   │       ├── sprintsSlice.ts
+│   │       └── types.ts
 │   │
-│   ├── hooks/                     # Global custom hooks
+│   ├── store/                     # Redux store
+│   │   ├── index.ts              # Store configuration
+│   │   └── hooks.ts              # Typed hooks
+│   │
+│   ├── services/                  # API services
+│   │   ├── api.ts                # Axios instance
+│   │   └── signalr.ts            # SignalR connection
+│   │
+│   ├── types/                     # Global types
+│   │   └── index.ts
+│   │
+│   ├── hooks/                     # Custom hooks
+│   │   ├── useAuth.ts
 │   │   ├── useDebounce.ts
-│   │   ├── useLocalStorage.ts
-│   │   ├── useMediaQuery.ts
-│   │   ├── useClickOutside.ts
-│   │   ├── useInfiniteScroll.ts
-│   │   └── index.ts
+│   │   └── useSignalR.ts
 │   │
-│   ├── services/                  # Global services
-│   │   ├── api/
-│   │   │   ├── client.ts         # Axios instance configuration
-│   │   │   ├── interceptors.ts   # Request/response interceptors
-│   │   │   └── endpoints.ts      # API endpoint constants
-│   │   ├── signalr/
-│   │   │   └── hubConnection.ts  # SignalR setup
-│   │   └── storage/
-│   │       └── localStorage.ts   # Local storage wrapper
+│   ├── router/                    # Routes
+│   │   ├── index.tsx
+│   │   └── ProtectedRoute.tsx
 │   │
-│   ├── store/                     # Global state management
-│   │   ├── index.ts              # Export all stores
-│   │   ├── uiStore.ts            # UI state (sidebar open, theme, etc.)
-│   │   └── notificationStore.ts  # Global notifications
+│   ├── utils/                     # Utilities
+│   │   ├── constants.ts
+│   │   └── helpers.ts
 │   │
-│   ├── types/                     # Global TypeScript types
-│   │   ├── api.types.ts          # API response types
-│   │   ├── common.types.ts       # Common shared types
-│   │   └── index.ts
-│   │
-│   ├── utils/                     # Utility functions
-│   │   ├── dateUtils.ts
-│   │   ├── stringUtils.ts
-│   │   ├── validationUtils.ts
-│   │   ├── formatters.ts
-│   │   └── constants.ts
-│   │
-│   ├── styles/                    # Global styles
-│   │   ├── index.css             # Tailwind imports
-│   │   └── variables.css         # CSS custom properties
-│   │
-│   ├── router/                    # Routing configuration
-│   │   ├── index.tsx             # Router setup
-│   │   ├── routes.tsx            # Route definitions
-│   │   └── ProtectedRoute.tsx    # Auth guard component
-│   │
-│   ├── config/                    # Configuration
-│   │   ├── env.ts                # Environment variables with validation
-│   │   └── constants.ts          # App-wide constants
-│   │
-│   ├── App.tsx                    # Main app component
+│   ├── App.tsx                    # Main app
 │   ├── main.tsx                   # Entry point
-│   └── vite-env.d.ts             # Vite type declarations
+│   └── index.css                  # Global styles
 │
-├── .env.example                   # Example environment variables
-├── .env.development              # Development environment
-├── .env.production               # Production environment
-├── .eslintrc.cjs                 # ESLint configuration
-├── .prettierrc                   # Prettier configuration
-├── index.html                    # HTML entry point
+├── .env.example
+├── .env.development
+├── index.html
 ├── package.json
-├── tsconfig.json                 # TypeScript configuration
-├── tsconfig.node.json            # TypeScript config for Vite
-├── vite.config.ts                # Vite configuration
-├── tailwind.config.js            # Tailwind configuration
+├── tailwind.config.js
+├── tsconfig.json
+├── vite.config.ts
 └── README.md
 ```
 
-## Component Architecture
+## Key Patterns
 
-### Component Structure Pattern
-Each component follows this structure:
-```tsx
-// Button.tsx
-import { ComponentProps, ReactNode } from 'react';
-import { clsx } from 'clsx';
+### 1. Redux Slice Pattern
 
-export interface ButtonProps extends ComponentProps<'button'> {
-  variant?: 'primary' | 'secondary' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
-  isLoading?: boolean;
-  children: ReactNode;
+```typescript
+// features/workitems/workItemsSlice.ts
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { workItemService } from './workItemService';
+import { WorkItem, CreateWorkItemDto } from './types';
+
+interface WorkItemsState {
+  items: WorkItem[];
+  currentItem: WorkItem | null;
+  loading: boolean;
+  error: string | null;
 }
 
-export function Button({
-  variant = 'primary',
-  size = 'md',
-  isLoading = false,
-  className,
-  children,
-  disabled,
-  ...props
-}: ButtonProps) {
-  return (
-    <button
-      className={clsx(
-        'button-base',
-        variant === 'primary' && 'button-primary',
-        variant === 'secondary' && 'button-secondary',
-        variant === 'danger' && 'button-danger',
-        size === 'sm' && 'button-sm',
-        size === 'md' && 'button-md',
-        size === 'lg' && 'button-lg',
-        className
-      )}
-      disabled={disabled || isLoading}
-      {...props}
-    >
-      {isLoading ? <Spinner /> : children}
-    </button>
-  );
-}
+const initialState: WorkItemsState = {
+  items: [],
+  currentItem: null,
+  loading: false,
+  error: null,
+};
+
+// Async thunks
+export const fetchWorkItems = createAsyncThunk(
+  'workItems/fetchAll',
+  async (projectId: string) => {
+    const response = await workItemService.getAll(projectId);
+    return response.data;
+  }
+);
+
+export const createWorkItem = createAsyncThunk(
+  'workItems/create',
+  async (dto: CreateWorkItemDto) => {
+    const response = await workItemService.create(dto);
+    return response.data;
+  }
+);
+
+// Slice
+const workItemsSlice = createSlice({
+  name: 'workItems',
+  initialState,
+  reducers: {
+    setCurrentItem: (state, action: PayloadAction<WorkItem>) => {
+      state.currentItem = action.payload;
+    },
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchWorkItems.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchWorkItems.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = action.payload;
+      })
+      .addCase(fetchWorkItems.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch work items';
+      })
+      .addCase(createWorkItem.fulfilled, (state, action) => {
+        state.items.push(action.payload);
+      });
+  },
+});
+
+export const { setCurrentItem, clearError } = workItemsSlice.actions;
+export default workItemsSlice.reducer;
 ```
 
-### Feature Module Pattern
-Each feature is self-contained with its own:
-- Components
-- Hooks (React Query queries/mutations)
-- Types
-- Services
-- Pages
+### 2. API Service Pattern
 
-Example:
-```tsx
-// features/workitems/hooks/useWorkItem.ts
-import { useQuery } from '@tanstack/react-query';
-import { workItemService } from '../services/workItemService';
-
-export function useWorkItem(id: string) {
-  return useQuery({
-    queryKey: ['workItem', id],
-    queryFn: () => workItemService.getById(id),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-}
-
-// features/workitems/services/workItemService.ts
-import { apiClient } from '@/services/api/client';
-import { WorkItem, CreateWorkItemDto } from '../types/workitem.types';
+```typescript
+// features/workitems/workItemService.ts
+import api from '@/services/api';
+import { WorkItem, CreateWorkItemDto, UpdateWorkItemDto } from './types';
 
 export const workItemService = {
-  getById: async (id: string): Promise<WorkItem> => {
-    const response = await apiClient.get(`/api/v1/workitems/${id}`);
-    return response.data.data;
-  },
+  getAll: (projectId: string) =>
+    api.get<WorkItem[]>(`/api/workitems?projectId=${projectId}`),
 
-  create: async (dto: CreateWorkItemDto): Promise<WorkItem> => {
-    const response = await apiClient.post('/api/v1/workitems', dto);
-    return response.data.data;
-  },
+  getById: (id: string) =>
+    api.get<WorkItem>(`/api/workitems/${id}`),
 
-  // ... other methods
+  create: (dto: CreateWorkItemDto) =>
+    api.post<WorkItem>('/api/workitems', dto),
+
+  update: (id: string, dto: UpdateWorkItemDto) =>
+    api.put<WorkItem>(`/api/workitems/${id}`, dto),
+
+  delete: (id: string) =>
+    api.delete(`/api/workitems/${id}`),
+
+  updateStatus: (id: string, statusId: string) =>
+    api.patch(`/api/workitems/${id}/status`, { statusId }),
 };
 ```
 
-## State Management Strategy
+### 3. Axios Setup
 
-### 1. Server State (React Query)
-For all data from the API:
-- Automatic caching
-- Background refetching
-- Optimistic updates
-- Mutation handling
-
-```tsx
-// Query
-const { data: workItems, isLoading, error } = useWorkItems(projectId);
-
-// Mutation with optimistic update
-const updateWorkItem = useMutation({
-  mutationFn: workItemService.update,
-  onMutate: async (updatedItem) => {
-    await queryClient.cancelQueries({ queryKey: ['workItem', updatedItem.id] });
-    const previousItem = queryClient.getQueryData(['workItem', updatedItem.id]);
-    queryClient.setQueryData(['workItem', updatedItem.id], updatedItem);
-    return { previousItem };
-  },
-  onError: (err, variables, context) => {
-    queryClient.setQueryData(['workItem', variables.id], context?.previousItem);
-  },
-  onSettled: (data) => {
-    queryClient.invalidateQueries({ queryKey: ['workItem', data?.id] });
-  },
-});
-```
-
-### 2. Client State (Zustand)
-For UI state and client-only data:
-
-```tsx
-// store/uiStore.ts
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-
-interface UIState {
-  sidebarOpen: boolean;
-  theme: 'light' | 'dark';
-  toggleSidebar: () => void;
-  setTheme: (theme: 'light' | 'dark') => void;
-}
-
-export const useUIStore = create<UIState>()(
-  persist(
-    (set) => ({
-      sidebarOpen: true,
-      theme: 'light',
-      toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
-      setTheme: (theme) => set({ theme }),
-    }),
-    {
-      name: 'ui-storage',
-    }
-  )
-);
-```
-
-## Routing Strategy
-
-### Route Structure
-```
-/                           → Landing/Dashboard
-/auth/login                 → Login page
-/auth/register              → Register page
-
-/projects                   → All projects
-/projects/:projectId        → Project detail
-
-/projects/:projectId/board  → Kanban/Scrum board
-/projects/:projectId/backlog → Product backlog
-/projects/:projectId/sprints → Sprint management
-/projects/:projectId/sprints/:sprintId → Sprint detail
-
-/projects/:projectId/workitems → Work items list
-/projects/:projectId/workitems/:workItemId → Work item detail
-
-/projects/:projectId/reports → Reports dashboard
-/projects/:projectId/settings → Project settings
-
-/profile                    → User profile
-/settings                   → User settings
-/admin                      → Admin dashboard (role-based)
-```
-
-### Protected Routes
-```tsx
-// router/ProtectedRoute.tsx
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuthStore } from '@/features/auth/store/authStore';
-
-export function ProtectedRoute() {
-  const { isAuthenticated } = useAuthStore();
-
-  if (!isAuthenticated) {
-    return <Navigate to="/auth/login" replace />;
-  }
-
-  return <Outlet />;
-}
-```
-
-## API Integration
-
-### Axios Setup
-```tsx
-// services/api/client.ts
+```typescript
+// services/api.ts
 import axios from 'axios';
-import { API_BASE_URL } from '@/config/env';
 
-export const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor
-apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// Request interceptor - add auth token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-// Response interceptor
-apiClient.interceptors.response.use(
+// Response interceptor - handle errors
+api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
       // Handle token refresh or redirect to login
+      localStorage.removeItem('accessToken');
+      window.location.href = '/login';
     }
     return Promise.reject(error);
   }
 );
+
+export default api;
 ```
 
-## Forms & Validation
+### 4. Redux Store Setup
 
-### Form Pattern with React Hook Form + Zod
-```tsx
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+```typescript
+// store/index.ts
+import { configureStore } from '@reduxjs/toolkit';
+import authReducer from '@/features/auth/authSlice';
+import projectsReducer from '@/features/projects/projectsSlice';
+import workItemsReducer from '@/features/workitems/workItemsSlice';
+import sprintsReducer from '@/features/sprints/sprintsSlice';
+import boardsReducer from '@/features/boards/boardsSlice';
 
-const createTaskSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(200),
-  description: z.string().optional(),
-  priority: z.enum(['low', 'medium', 'high', 'critical']),
-  assigneeId: z.string().uuid().optional(),
-  storyPoints: z.number().min(0).max(100).optional(),
+export const store = configureStore({
+  reducer: {
+    auth: authReducer,
+    projects: projectsReducer,
+    workItems: workItemsReducer,
+    sprints: sprintsReducer,
+    boards: boardsReducer,
+  },
 });
 
-type CreateTaskFormData = z.infer<typeof createTaskSchema>;
-
-export function CreateTaskForm() {
-  const { register, handleSubmit, formState: { errors } } = useForm<CreateTaskFormData>({
-    resolver: zodResolver(createTaskSchema),
-  });
-
-  const onSubmit = (data: CreateTaskFormData) => {
-    // Handle form submission
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Input {...register('title')} error={errors.title?.message} />
-      {/* Other fields */}
-    </form>
-  );
-}
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 ```
 
-## Drag & Drop for Boards
+```typescript
+// store/hooks.ts
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import type { RootState, AppDispatch } from './index';
 
-### Using dnd-kit
-```tsx
-import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+```
 
-export function KanbanBoard() {
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      // Update work item status
-      updateWorkItemStatus(active.id, over.id);
-    }
-  };
+### 5. Component with Redux
+
+```typescript
+// features/workitems/components/WorkItemList.tsx
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { fetchWorkItems } from '../workItemsSlice';
+import WorkItemCard from './WorkItemCard';
+
+interface WorkItemListProps {
+  projectId: string;
+}
+
+export default function WorkItemList({ projectId }: WorkItemListProps) {
+  const dispatch = useAppDispatch();
+  const { items, loading, error } = useAppSelector((state) => state.workItems);
+
+  useEffect(() => {
+    dispatch(fetchWorkItems(projectId));
+  }, [dispatch, projectId]);
+
+  if (loading) return <div className="loading loading-spinner"></div>;
+  if (error) return <div className="alert alert-error">{error}</div>;
 
   return (
-    <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      {columns.map((column) => (
-        <SortableContext
-          key={column.id}
-          items={column.workItems}
-          strategy={verticalListSortingStrategy}
-        >
-          <BoardColumn column={column} />
-        </SortableContext>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {items.map((item) => (
+        <WorkItemCard key={item.id} item={item} />
       ))}
-    </DndContext>
-  );
-}
-```
-
-## Real-time Updates with SignalR
-
-```tsx
-// services/signalr/hubConnection.ts
-import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
-
-export const createHubConnection = (token: string) => {
-  return new HubConnectionBuilder()
-    .withUrl(`${API_BASE_URL}/hubs/notifications`, {
-      accessTokenFactory: () => token,
-    })
-    .withAutomaticReconnect()
-    .configureLogging(LogLevel.Information)
-    .build();
-};
-
-// In component
-useEffect(() => {
-  const connection = createHubConnection(accessToken);
-
-  connection.on('WorkItemUpdated', (workItem) => {
-    // Invalidate React Query cache
-    queryClient.invalidateQueries(['workItem', workItem.id]);
-  });
-
-  connection.start();
-
-  return () => {
-    connection.stop();
-  };
-}, [accessToken]);
-```
-
-## Performance Optimization
-
-### Code Splitting
-```tsx
-// router/routes.tsx
-import { lazy } from 'react';
-
-const ProjectsPage = lazy(() => import('@/features/projects/pages/ProjectsPage'));
-const BoardPage = lazy(() => import('@/features/boards/pages/BoardPage'));
-```
-
-### Virtual Scrolling for Large Lists
-```tsx
-import { useVirtualizer } from '@tanstack/react-virtual';
-
-export function WorkItemsList({ items }: { items: WorkItem[] }) {
-  const parentRef = useRef<HTMLDivElement>(null);
-
-  const virtualizer = useVirtualizer({
-    count: items.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 100,
-  });
-
-  return (
-    <div ref={parentRef} style={{ height: '600px', overflow: 'auto' }}>
-      <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
-        {virtualizer.getVirtualItems().map((virtualItem) => (
-          <div key={virtualItem.key} style={{ height: `${virtualItem.size}px` }}>
-            <WorkItemCard item={items[virtualItem.index]} />
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
 ```
 
-## AI Integration Points (Future)
+### 6. Forms with React Hook Form + Zod
 
-### Where AI Features Will Be Integrated
+```typescript
+// features/workitems/components/WorkItemForm.tsx
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useAppDispatch } from '@/store/hooks';
+import { createWorkItem } from '../workItemsSlice';
 
-1. **Work Item Creation**
-   - AI-assisted description generation
-   - Automatic priority suggestion
-   - Similar ticket detection
+const workItemSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(200),
+  description: z.string().optional(),
+  priority: z.enum(['Low', 'Medium', 'High', 'Critical']),
+  projectId: z.string().uuid(),
+  assigneeId: z.string().uuid().optional(),
+  storyPoints: z.number().min(0).max(100).optional(),
+});
 
-2. **Sprint Planning**
-   - AI-generated sprint summaries
-   - Capacity recommendations
-   - Risk assessment
+type WorkItemFormData = z.infer<typeof workItemSchema>;
 
-3. **Reports Dashboard**
-   - AI insights on team performance
-   - Predictive burndown
-   - Anomaly detection alerts
-
-4. **Search & Discovery**
-   - Natural language search
-   - Semantic work item matching
-
-### Component Structure for AI Features
-```tsx
-// features/workitems/components/AISuggestions.tsx
-export function AISuggestions({ workItemId }: { workItemId: string }) {
-  const { data: suggestions, isLoading } = useQuery({
-    queryKey: ['ai-suggestions', workItemId],
-    queryFn: () => aiService.getSuggestions(workItemId),
-    enabled: AI_FEATURES_ENABLED, // Feature flag
+export default function WorkItemForm({ projectId }: { projectId: string }) {
+  const dispatch = useAppDispatch();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<WorkItemFormData>({
+    resolver: zodResolver(workItemSchema),
+    defaultValues: { projectId },
   });
 
-  if (!AI_FEATURES_ENABLED) return null;
+  const onSubmit = async (data: WorkItemFormData) => {
+    await dispatch(createWorkItem(data));
+    reset();
+  };
 
   return (
-    <Card>
-      <CardHeader>AI Suggestions</CardHeader>
-      <CardBody>
-        {suggestions?.map((suggestion) => (
-          <SuggestionItem key={suggestion.id} suggestion={suggestion} />
-        ))}
-      </CardBody>
-    </Card>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className="form-control">
+        <label className="label">
+          <span className="label-text">Title</span>
+        </label>
+        <input
+          {...register('title')}
+          type="text"
+          className="input input-bordered"
+        />
+        {errors.title && (
+          <label className="label">
+            <span className="label-text-alt text-error">
+              {errors.title.message}
+            </span>
+          </label>
+        )}
+      </div>
+
+      <div className="form-control">
+        <label className="label">
+          <span className="label-text">Priority</span>
+        </label>
+        <select {...register('priority')} className="select select-bordered">
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+          <option value="Critical">Critical</option>
+        </select>
+      </div>
+
+      <button type="submit" className="btn btn-primary">
+        Create Work Item
+      </button>
+    </form>
   );
 }
 ```
 
-## Testing Strategy
+## Routing Setup
 
-### Unit Tests (Vitest + React Testing Library)
+```typescript
+// router/index.tsx
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import MainLayout from '@/components/layout/MainLayout';
+import ProtectedRoute from './ProtectedRoute';
+import LoginPage from '@/features/auth/components/LoginPage';
+import ProjectsPage from '@/features/projects/pages/ProjectsPage';
+import ProjectDetailPage from '@/features/projects/pages/ProjectDetailPage';
+import BoardPage from '@/features/boards/pages/BoardPage';
+
+const router = createBrowserRouter([
+  {
+    path: '/login',
+    element: <LoginPage />,
+  },
+  {
+    path: '/',
+    element: <ProtectedRoute />,
+    children: [
+      {
+        element: <MainLayout />,
+        children: [
+          {
+            path: '/',
+            element: <ProjectsPage />,
+          },
+          {
+            path: '/projects/:projectId',
+            element: <ProjectDetailPage />,
+          },
+          {
+            path: '/projects/:projectId/board',
+            element: <BoardPage />,
+          },
+        ],
+      },
+    ],
+  },
+]);
+
+export default function Router() {
+  return <RouterProvider router={router} />;
+}
+```
+
+```typescript
+// router/ProtectedRoute.tsx
+import { Navigate, Outlet } from 'react-router-dom';
+import { useAppSelector } from '@/store/hooks';
+
+export default function ProtectedRoute() {
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
+}
+```
+
+## SignalR Setup
+
+```typescript
+// services/signalr.ts
+import * as signalR from '@microsoft/signalr';
+
+let connection: signalR.HubConnection | null = null;
+
+export const createSignalRConnection = (token: string) => {
+  connection = new signalR.HubConnectionBuilder()
+    .withUrl(`${import.meta.env.VITE_API_URL}/hubs/notifications`, {
+      accessTokenFactory: () => token,
+    })
+    .withAutomaticReconnect()
+    .build();
+
+  return connection;
+};
+
+export const getConnection = () => connection;
+```
+
+```typescript
+// hooks/useSignalR.ts
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { createSignalRConnection } from '@/services/signalr';
+import { fetchWorkItems } from '@/features/workitems/workItemsSlice';
+
+export const useSignalR = (projectId: string) => {
+  const dispatch = useAppDispatch();
+  const { accessToken } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (!accessToken) return;
+
+    const connection = createSignalRConnection(accessToken);
+
+    connection.start().then(() => {
+      connection.invoke('JoinProject', projectId);
+
+      // Listen for work item updates
+      connection.on('WorkItemUpdated', (workItem) => {
+        // Refresh work items or update specific item
+        dispatch(fetchWorkItems(projectId));
+      });
+    });
+
+    return () => {
+      connection.invoke('LeaveProject', projectId);
+      connection.stop();
+    };
+  }, [accessToken, projectId, dispatch]);
+};
+```
+
+## DaisyUI Components
+
+DaisyUI provides pre-built Tailwind components. Use them for quick development:
+
 ```tsx
-// components/common/Button/Button.test.tsx
-import { render, screen, fireEvent } from '@testing-library/react';
-import { Button } from './Button';
+// Button variants
+<button className="btn btn-primary">Primary</button>
+<button className="btn btn-secondary">Secondary</button>
+<button className="btn btn-error">Delete</button>
 
-describe('Button', () => {
-  it('renders with children', () => {
-    render(<Button>Click me</Button>);
-    expect(screen.getByText('Click me')).toBeInTheDocument();
-  });
+// Card
+<div className="card bg-base-100 shadow-xl">
+  <div className="card-body">
+    <h2 className="card-title">Card Title</h2>
+    <p>Card content</p>
+    <div className="card-actions justify-end">
+      <button className="btn btn-primary">Action</button>
+    </div>
+  </div>
+</div>
 
-  it('calls onClick when clicked', () => {
-    const onClick = vi.fn();
-    render(<Button onClick={onClick}>Click me</Button>);
-    fireEvent.click(screen.getByText('Click me'));
-    expect(onClick).toHaveBeenCalledTimes(1);
-  });
-});
+// Modal
+<dialog className="modal" id="my_modal">
+  <div className="modal-box">
+    <h3 className="font-bold text-lg">Modal Title</h3>
+    <p>Modal content</p>
+    <div className="modal-action">
+      <button className="btn">Close</button>
+    </div>
+  </div>
+</dialog>
+
+// Badge
+<div className="badge badge-primary">Primary</div>
+<div className="badge badge-error">Error</div>
+
+// Loading spinner
+<span className="loading loading-spinner loading-lg"></span>
 ```
 
-### Integration Tests with MSW
-```tsx
-// features/workitems/hooks/useWorkItems.test.tsx
-import { renderHook, waitFor } from '@testing-library/react';
-import { rest } from 'msw';
-import { setupServer } from 'msw/node';
-import { useWorkItems } from './useWorkItems';
+## Tailwind Config
 
-const server = setupServer(
-  rest.get('/api/v1/workitems', (req, res, ctx) => {
-    return res(ctx.json({ data: [{ id: '1', title: 'Test Task' }] }));
-  })
-);
-
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
-
-test('fetches work items', async () => {
-  const { result } = renderHook(() => useWorkItems('project-1'));
-
-  await waitFor(() => expect(result.current.isSuccess).toBe(true));
-  expect(result.current.data).toHaveLength(1);
-});
-```
-
-## Accessibility
-
-- Semantic HTML
-- ARIA labels and roles
-- Keyboard navigation
-- Focus management
-- Screen reader support
-- Color contrast compliance (WCAG AA)
-
-## Internationalization (Future)
-
-Setup for future i18n support:
-- Use `react-i18next`
-- Extract all strings to translation files
-- Support for RTL languages
-
-## Build & Deployment
-
-### Development
-```bash
-npm run dev      # Start dev server
-npm run test     # Run tests
-npm run lint     # Lint code
-```
-
-### Production Build
-```bash
-npm run build    # Build for production
-npm run preview  # Preview production build
-```
-
-### Environment Variables
-```env
-VITE_API_BASE_URL=http://localhost:5000
-VITE_SIGNALR_HUB_URL=http://localhost:5000/hubs/notifications
-VITE_AI_FEATURES_ENABLED=false
-```
-
-## Styling Strategy
-
-### Tailwind Configuration
-```js
+```javascript
 // tailwind.config.js
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
-    extend: {
-      colors: {
-        primary: {...},
-        secondary: {...},
-        // Jira-like color palette
-      },
-    },
+    extend: {},
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-  ],
+  plugins: [require('daisyui')],
+  daisyui: {
+    themes: ['light', 'dark', 'cupcake'], // Choose themes
+  },
 };
 ```
 
-### Component Styling Pattern
-- Tailwind for layout and basic styling
-- CSS modules for complex components (if needed)
-- Consistent spacing scale (4px base)
-- Design tokens in CSS variables
+## Environment Variables
 
-## Key UI/UX Considerations
+```env
+# .env.development
+VITE_API_URL=http://localhost:5000
+VITE_SIGNALR_URL=http://localhost:5000/hubs/notifications
+```
 
-1. **Responsive Design**: Mobile-first approach, works on tablets and desktops
-2. **Loading States**: Skeleton loaders for better perceived performance
-3. **Empty States**: Helpful messages and CTAs when no data
-4. **Error States**: User-friendly error messages with retry options
-5. **Optimistic UI**: Immediate feedback before server confirmation
-6. **Keyboard Shortcuts**: Power user features (e.g., 'C' to create task)
-7. **Dark Mode**: Support from day one
+## Main App Setup
 
-## Progressive Enhancement
+```typescript
+// main.tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { store } from './store';
+import Router from './router';
+import './index.css';
 
-Start with core functionality, progressively add:
-1. Basic CRUD operations
-2. Drag & drop
-3. Real-time updates
-4. Advanced filtering
-5. AI features
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <Router />
+    </Provider>
+  </React.StrictMode>
+);
+```
+
+```css
+/* index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+## TypeScript Config
+
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
+```
+
+## Vite Config
+
+```typescript
+// vite.config.ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  server: {
+    port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+    },
+  },
+});
+```
+
+## Package.json Scripts
+
+```json
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.22.0",
+    "@reduxjs/toolkit": "^2.2.0",
+    "react-redux": "^9.1.0",
+    "axios": "^1.6.7",
+    "react-hook-form": "^7.50.0",
+    "zod": "^3.22.4",
+    "@hookform/resolvers": "^3.3.4",
+    "@microsoft/signalr": "^8.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "^5.4.0",
+    "vite": "^5.2.0",
+    "tailwindcss": "^3.4.1",
+    "daisyui": "^4.7.2",
+    "autoprefixer": "^10.4.18",
+    "postcss": "^8.4.35"
+  }
+}
+```
 
 ---
 
-**Document Version**: 1.0
-**Last Updated**: 2025-11-05
-**Status**: Planning Phase
+**Version**: 1.0
+**Updated**: 2025-11-05

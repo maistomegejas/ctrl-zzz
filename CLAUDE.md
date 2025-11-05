@@ -4,358 +4,426 @@
 ## Overview
 CTRL-ZZZ is a modern project management system inspired by Jira, with built-in AI capabilities to enhance workflow efficiency. The system allows teams to manage tasks, bugs, stories, epics, sprints, and all standard project management entities with intelligent automation and insights.
 
+## Technology Stack
+
+### Frontend
+- **Vite + React 18+ + TypeScript**
+- **React Router** - Client-side routing
+- **Redux Toolkit** - State management
+- **DaisyUI + Tailwind CSS** - UI components and styling
+- **Axios** - HTTP client
+- **React Hook Form + Zod** - Forms and validation
+
+### Backend
+- **ASP.NET Core 8.0 Web API**
+- **Entity Framework Core 8.0** - ORM
+- **MediatR** - CQRS pattern (all business logic here)
+- **AutoMapper** - Object mapping
+- **FluentValidation** - Request validation
+- **FluentResults** (or similar) - Result pattern
+- **Ardalis.Specification** - Query specifications
+- **JWT Bearer** - Authentication
+- **SignalR** - Real-time updates
+
+### Database
+- **Microsoft SQL Server** (with PostgreSQL compatibility)
+- Store all dates as UTC
+- Avoid DB-specific functions in queries
+
+### DevOps
+- **Docker + Docker Compose** - Launch entire stack with one command
+
 ## System Architecture
 
-### Technology Stack
-- **Frontend**: React 18+ with TypeScript, Vite (for fast development and optimized builds)
-- **Backend**: ASP.NET Core 8.0 Web API
-- **Database**: Microsoft SQL Server (with abstraction layer for PostgreSQL/other RDBMS compatibility)
-- **Authentication**: JWT-based authentication with refresh tokens
-- **AI Integration**: Prepared architecture for future AI services (summary generation, task estimation, priority suggestions, anomaly detection)
-
-### Architectural Pattern
-**Clean Architecture** with clear separation of concerns:
-
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        Presentation Layer                    │
-│                    (React + TypeScript)                      │
+│                    Frontend (React + Redux)                  │
 └─────────────────────────────────────────────────────────────┘
-                              │
-                              │ HTTP/REST API
-                              ▼
+                            │ HTTP/REST + SignalR
+                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                        API Layer (Web)                       │
-│              Controllers, Middleware, Filters                │
+│                  API Layer (Controllers)                     │
+│          Thin controllers - just call MediatR               │
 └─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
+                            │
+                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                     Application Layer (Core)                 │
-│         Services, DTOs, Interfaces, Business Logic           │
+│              MediatR Handlers (Business Logic)               │
+│          Commands, Queries, Validators                       │
 └─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
+                            │
+                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                       Domain Layer (Core)                    │
-│            Entities, Value Objects, Domain Events            │
+│                    Domain Layer (Entities)                   │
+│              + Ardalis Specifications                        │
 └─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
+                            │
+                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                  Infrastructure Layer                        │
-│     Data Access, External Services, Repositories             │
+│          Infrastructure (EF Core, Repositories)              │
 └─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
+                            │
+                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                       Shared Layer                           │
-│      Common Utilities, Extensions, Constants                 │
+│                   Database (MSSQL/PostgreSQL)                │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## Core Domain Concepts
+## Core Domain Entities
 
 ### Primary Entities
-1. **Organization/Workspace** - Top-level container for projects
-2. **Project** - Contains all work items, boards, and settings
-3. **Work Items** (base entity with specializations):
-   - **Epic** - Large body of work spanning multiple sprints
-   - **Story** - User-facing feature or requirement
+1. **Organization** - Top-level container
+2. **Project** - Contains all work items and boards
+3. **WorkItem** (base class)
+   - **Epic** - Large body of work
+   - **Story** - User-facing feature
    - **Task** - Unit of work
-   - **Bug** - Defect or issue
+   - **Bug** - Defect
    - **Subtask** - Child work item
-4. **Sprint/Iteration** - Time-boxed development period
-5. **Board** - Visualization (Scrum board, Kanban board)
-6. **User** - System user with roles and permissions
-7. **Team** - Group of users working on projects
-8. **Workflow** - Customizable state machine for work items
-9. **Comment** - Discussion on work items
-10. **Attachment** - Files associated with work items
-11. **Activity Log** - Audit trail of changes
+4. **Sprint** - Time-boxed iteration
+5. **Board** - Kanban/Scrum visualization
+6. **User** - System user
+7. **Team** - Group of users
+8. **Workflow** - State machine for work items
+9. **Comment** - Discussions
+10. **Attachment** - File attachments
+11. **ActivityLog** - Audit trail
 
-### Key Domain Concepts
-- **Priority Levels**: Blocker, Critical, High, Medium, Low
-- **Work Item States**: Customizable per workflow (e.g., To Do, In Progress, In Review, Done)
-- **Story Points**: Estimation metric
+### Key Concepts
+- **Priority**: Blocker, Critical, High, Medium, Low
+- **Status**: Customizable per workflow (To Do, In Progress, Done, etc.)
+- **Story Points**: Estimation
 - **Time Tracking**: Original estimate, remaining, time logged
-- **Relationships**: Blocks, Blocked by, Relates to, Parent-Child, Epic-Story
-- **Labels/Tags**: Flexible categorization
-- **Custom Fields**: Extensible metadata
+- **Relationships**: Blocks, Blocked By, Relates To, Parent-Child
+- **Labels/Tags**: Categorization
 
-## AI Integration Points (Future)
+## Project Structure
 
-### Planned AI Capabilities
-1. **Intelligent Summaries**
-   - Generate sprint summaries
-   - Project health reports
-   - Epic/story summarization
-
-2. **Predictive Analytics**
-   - Sprint velocity predictions
-   - Deadline risk assessment
-   - Bottleneck identification
-
-3. **Smart Suggestions**
-   - Auto-priority assignment based on content analysis
-   - Similar ticket detection
-   - Optimal assignee recommendations
-
-4. **Natural Language Processing**
-   - Convert text to structured work items
-   - Extract requirements from descriptions
-   - Sentiment analysis on comments
-
-5. **Workflow Optimization**
-   - Identify inefficient patterns
-   - Suggest process improvements
-   - Anomaly detection (e.g., tasks stuck too long)
-
-### AI Architecture Considerations
-- **Service Layer Abstraction**: AI services will be injected through interfaces
-- **Async Processing**: AI operations run asynchronously via background jobs
-- **Caching Strategy**: Cache AI-generated insights with TTL
-- **Extensibility**: Plugin architecture for different AI providers (OpenAI, Azure OpenAI, custom models)
-- **Fallback Mechanisms**: System remains fully functional without AI
-
-## Backend Project Structure
-
+### Backend Structure
 ```
 src/
-├── CtrlZzz.Core/                  # Domain + Application Layer
-│   ├── Entities/                  # Domain entities
-│   ├── ValueObjects/              # Value objects (Email, WorkItemState, etc.)
-│   ├── Interfaces/                # Repository and service interfaces
-│   ├── Services/                  # Business logic services
-│   ├── DTOs/                      # Data transfer objects
-│   ├── Exceptions/                # Domain exceptions
-│   └── Specifications/            # Query specifications
+├── CtrlZzz.Core/              # Domain + Application
+│   ├── Entities/              # Domain entities
+│   ├── Enums/                 # Enumerations
+│   ├── Interfaces/            # Repository interfaces
+│   ├── Specifications/        # Ardalis specs
+│   └── Features/              # MediatR handlers
+│       ├── WorkItems/
+│       │   ├── Commands/
+│       │   │   ├── CreateWorkItem/
+│       │   │   │   ├── CreateWorkItemCommand.cs
+│       │   │   │   ├── CreateWorkItemHandler.cs
+│       │   │   │   └── CreateWorkItemValidator.cs
+│       │   │   └── UpdateWorkItem/
+│       │   └── Queries/
+│       │       ├── GetWorkItem/
+│       │       └── GetWorkItems/
+│       ├── Projects/
+│       ├── Sprints/
+│       └── Auth/
 │
-├── CtrlZzz.Infrastructure/        # Data access + External services
-│   ├── Data/                      # EF Core DbContext, configurations
-│   ├── Repositories/              # Repository implementations
-│   ├── Services/                  # External service implementations
-│   ├── Migrations/                # Database migrations
-│   └── Identity/                  # Authentication/Authorization setup
+├── CtrlZzz.Infrastructure/    # Data access
+│   ├── Data/
+│   │   ├── ApplicationDbContext.cs
+│   │   └── Configurations/
+│   ├── Repositories/
+│   └── Services/
 │
-├── CtrlZzz.Web/                   # API Layer
-│   ├── Controllers/               # REST API endpoints
-│   ├── Middleware/                # Custom middleware
-│   ├── Filters/                   # Action filters
-│   ├── Extensions/                # Service registration extensions
-│   └── Program.cs                 # Application entry point
+├── CtrlZzz.Web/               # API
+│   ├── Controllers/
+│   ├── Hubs/                  # SignalR
+│   ├── Middleware/
+│   └── Program.cs
 │
-├── CtrlZzz.Shared/                # Cross-cutting concerns
-│   ├── Constants/                 # Application constants
-│   ├── Helpers/                   # Utility functions
-│   ├── Extensions/                # Extension methods
-│   └── Results/                   # Result pattern types
-│
-└── CtrlZzz.AI/                    # Future AI services (not yet implemented)
-    ├── Interfaces/                # AI service contracts
-    ├── Services/                  # AI service implementations
-    └── Models/                    # AI-specific models
+└── CtrlZzz.Shared/            # Common utilities
+    ├── Constants/
+    └── Extensions/
 ```
 
-## Frontend Project Structure
-
+### Frontend Structure
 ```
 frontend/
 ├── src/
-│   ├── components/                # Reusable UI components
-│   │   ├── common/               # Generic components (Button, Input, etc.)
-│   │   ├── layout/               # Layout components (Header, Sidebar, etc.)
-│   │   └── domain/               # Domain-specific components
-│   ├── features/                  # Feature-based modules
-│   │   ├── auth/                 # Authentication
-│   │   ├── projects/             # Project management
-│   │   ├── workitems/            # Work items (tasks, bugs, stories)
-│   │   ├── boards/               # Kanban/Scrum boards
-│   │   ├── sprints/              # Sprint management
-│   │   └── reports/              # Reporting and analytics
-│   ├── hooks/                     # Custom React hooks
-│   ├── services/                  # API client services
-│   ├── store/                     # State management (Zustand/Redux)
-│   ├── types/                     # TypeScript type definitions
-│   ├── utils/                     # Utility functions
-│   ├── styles/                    # Global styles
-│   └── App.tsx                    # Main application component
+│   ├── components/            # Reusable components
+│   ├── features/              # Feature modules with Redux slices
+│   │   ├── auth/
+│   │   ├── projects/
+│   │   ├── workitems/
+│   │   ├── boards/
+│   │   └── sprints/
+│   ├── store/                 # Redux store
+│   ├── services/              # API clients
+│   ├── types/                 # TypeScript types
+│   ├── hooks/                 # Custom hooks
+│   ├── router/                # React Router config
+│   └── App.tsx
 ```
 
-## Key Architectural Decisions
+## Backend Pattern: MediatR CQRS
 
-### 1. Database Abstraction
-- Use **Entity Framework Core** with provider-agnostic approach
-- **DateTime handling**: Always use `DateTime.UtcNow` and store as UTC
-- **Avoid database-specific functions** in queries (use LINQ)
-- Configuration per database provider via appsettings
-- Easily swap between MSSQL, PostgreSQL, SQLite
-
-### 2. API Design Principles
-- **RESTful conventions** with proper HTTP verbs
-- **Versioning**: URL-based versioning (/api/v1/)
-- **Pagination**: Offset-based with metadata (total, page, pageSize)
-- **Filtering**: Query string parameters with standardized naming
-- **Response format**: Consistent envelope pattern
-```json
+### Controller (Thin)
+```csharp
+[ApiController]
+[Route("api/[controller]")]
+public class WorkItemsController : ControllerBase
 {
-  "success": true,
-  "data": {},
-  "message": "Optional message",
-  "errors": []
+    private readonly IMediator _mediator;
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateWorkItemCommand command)
+    {
+        var result = await _mediator.Send(command);
+
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : BadRequest(result.Errors);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var result = await _mediator.Send(new GetWorkItemQuery(id));
+
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : NotFound();
+    }
 }
 ```
 
-### 3. Authentication & Authorization
-- **JWT tokens** with refresh token rotation
-- **Role-based access control (RBAC)**: System Admin, Org Admin, Project Admin, Member, Viewer
-- **Permission-based** fine-grained access (e.g., CAN_EDIT_WORK_ITEM, CAN_DELETE_PROJECT)
-- **Multi-tenancy**: Organization-level data isolation
+### Command Handler (Business Logic)
+```csharp
+public class CreateWorkItemHandler : IRequestHandler<CreateWorkItemCommand, Result<WorkItemDto>>
+{
+    private readonly IRepository<WorkItem> _repository;
+    private readonly IMapper _mapper;
 
-### 4. State Management (Frontend)
-- **Zustand** for global state (lightweight, less boilerplate than Redux)
-- **React Query** for server state management (caching, refetching, optimistic updates)
-- Local component state for UI-only concerns
+    public async Task<Result<WorkItemDto>> Handle(CreateWorkItemCommand request, CancellationToken ct)
+    {
+        var workItem = _mapper.Map<WorkItem>(request);
+        workItem.CreatedAt = DateTime.UtcNow;
 
-### 5. Real-time Updates
-- **SignalR** for real-time notifications (work item updates, comments, etc.)
-- Fallback to polling for clients that don't support WebSockets
+        await _repository.AddAsync(workItem);
 
-### 6. Validation Strategy
-- **Client-side**: Zod schemas for TypeScript validation
-- **Server-side**: FluentValidation for DTOs and commands
-- Never trust client input
+        var dto = _mapper.Map<WorkItemDto>(workItem);
+        return Result.Ok(dto);
+    }
+}
+```
 
-### 7. Error Handling
-- **Global exception middleware** on backend
-- **Typed errors** with error codes
-- **Client-side**: Axios interceptors for consistent error handling
-- User-friendly error messages with technical details in logs
+### Validator
+```csharp
+public class CreateWorkItemValidator : AbstractValidator<CreateWorkItemCommand>
+{
+    public CreateWorkItemValidator()
+    {
+        RuleFor(x => x.Title).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.ProjectId).NotEmpty();
+        RuleFor(x => x.Priority).IsInEnum();
+    }
+}
+```
 
-### 8. Logging & Monitoring
-- **Serilog** for structured logging
-- Log levels: Trace, Debug, Information, Warning, Error, Critical
-- Correlation IDs for request tracing
-- Future: Application Insights or similar APM
+## Frontend Pattern: Redux Toolkit
 
-### 9. Testing Strategy
-- **Backend**: Unit tests (xUnit), Integration tests with WebApplicationFactory
-- **Frontend**: Vitest for unit tests, React Testing Library for components, Playwright for E2E
-- **AI Integration**: Mock AI services in tests, separate AI integration tests
+### Redux Slice
+```typescript
+// features/workitems/workItemsSlice.ts
+const workItemsSlice = createSlice({
+  name: 'workItems',
+  initialState,
+  reducers: {
+    addWorkItem: (state, action) => {
+      state.items.push(action.payload);
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchWorkItems.fulfilled, (state, action) => {
+        state.items = action.payload;
+      });
+  },
+});
 
-## Security Considerations
+// Async thunk
+export const fetchWorkItems = createAsyncThunk(
+  'workItems/fetchAll',
+  async (projectId: string) => {
+    const response = await workItemService.getAll(projectId);
+    return response.data;
+  }
+);
+```
 
-1. **OWASP Top 10 Compliance**
-   - SQL Injection: Parameterized queries (EF Core)
-   - XSS: Content sanitization, CSP headers
-   - CSRF: SameSite cookies, anti-forgery tokens
-   - Authentication: Secure password hashing (bcrypt/PBKDF2)
+### API Service
+```typescript
+// services/workItemService.ts
+export const workItemService = {
+  getAll: (projectId: string) =>
+    api.get(`/api/workitems?projectId=${projectId}`),
 
-2. **Data Privacy**
-   - GDPR compliance considerations
-   - User data export/deletion capabilities
-   - Audit logging for sensitive operations
+  getById: (id: string) =>
+    api.get(`/api/workitems/${id}`),
 
-3. **API Security**
-   - Rate limiting per user/IP
-   - Request size limits
-   - CORS configuration
-   - HTTPS only in production
+  create: (data: CreateWorkItemDto) =>
+    api.post('/api/workitems', data),
+};
+```
 
-## Performance Considerations
+## API Endpoints
 
-1. **Database Optimization**
-   - Proper indexing strategy
-   - Eager/lazy loading decisions
-   - Query result caching (Redis in future)
-   - Connection pooling
+### Authentication
+```
+POST   /api/auth/register
+POST   /api/auth/login
+POST   /api/auth/refresh
+```
 
-2. **Frontend Performance**
-   - Code splitting by route
-   - Lazy loading for heavy components
-   - Virtual scrolling for large lists
-   - Image optimization
-   - Bundle size monitoring
+### Projects
+```
+GET    /api/projects
+POST   /api/projects
+GET    /api/projects/{id}
+PUT    /api/projects/{id}
+DELETE /api/projects/{id}
+```
 
-3. **API Performance**
-   - Response compression
-   - ETags for caching
-   - GraphQL consideration for complex queries (future)
-   - Background job processing (Hangfire for long-running tasks)
+### Work Items
+```
+GET    /api/workitems?projectId={id}&status={status}
+POST   /api/workitems
+GET    /api/workitems/{id}
+PUT    /api/workitems/{id}
+DELETE /api/workitems/{id}
+PATCH  /api/workitems/{id}/status
+GET    /api/workitems/{id}/comments
+POST   /api/workitems/{id}/comments
+```
 
-## Scalability Plan
+### Sprints
+```
+GET    /api/sprints?projectId={id}
+POST   /api/sprints
+GET    /api/sprints/{id}
+PUT    /api/sprints/{id}
+POST   /api/sprints/{id}/start
+POST   /api/sprints/{id}/complete
+```
 
-### Phase 1 (Current): Monolithic Architecture
-- Single API server
-- Single database
-- Simple deployment
+### Boards
+```
+GET    /api/boards?projectId={id}
+POST   /api/boards
+GET    /api/boards/{id}
+GET    /api/boards/{id}/workitems
+```
 
-### Phase 2 (Future): Enhanced Scalability
-- Horizontal scaling with load balancer
-- Database read replicas
-- Redis cache layer
-- CDN for static assets
+## Database Design Principles
 
-### Phase 3 (Future): Microservices (If needed)
-- Separate AI service
-- Notification service
-- File storage service
-- Event-driven architecture with message bus
+1. **UTC Everywhere**: Always use `DateTime.UtcNow`
+2. **Soft Delete**: `IsDeleted` flag on entities
+3. **Audit Fields**: `CreatedAt`, `UpdatedAt`, `CreatedBy`, `UpdatedBy`
+4. **Multi-tenancy**: Filter by `OrganizationId`
+5. **Provider Agnostic**: Avoid SQL Server specific functions
+
+### Base Entity
+```csharp
+public abstract class BaseEntity
+{
+    public Guid Id { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public string? CreatedBy { get; set; }
+    public string? UpdatedBy { get; set; }
+    public bool IsDeleted { get; set; }
+}
+```
+
+## AI Integration (Future)
+
+### Planned Features
+1. **Smart Summaries**: Generate sprint/epic summaries
+2. **Priority Suggestions**: AI predicts priority based on content
+3. **Similar Ticket Detection**: Find related work items
+4. **Time Estimation**: Suggest story points
+5. **Anomaly Detection**: Identify stuck tasks
+
+### Architecture
+- Separate service interfaces in `CtrlZzz.AI` project
+- Inject through dependency injection
+- Feature flags to enable/disable
+- Async processing for AI operations
+- System works without AI enabled
+
+## Authentication
+
+- **JWT tokens** with refresh tokens
+- **Roles**: Admin, Member, Viewer
+- Tokens stored in localStorage (frontend)
+- Authorization header: `Bearer {token}`
+
+## Real-time Updates
+
+- **SignalR** for live collaboration
+- Join project groups: `connection.invoke('JoinProject', projectId)`
+- Receive updates: `connection.on('WorkItemUpdated', callback)`
 
 ## Development Workflow
 
-1. **Feature Development**
-   - Feature branch from main
-   - Backend: Create entity → Repository → Service → Controller
-   - Frontend: API types → Service → UI components
-   - Tests for each layer
+1. **Create entity** in Core/Entities
+2. **Add EF configuration** in Infrastructure/Data/Configurations
+3. **Create migration**: `dotnet ef migrations add MigrationName`
+4. **Create MediatR command/query** in Core/Features
+5. **Add validator** for command
+6. **Create controller endpoint** that calls MediatR
+7. **Frontend: Add Redux slice** and async thunks
+8. **Frontend: Create components** and hook up to Redux
 
-2. **Database Changes**
-   - Code-first migrations
-   - Migration naming: `YYYYMMDDHHMMSS_DescriptiveName`
-   - Always test migrations up and down
+## Docker Setup
 
-3. **Code Standards**
-   - Backend: C# conventions, follow SOLID principles
-   - Frontend: ESLint + Prettier configuration
-   - Commit messages: Conventional Commits format
+```yaml
+# docker-compose.yml
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourPassword123!
+    ports:
+      - "1433:1433"
 
-## Deployment Strategy
+  api:
+    build: ./src/CtrlZzz.Web
+    ports:
+      - "5000:80"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Database=CtrlZzz;User=sa;Password=YourPassword123!
+    depends_on:
+      - db
 
-### Development Environment
-- Local development with Docker Compose
-- MSSQL container or LocalDB
-- Hot reload for frontend and backend
-
-### Production Environment
-- Docker containers orchestrated by Kubernetes (or simpler: Docker Compose for MVP)
-- Automated CI/CD pipeline
-- Database migrations as part of deployment
-- Blue-green deployment for zero downtime
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+```
 
 ## Next Steps
 
-1. Set up project structure (backend projects + frontend scaffold)
-2. Implement core domain entities
-3. Database schema and migrations
-4. Authentication/Authorization infrastructure
-5. Basic CRUD operations for work items
-6. Frontend component library
-7. Board visualization
-8. Sprint management
-9. Reporting and analytics
-10. AI integration (future phase)
-
-## Success Metrics
-
-- **Performance**: API response time < 200ms for 95th percentile
-- **Reliability**: 99.9% uptime
-- **User Experience**: Time to create work item < 10 seconds
-- **Code Quality**: > 80% test coverage
-- **Security**: Zero critical vulnerabilities
+1. Setup solution structure
+2. Create domain entities
+3. Setup EF Core + migrations
+4. Implement auth with JWT
+5. Create first MediatR handlers (Projects CRUD)
+6. Setup React + Redux + DaisyUI
+7. Create basic UI components
+8. Implement boards with drag & drop
+9. Add SignalR for real-time
+10. Add AI features later
 
 ---
 
-**Document Version**: 1.0
-**Last Updated**: 2025-11-05
+**Version**: 1.0
+**Updated**: 2025-11-05
 **Status**: Planning Phase
