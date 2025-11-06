@@ -17,7 +17,7 @@ public class GetCommentsHandler : IRequestHandler<GetCommentsQuery, Result<List<
 
     public async Task<Result<List<CommentDto>>> Handle(GetCommentsQuery request, CancellationToken cancellationToken)
     {
-        var comments = await _commentRepository.ListAsync(cancellationToken);
+        var comments = await _commentRepository.GetAllAsync(cancellationToken);
 
         // Filter by work item ID
         var filteredComments = comments
