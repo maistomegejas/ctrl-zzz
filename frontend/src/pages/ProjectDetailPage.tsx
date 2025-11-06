@@ -26,6 +26,7 @@ export default function ProjectDetailPage() {
     storyPoints: undefined,
     projectId: id || '',
     assigneeId: undefined,
+    reporterId: undefined,
     parentId: undefined,
     sprintId: undefined,
   })
@@ -39,6 +40,7 @@ export default function ProjectDetailPage() {
     remainingEstimateMinutes: undefined,
     timeLoggedMinutes: undefined,
     assigneeId: undefined,
+    reporterId: undefined,
     sprintId: undefined,
   })
 
@@ -66,6 +68,7 @@ export default function ProjectDetailPage() {
       storyPoints: undefined,
       projectId: id || '',
       assigneeId: undefined,
+      reporterId: undefined,
       parentId: undefined,
       sprintId: undefined,
     })
@@ -83,6 +86,7 @@ export default function ProjectDetailPage() {
       remainingEstimateMinutes: item.remainingEstimateMinutes,
       timeLoggedMinutes: item.timeLoggedMinutes,
       assigneeId: item.assigneeId,
+      reporterId: item.reporterId,
       sprintId: item.sprintId,
     })
     setShowCreateForm(false)

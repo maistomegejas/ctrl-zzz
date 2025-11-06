@@ -79,6 +79,7 @@ export default function BoardPage() {
         remainingEstimateMinutes: draggedItem.remainingEstimateMinutes,
         timeLoggedMinutes: draggedItem.timeLoggedMinutes,
         assigneeId: draggedItem.assigneeId,
+        reporterId: draggedItem.reporterId,
         sprintId: draggedItem.sprintId,
       }
     }))
