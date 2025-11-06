@@ -185,7 +185,13 @@ export default function ProjectDetailPage() {
           {selectedProject.description && (
             <p className="text-base-content/70">{selectedProject.description}</p>
           )}
-          <div className="mt-4">
+          <div className="mt-4 flex gap-2">
+            <button
+              onClick={() => navigate(`/projects/${id}/board`)}
+              className="btn btn-primary btn-sm"
+            >
+              View Board
+            </button>
             <button
               onClick={() => navigate(`/projects/${id}/sprints`)}
               className="btn btn-outline btn-sm"
