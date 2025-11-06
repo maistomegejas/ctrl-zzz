@@ -4,6 +4,7 @@ import ProjectDetailPage from './pages/ProjectDetailPage'
 import SprintsPage from './pages/SprintsPage'
 import BoardPage from './pages/BoardPage'
 import IssueDetailPage from './pages/IssueDetailPage'
+import MyIssuesPage from './pages/MyIssuesPage'
 import Sidebar from './components/Sidebar'
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
             <Route path="/projects/:id/board" element={<BoardPage />} />
             <Route path="/projects/:projectId/sprints" element={<SprintsPage />} />
             <Route path="/issues/:id" element={<IssueDetailPage />} />
+            <Route path="/my-issues" element={<MyIssuesPage />} />
           </Routes>
         </div>
       </div>

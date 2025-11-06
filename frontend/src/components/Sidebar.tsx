@@ -41,6 +41,31 @@ export default function Sidebar() {
           Projects
         </Link>
 
+        <Link
+          to="/my-issues"
+          className={`flex items-center gap-3 px-3 py-2 rounded-lg mb-1 transition-colors ${
+            isActive('/my-issues')
+              ? 'bg-blue-50 text-blue-600 font-medium'
+              : 'text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+            />
+          </svg>
+          My Issues
+        </Link>
+
         <div className="mt-6 px-3">
           <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
             Resources
