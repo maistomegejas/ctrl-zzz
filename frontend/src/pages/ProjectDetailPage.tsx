@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchProjectById } from '../features/projectsSlice'
-import { fetchWorkItems, createWorkItem, deleteWorkItem } from '../features/workItemsSlice'
+import { fetchWorkItems, createWorkItem, updateWorkItem, deleteWorkItem } from '../features/workItemsSlice'
 import { fetchSprints } from '../features/sprintsSlice'
-import { CreateWorkItemDto, WorkItemType, Priority, WorkItemStatus } from '../types'
+import { CreateWorkItemDto, UpdateWorkItemDto, WorkItem, WorkItemType, Priority, WorkItemStatus } from '../types'
 
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -16,6 +16,7 @@ export default function ProjectDetailPage() {
   const { sprints } = useAppSelector((state) => state.sprints)
 
   const [showCreateForm, setShowCreateForm] = useState(false)
+  const [editingWorkItem, setEditingWorkItem] = useState<WorkItem | null>(null)
   const [formData, setFormData] = useState<CreateWorkItemDto>({
     title: '',
     description: '',
@@ -25,6 +26,18 @@ export default function ProjectDetailPage() {
     projectId: id || '',
     assigneeId: undefined,
     parentId: undefined,
+    sprintId: undefined,
+  })
+  const [editFormData, setEditFormData] = useState<UpdateWorkItemDto>({
+    title: '',
+    description: '',
+    status: WorkItemStatus.ToDo,
+    priority: Priority.Medium,
+    storyPoints: undefined,
+    originalEstimateMinutes: undefined,
+    remainingEstimateMinutes: undefined,
+    timeLoggedMinutes: undefined,
+    assigneeId: undefined,
     sprintId: undefined,
   })
 
@@ -51,6 +64,31 @@ export default function ProjectDetailPage() {
       parentId: undefined,
       sprintId: undefined,
     })
+  }
+
+  const handleEdit = (item: WorkItem) => {
+    setEditingWorkItem(item)
+    setEditFormData({
+      title: item.title,
+      description: item.description || '',
+      status: item.status,
+      priority: item.priority,
+      storyPoints: item.storyPoints,
+      originalEstimateMinutes: item.originalEstimateMinutes,
+      remainingEstimateMinutes: item.remainingEstimateMinutes,
+      timeLoggedMinutes: item.timeLoggedMinutes,
+      assigneeId: item.assigneeId,
+      sprintId: item.sprintId,
+    })
+    setShowCreateForm(false)
+  }
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (editingWorkItem) {
+      await dispatch(updateWorkItem({ id: editingWorkItem.id, data: editFormData }))
+      setEditingWorkItem(null)
+    }
   }
 
   const handleDelete = async (workItemId: string) => {
@@ -118,6 +156,124 @@ export default function ProjectDetailPage() {
           {showCreateForm ? 'Cancel' : '+ New Work Item'}
         </button>
       </div>
+
+      {editingWorkItem && (
+        <div className="card bg-base-200 shadow-xl mb-8">
+          <div className="card-body">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="card-title">Edit Work Item</h3>
+              <button
+                type="button"
+                onClick={() => setEditingWorkItem(null)}
+                className="btn btn-ghost btn-sm"
+              >
+                Cancel
+              </button>
+            </div>
+            <form onSubmit={handleUpdate} className="space-y-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Title</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter work item title"
+                  className="input input-bordered"
+                  value={editFormData.title}
+                  onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Description</span>
+                </label>
+                <textarea
+                  className="textarea textarea-bordered h-24"
+                  placeholder="Work item description (optional)"
+                  value={editFormData.description}
+                  onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Status</span>
+                  </label>
+                  <select
+                    className="select select-bordered"
+                    value={editFormData.status}
+                    onChange={(e) => setEditFormData({ ...editFormData, status: Number(e.target.value) as WorkItemStatus })}
+                  >
+                    <option value={WorkItemStatus.ToDo}>To Do</option>
+                    <option value={WorkItemStatus.InProgress}>In Progress</option>
+                    <option value={WorkItemStatus.InReview}>In Review</option>
+                    <option value={WorkItemStatus.Done}>Done</option>
+                    <option value={WorkItemStatus.Blocked}>Blocked</option>
+                  </select>
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Priority</span>
+                  </label>
+                  <select
+                    className="select select-bordered"
+                    value={editFormData.priority}
+                    onChange={(e) => setEditFormData({ ...editFormData, priority: Number(e.target.value) as Priority })}
+                  >
+                    <option value={Priority.Low}>Low</option>
+                    <option value={Priority.Medium}>Medium</option>
+                    <option value={Priority.High}>High</option>
+                    <option value={Priority.Critical}>Critical</option>
+                    <option value={Priority.Blocker}>Blocker</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Story Points</span>
+                </label>
+                <input
+                  type="number"
+                  placeholder="Optional"
+                  className="input input-bordered"
+                  value={editFormData.storyPoints || ''}
+                  onChange={(e) => setEditFormData({ ...editFormData, storyPoints: e.target.value ? Number(e.target.value) : undefined })}
+                  min="0"
+                />
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Sprint</span>
+                </label>
+                <select
+                  className="select select-bordered"
+                  value={editFormData.sprintId || ''}
+                  onChange={(e) => setEditFormData({ ...editFormData, sprintId: e.target.value || undefined })}
+                >
+                  <option value="">No Sprint</option>
+                  {sprints.map((sprint) => (
+                    <option key={sprint.id} value={sprint.id}>
+                      {sprint.name} {sprint.isActive ? '(Active)' : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="card-actions justify-end">
+                <button type="submit" className="btn btn-primary">
+                  Update Work Item
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {showCreateForm && (
         <div className="card bg-base-200 shadow-xl mb-8">
@@ -261,9 +417,14 @@ export default function ProjectDetailPage() {
                     )}
                   </div>
                 </div>
-                <button onClick={() => handleDelete(item.id)} className="btn btn-error btn-sm">
-                  Delete
-                </button>
+                <div className="flex gap-2">
+                  <button onClick={() => handleEdit(item)} className="btn btn-primary btn-sm">
+                    Edit
+                  </button>
+                  <button onClick={() => handleDelete(item.id)} className="btn btn-error btn-sm">
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           </div>
