@@ -53,6 +53,7 @@ export interface WorkItem {
   timeLoggedMinutes?: number
   projectId: string
   assigneeId?: string
+  reporterId?: string
   parentId?: string
   sprintId?: string
   createdAt: string
@@ -74,6 +75,7 @@ export interface CreateWorkItemDto {
   storyPoints?: number
   projectId: string
   assigneeId?: string
+  reporterId?: string
   parentId?: string
   sprintId?: string
 }
@@ -88,6 +90,7 @@ export interface UpdateWorkItemDto {
   remainingEstimateMinutes?: number
   timeLoggedMinutes?: number
   assigneeId?: string
+  reporterId?: string
   sprintId?: string
 }
 
