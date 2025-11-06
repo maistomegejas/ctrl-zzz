@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchProjectById } from '../features/projectsSlice'
 import { fetchWorkItems, createWorkItem, updateWorkItem, deleteWorkItem } from '../features/workItemsSlice'
 import { fetchSprints } from '../features/sprintsSlice'
+import { fetchUsers } from '../features/usersSlice'
 import { CreateWorkItemDto, UpdateWorkItemDto, WorkItem, WorkItemType, Priority, WorkItemStatus, Comment } from '../types'
 import { commentService } from '../services/commentService'
 
@@ -15,6 +16,7 @@ export default function ProjectDetailPage() {
   const { selectedProject } = useAppSelector((state) => state.projects)
   const { workItems, loading } = useAppSelector((state) => state.workItems)
   const { sprints } = useAppSelector((state) => state.sprints)
+  const { users } = useAppSelector((state) => state.users)
 
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [editingWorkItem, setEditingWorkItem] = useState<WorkItem | null>(null)
@@ -54,7 +56,11 @@ export default function ProjectDetailPage() {
       dispatch(fetchWorkItems(id))
       dispatch(fetchSprints(id))
     }
-  }, [id, dispatch])
+    // Fetch users if not loaded
+    if (users.length === 0) {
+      dispatch(fetchUsers())
+    }
+  }, [id, dispatch, users])
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -172,6 +178,12 @@ export default function ProjectDetailPage() {
   const getTypeBadgeClass = (type: WorkItemType) => {
     const classes = ['badge-secondary', 'badge-accent', 'badge-primary', 'badge-error', 'badge-ghost']
     return classes[type]
+  }
+
+  const getUserName = (userId?: string) => {
+    if (!userId) return 'Unassigned'
+    const user = users.find(u => u.id === userId)
+    return user?.name || 'Unknown User'
   }
 
   return (
@@ -478,6 +490,9 @@ export default function ProjectDetailPage() {
                         {item.storyPoints} SP
                       </div>
                     )}
+                    <div className="badge badge-ghost">
+                      👤 {getUserName(item.assigneeId)}
+                    </div>
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -505,7 +520,17 @@ export default function ProjectDetailPage() {
                     {comments[item.id]?.map((comment) => (
                       <div key={comment.id} className="bg-base-200 p-3 rounded-lg">
                         <div className="flex justify-between items-start">
-                          <p className="text-sm">{comment.content}</p>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs font-semibold">
+                                {getUserName(comment.userId)}
+                              </span>
+                              <span className="text-xs text-base-content/60">
+                                {new Date(comment.createdAt).toLocaleString()}
+                              </span>
+                            </div>
+                            <p className="text-sm">{comment.content}</p>
+                          </div>
                           <button
                             onClick={() => handleDeleteComment(item.id, comment.id)}
                             className="btn btn-ghost btn-xs"
@@ -513,9 +538,6 @@ export default function ProjectDetailPage() {
                             ✕
                           </button>
                         </div>
-                        <p className="text-xs text-base-content/60 mt-1">
-                          {new Date(comment.createdAt).toLocaleString()}
-                        </p>
                       </div>
                     ))}
 

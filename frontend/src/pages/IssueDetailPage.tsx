@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchWorkItems, updateWorkItem } from '../features/workItemsSlice'
+import { fetchUsers } from '../features/usersSlice'
 import { WorkItemType, Priority, WorkItemStatus, Comment } from '../types'
 import { commentService } from '../services/commentService'
 
@@ -11,6 +12,7 @@ export default function IssueDetailPage() {
   const dispatch = useAppDispatch()
 
   const { workItems } = useAppSelector((state) => state.workItems)
+  const { users } = useAppSelector((state) => state.users)
   const issue = workItems.find(item => item.id === id)
 
   const [comments, setComments] = useState<Comment[]>([])
@@ -24,6 +26,13 @@ export default function IssueDetailPage() {
       dispatch(fetchWorkItems())
     }
   }, [id, issue, dispatch])
+
+  useEffect(() => {
+    // Fetch users if not loaded
+    if (users.length === 0) {
+      dispatch(fetchUsers())
+    }
+  }, [users, dispatch])
 
   useEffect(() => {
     if (id) {
@@ -89,6 +98,12 @@ export default function IssueDetailPage() {
   const getTypeLabel = (type: WorkItemType) => ['Epic', 'Story', 'Task', 'Bug', 'Subtask'][type]
   const getPriorityLabel = (priority: Priority) => ['Low', 'Medium', 'High', 'Critical', 'Blocker'][priority]
   const getStatusLabel = (status: WorkItemStatus) => ['To Do', 'In Progress', 'In Review', 'Done', 'Blocked'][status]
+
+  const getUserName = (userId?: string) => {
+    if (!userId) return 'Unassigned'
+    const user = users.find(u => u.id === userId)
+    return user?.name || 'Unknown User'
+  }
 
   const getTypeBadgeClass = (type: WorkItemType) => {
     const classes = ['badge-secondary', 'badge-accent', 'badge-primary', 'badge-error', 'badge-ghost']
@@ -178,10 +193,15 @@ export default function IssueDetailPage() {
               <div className="space-y-4 mb-4">
                 {comments.map((comment) => (
                   <div key={comment.id} className="border-l-2 border-gray-200 pl-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-semibold text-gray-900">
+                        {getUserName(comment.userId)}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {new Date(comment.createdAt).toLocaleString()}
+                      </span>
+                    </div>
                     <p className="text-sm text-gray-700">{comment.content}</p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {new Date(comment.createdAt).toLocaleString()}
-                    </p>
                   </div>
                 ))}
               </div>
@@ -245,6 +265,25 @@ export default function IssueDetailPage() {
                 onChange={(e) => handleUpdateField('storyPoints', e.target.value ? Number(e.target.value) : null)}
                 min="0"
               />
+            </div>
+
+            {/* People */}
+            <div className="bg-white rounded-lg shadow p-4">
+              <h3 className="text-sm font-semibold text-gray-600 mb-3">People</h3>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs text-gray-500 block mb-1">Assignee</label>
+                  <div className="text-sm font-medium text-gray-900">
+                    {getUserName(issue.assigneeId)}
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 block mb-1">Reporter</label>
+                  <div className="text-sm font-medium text-gray-900">
+                    {getUserName(issue.reporterId)}
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Details */}
