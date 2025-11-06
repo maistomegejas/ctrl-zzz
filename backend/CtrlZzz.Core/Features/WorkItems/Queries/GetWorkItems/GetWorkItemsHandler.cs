@@ -49,7 +49,9 @@ public class GetWorkItemsHandler : IRequestHandler<GetWorkItemsQuery, Result<Lis
             TimeLoggedMinutes = w.TimeLoggedMinutes,
             ProjectId = w.ProjectId,
             AssigneeId = w.AssigneeId,
+            ReporterId = w.ReporterId,
             ParentId = w.ParentId,
+            SprintId = w.SprintId,
             CreatedAt = w.CreatedAt,
             UpdatedAt = w.UpdatedAt
         }).ToList();
