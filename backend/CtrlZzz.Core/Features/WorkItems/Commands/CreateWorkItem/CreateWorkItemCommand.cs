@@ -13,5 +13,6 @@ public record CreateWorkItemCommand(
     int? StoryPoints,
     Guid ProjectId,
     Guid? AssigneeId,
-    Guid? ParentId
+    Guid? ParentId,
+    Guid? SprintId
 ) : IRequest<Result<WorkItemDto>>;

@@ -10,11 +10,16 @@ public class UpdateWorkItemHandler : IRequestHandler<UpdateWorkItemCommand, Resu
 {
     private readonly IRepository<WorkItem> _workItemRepository;
     private readonly IRepository<User> _userRepository;
+    private readonly IRepository<Sprint> _sprintRepository;
 
-    public UpdateWorkItemHandler(IRepository<WorkItem> workItemRepository, IRepository<User> userRepository)
+    public UpdateWorkItemHandler(
+        IRepository<WorkItem> workItemRepository,
+        IRepository<User> userRepository,
+        IRepository<Sprint> sprintRepository)
     {
         _workItemRepository = workItemRepository;
         _userRepository = userRepository;
+        _sprintRepository = sprintRepository;
     }
 
     public async Task<Result<WorkItemDto>> Handle(UpdateWorkItemCommand request, CancellationToken cancellationToken)
@@ -36,6 +41,16 @@ public class UpdateWorkItemHandler : IRequestHandler<UpdateWorkItemCommand, Resu
             }
         }
 
+        // Validate sprint exists if provided
+        if (request.SprintId.HasValue)
+        {
+            var sprintExists = await _sprintRepository.ExistsAsync(request.SprintId.Value, cancellationToken);
+            if (!sprintExists)
+            {
+                return Result.Fail<WorkItemDto>("Sprint not found");
+            }
+        }
+
         // Update fields
         workItem.Title = request.Title;
         workItem.Description = request.Description;
@@ -46,6 +61,7 @@ public class UpdateWorkItemHandler : IRequestHandler<UpdateWorkItemCommand, Resu
         workItem.RemainingEstimateMinutes = request.RemainingEstimateMinutes;
         workItem.TimeLoggedMinutes = request.TimeLoggedMinutes;
         workItem.AssigneeId = request.AssigneeId;
+        workItem.SprintId = request.SprintId;
         workItem.UpdatedAt = DateTime.UtcNow;
 
         await _workItemRepository.UpdateAsync(workItem, cancellationToken);
@@ -66,6 +82,7 @@ public class UpdateWorkItemHandler : IRequestHandler<UpdateWorkItemCommand, Resu
             ProjectId = workItem.ProjectId,
             AssigneeId = workItem.AssigneeId,
             ParentId = workItem.ParentId,
+            SprintId = workItem.SprintId,
             CreatedAt = workItem.CreatedAt,
             UpdatedAt = workItem.UpdatedAt
         };

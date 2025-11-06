@@ -55,7 +55,8 @@ public class WorkItemsController : ControllerBase
             dto.StoryPoints,
             dto.ProjectId,
             dto.AssigneeId,
-            dto.ParentId
+            dto.ParentId,
+            dto.SprintId
         );
 
         var result = await _mediator.Send(command);
@@ -78,7 +79,8 @@ public class WorkItemsController : ControllerBase
             dto.OriginalEstimateMinutes,
             dto.RemainingEstimateMinutes,
             dto.TimeLoggedMinutes,
-            dto.AssigneeId
+            dto.AssigneeId,
+            dto.SprintId
         );
 
         var result = await _mediator.Send(command);

@@ -12,4 +12,5 @@ public class CreateWorkItemDto
     public Guid ProjectId { get; set; }
     public Guid? AssigneeId { get; set; }
     public Guid? ParentId { get; set; }
+    public Guid? SprintId { get; set; }
 }

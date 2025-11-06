@@ -12,15 +12,18 @@ public class CreateWorkItemHandler : IRequestHandler<CreateWorkItemCommand, Resu
     private readonly IRepository<WorkItem> _workItemRepository;
     private readonly IRepository<Project> _projectRepository;
     private readonly IRepository<User> _userRepository;
+    private readonly IRepository<Sprint> _sprintRepository;
 
     public CreateWorkItemHandler(
         IRepository<WorkItem> workItemRepository,
         IRepository<Project> projectRepository,
-        IRepository<User> userRepository)
+        IRepository<User> userRepository,
+        IRepository<Sprint> sprintRepository)
     {
         _workItemRepository = workItemRepository;
         _projectRepository = projectRepository;
         _userRepository = userRepository;
+        _sprintRepository = sprintRepository;
     }
 
     public async Task<Result<WorkItemDto>> Handle(CreateWorkItemCommand request, CancellationToken cancellationToken)
@@ -52,6 +55,16 @@ public class CreateWorkItemHandler : IRequestHandler<CreateWorkItemCommand, Resu
             }
         }
 
+        // Validate sprint exists if provided
+        if (request.SprintId.HasValue)
+        {
+            var sprintExists = await _sprintRepository.ExistsAsync(request.SprintId.Value, cancellationToken);
+            if (!sprintExists)
+            {
+                return Result.Fail<WorkItemDto>("Sprint not found");
+            }
+        }
+
         // Create work item
         var workItem = new WorkItem
         {
@@ -65,6 +78,7 @@ public class CreateWorkItemHandler : IRequestHandler<CreateWorkItemCommand, Resu
             ProjectId = request.ProjectId,
             AssigneeId = request.AssigneeId,
             ParentId = request.ParentId,
+            SprintId = request.SprintId,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -86,6 +100,7 @@ public class CreateWorkItemHandler : IRequestHandler<CreateWorkItemCommand, Resu
             ProjectId = workItem.ProjectId,
             AssigneeId = workItem.AssigneeId,
             ParentId = workItem.ParentId,
+            SprintId = workItem.SprintId,
             CreatedAt = workItem.CreatedAt,
             UpdatedAt = workItem.UpdatedAt
         };
