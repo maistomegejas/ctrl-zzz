@@ -40,7 +40,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("refresh")]
-    public async Task<IActionResult> Refresh([FromBody] RefreshTokenDto dto)
+    public IActionResult Refresh([FromBody] RefreshTokenDto dto)
     {
         // TODO: Implement refresh token logic when needed
         return Ok(new { message = "Refresh token endpoint - to be implemented" });
