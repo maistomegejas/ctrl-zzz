@@ -38,6 +38,7 @@ public class CreateWorkItemHandlerTests
             StoryPoints: 3,
             ProjectId: projectId,
             AssigneeId: null,
+            ReporterId: null,
             ParentId: null,
             SprintId: null
         );
@@ -75,6 +76,7 @@ public class CreateWorkItemHandlerTests
             StoryPoints: null,
             ProjectId: projectId,
             AssigneeId: null,
+            ReporterId: null,
             ParentId: null,
             SprintId: null
         );
