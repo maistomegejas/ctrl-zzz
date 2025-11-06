@@ -115,6 +115,11 @@ export default function IssueDetailPage() {
     return classes[priority]
   }
 
+  const getStatusBadgeClass = (status: WorkItemStatus) => {
+    const classes = ['badge-neutral', 'badge-info', 'badge-warning', 'badge-success', 'badge-error']
+    return classes[status]
+  }
+
   if (!issue) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -219,6 +224,62 @@ export default function IssueDetailPage() {
                 </button>
               </div>
             </div>
+
+            {/* Child Issues (for Epics) */}
+            {issue.type === WorkItemType.Epic && (
+              <div className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-lg font-semibold mb-4">Child Issues</h2>
+                {workItems.filter(item => item.parentId === issue.id).length === 0 ? (
+                  <p className="text-gray-500 text-sm">No child issues yet</p>
+                ) : (
+                  <div className="space-y-3">
+                    {workItems.filter(item => item.parentId === issue.id).map((child) => (
+                      <div
+                        key={child.id}
+                        className="border border-gray-200 rounded p-3 hover:bg-gray-50 cursor-pointer transition"
+                        onClick={() => navigate(`/issues/${child.id}`)}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <div className={`badge badge-sm ${getTypeBadgeClass(child.type)}`}>
+                              {getTypeLabel(child.type)}
+                            </div>
+                            <div className={`badge badge-sm ${getPriorityBadgeClass(child.priority)}`}>
+                              {getPriorityLabel(child.priority)}
+                            </div>
+                          </div>
+                          <div className={`badge badge-sm ${getStatusBadgeClass(child.status)}`}>
+                            {getStatusLabel(child.status)}
+                          </div>
+                        </div>
+                        <h3 className="font-medium text-sm">{child.title}</h3>
+                        {child.assigneeId && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            👤 {getUserName(child.assigneeId)}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Progress Bar */}
+                <div className="mt-6">
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="font-semibold">Progress</span>
+                    <span>
+                      {workItems.filter(item => item.parentId === issue.id && item.status === WorkItemStatus.Done).length} /
+                      {workItems.filter(item => item.parentId === issue.id).length} completed
+                    </span>
+                  </div>
+                  <progress
+                    className="progress progress-primary w-full"
+                    value={workItems.filter(item => item.parentId === issue.id && item.status === WorkItemStatus.Done).length}
+                    max={workItems.filter(item => item.parentId === issue.id).length || 1}
+                  ></progress>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
