@@ -14,6 +14,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Project> Projects => Set<Project>();
     public DbSet<WorkItem> WorkItems => Set<WorkItem>();
     public DbSet<Sprint> Sprints => Set<Sprint>();
+    public DbSet<Comment> Comments => Set<Comment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -79,6 +80,23 @@ public class ApplicationDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.ProjectId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Comment configuration
+        modelBuilder.Entity<Comment>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Content).IsRequired();
+
+            entity.HasOne(e => e.WorkItem)
+                .WithMany(e => e.Comments)
+                .HasForeignKey(e => e.WorkItemId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
     }
 

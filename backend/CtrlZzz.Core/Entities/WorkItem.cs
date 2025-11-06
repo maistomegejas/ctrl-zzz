@@ -34,4 +34,7 @@ public class WorkItem : BaseEntity
     // Sprint relation
     public Guid? SprintId { get; set; }
     public Sprint? Sprint { get; set; }
+
+    // Comments
+    public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 }
