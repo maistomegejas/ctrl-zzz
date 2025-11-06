@@ -3,6 +3,7 @@ using CtrlZzz.Core.Features.Sprints.Commands.CreateSprint;
 using CtrlZzz.Core.Interfaces;
 using FluentAssertions;
 using Moq;
+using Xunit;
 
 namespace CtrlZzz.Core.Tests.Features.Sprints;
 
