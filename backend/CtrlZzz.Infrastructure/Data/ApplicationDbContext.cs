@@ -15,6 +15,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<WorkItem> WorkItems => Set<WorkItem>();
     public DbSet<Sprint> Sprints => Set<Sprint>();
     public DbSet<Comment> Comments => Set<Comment>();
+    public DbSet<ProjectMember> ProjectMembers => Set<ProjectMember>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -102,6 +103,25 @@ public class ApplicationDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // ProjectMember configuration
+        modelBuilder.Entity<ProjectMember>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.Project)
+                .WithMany(e => e.ProjectMembers)
+                .HasForeignKey(e => e.ProjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.User)
+                .WithMany(e => e.ProjectMemberships)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Ensure unique project-user combination
+            entity.HasIndex(e => new { e.ProjectId, e.UserId }).IsUnique();
         });
 
         // Seed Data

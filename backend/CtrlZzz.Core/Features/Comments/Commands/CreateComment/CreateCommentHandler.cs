@@ -10,13 +10,16 @@ public class CreateCommentHandler : IRequestHandler<CreateCommentCommand, Result
 {
     private readonly IRepository<Comment> _commentRepository;
     private readonly IRepository<WorkItem> _workItemRepository;
+    private readonly ICurrentUserService _currentUserService;
 
     public CreateCommentHandler(
         IRepository<Comment> commentRepository,
-        IRepository<WorkItem> workItemRepository)
+        IRepository<WorkItem> workItemRepository,
+        ICurrentUserService currentUserService)
     {
         _commentRepository = commentRepository;
         _workItemRepository = workItemRepository;
+        _currentUserService = currentUserService;
     }
 
     public async Task<Result<CommentDto>> Handle(CreateCommentCommand request, CancellationToken cancellationToken)
@@ -28,13 +31,13 @@ public class CreateCommentHandler : IRequestHandler<CreateCommentCommand, Result
             return Result.Fail<CommentDto>("Work item not found");
         }
 
-        // Create comment
+        // Create comment with current user
         var comment = new Comment
         {
             Id = Guid.NewGuid(),
             Content = request.Content,
             WorkItemId = request.WorkItemId,
-            UserId = null, // TODO: Get from auth context when auth is implemented
+            UserId = _currentUserService.GetCurrentUserId(),
             CreatedAt = DateTime.UtcNow
         };
 

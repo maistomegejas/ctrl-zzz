@@ -334,15 +334,69 @@ export default function IssueDetailPage() {
               <div className="space-y-3">
                 <div>
                   <label className="text-xs text-gray-500 block mb-1">Assignee</label>
-                  <div className="text-sm font-medium text-gray-900">
-                    {getUserName(issue.assigneeId)}
-                  </div>
+                  <select
+                    className="select select-bordered select-sm w-full"
+                    value={issue.assigneeId || ''}
+                    onChange={async (e) => {
+                      const newAssigneeId = e.target.value || undefined
+                      await dispatch(updateWorkItem({
+                        id: issue.id,
+                        data: {
+                          title: issue.title,
+                          description: issue.description,
+                          status: issue.status,
+                          priority: issue.priority,
+                          storyPoints: issue.storyPoints,
+                          originalEstimateMinutes: issue.originalEstimateMinutes,
+                          remainingEstimateMinutes: issue.remainingEstimateMinutes,
+                          timeLoggedMinutes: issue.timeLoggedMinutes,
+                          assigneeId: newAssigneeId,
+                          reporterId: issue.reporterId,
+                          sprintId: issue.sprintId,
+                        }
+                      }))
+                    }}
+                  >
+                    <option value="">Unassigned</option>
+                    {users.map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="text-xs text-gray-500 block mb-1">Reporter</label>
-                  <div className="text-sm font-medium text-gray-900">
-                    {getUserName(issue.reporterId)}
-                  </div>
+                  <select
+                    className="select select-bordered select-sm w-full"
+                    value={issue.reporterId || ''}
+                    onChange={async (e) => {
+                      const newReporterId = e.target.value || undefined
+                      await dispatch(updateWorkItem({
+                        id: issue.id,
+                        data: {
+                          title: issue.title,
+                          description: issue.description,
+                          status: issue.status,
+                          priority: issue.priority,
+                          storyPoints: issue.storyPoints,
+                          originalEstimateMinutes: issue.originalEstimateMinutes,
+                          remainingEstimateMinutes: issue.remainingEstimateMinutes,
+                          timeLoggedMinutes: issue.timeLoggedMinutes,
+                          assigneeId: issue.assigneeId,
+                          reporterId: newReporterId,
+                          sprintId: issue.sprintId,
+                        }
+                      }))
+                    }}
+                  >
+                    <option value="">No Reporter</option>
+                    {users.map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>

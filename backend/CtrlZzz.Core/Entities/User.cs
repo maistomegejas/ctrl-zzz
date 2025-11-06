@@ -9,4 +9,5 @@ public class User : BaseEntity
     // Navigation properties
     public ICollection<Project> Projects { get; set; } = new List<Project>();
     public ICollection<WorkItem> AssignedWorkItems { get; set; } = new List<WorkItem>();
+    public ICollection<ProjectMember> ProjectMemberships { get; set; } = new List<ProjectMember>();
 }

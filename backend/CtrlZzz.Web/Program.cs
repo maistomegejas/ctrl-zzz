@@ -24,8 +24,10 @@ builder.Services.AddValidatorsFromAssembly(typeof(CtrlZzz.Core.Entities.BaseEnti
 // Add Repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-// Add JWT Service
+// Add services
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

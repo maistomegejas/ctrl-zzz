@@ -12,4 +12,5 @@ public class Project : BaseEntity
 
     // Navigation properties
     public ICollection<WorkItem> WorkItems { get; set; } = new List<WorkItem>();
+    public ICollection<ProjectMember> ProjectMembers { get; set; } = new List<ProjectMember>();
 }
