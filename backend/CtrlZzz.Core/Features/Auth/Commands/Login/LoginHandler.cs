@@ -21,7 +21,7 @@ public class LoginHandler : IRequestHandler<LoginCommand, Result<AuthResponseDto
     public async Task<Result<AuthResponseDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         // Find user by email
-        var users = await _userRepository.ListAsync(cancellationToken);
+        var users = await _userRepository.GetAllAsync(cancellationToken);
         var user = users.FirstOrDefault(u => u.Email.ToLower() == request.Email.ToLower());
 
         if (user == null)

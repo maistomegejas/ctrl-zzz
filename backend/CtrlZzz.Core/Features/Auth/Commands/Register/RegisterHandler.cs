@@ -21,7 +21,7 @@ public class RegisterHandler : IRequestHandler<RegisterCommand, Result<AuthRespo
     public async Task<Result<AuthResponseDto>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         // Check if user already exists
-        var existingUsers = await _userRepository.ListAsync(cancellationToken);
+        var existingUsers = await _userRepository.GetAllAsync(cancellationToken);
         if (existingUsers.Any(u => u.Email.ToLower() == request.Email.ToLower()))
         {
             return Result.Fail("User with this email already exists");
