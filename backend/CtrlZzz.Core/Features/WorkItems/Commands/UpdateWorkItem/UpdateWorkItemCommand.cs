@@ -16,5 +16,6 @@ public record UpdateWorkItemCommand(
     int? RemainingEstimateMinutes,
     int? TimeLoggedMinutes,
     Guid? AssigneeId,
+    Guid? ReporterId,
     Guid? SprintId
 ) : IRequest<Result<WorkItemDto>>;

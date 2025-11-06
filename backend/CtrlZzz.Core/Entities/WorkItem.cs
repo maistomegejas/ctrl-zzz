@@ -26,6 +26,10 @@ public class WorkItem : BaseEntity
     public Guid? AssigneeId { get; set; }
     public User? Assignee { get; set; }
 
+    // Reporter (creator)
+    public Guid? ReporterId { get; set; }
+    public User? Reporter { get; set; }
+
     // Parent-child relationship for subtasks
     public Guid? ParentId { get; set; }
     public WorkItem? Parent { get; set; }

@@ -16,6 +16,7 @@ public class WorkItemDto
     public int? TimeLoggedMinutes { get; set; }
     public Guid ProjectId { get; set; }
     public Guid? AssigneeId { get; set; }
+    public Guid? ReporterId { get; set; }
     public Guid? ParentId { get; set; }
     public Guid? SprintId { get; set; }
     public DateTime CreatedAt { get; set; }

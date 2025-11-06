@@ -59,6 +59,11 @@ public class ApplicationDbContext : DbContext
                 .HasForeignKey(e => e.AssigneeId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            entity.HasOne(e => e.Reporter)
+                .WithMany()
+                .HasForeignKey(e => e.ReporterId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             entity.HasOne(e => e.Parent)
                 .WithMany(e => e.Children)
                 .HasForeignKey(e => e.ParentId)

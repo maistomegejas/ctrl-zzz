@@ -55,6 +55,7 @@ public class WorkItemsController : ControllerBase
             dto.StoryPoints,
             dto.ProjectId,
             dto.AssigneeId,
+            dto.ReporterId,
             dto.ParentId,
             dto.SprintId
         );
@@ -80,6 +81,7 @@ public class WorkItemsController : ControllerBase
             dto.RemainingEstimateMinutes,
             dto.TimeLoggedMinutes,
             dto.AssigneeId,
+            dto.ReporterId,
             dto.SprintId
         );
 

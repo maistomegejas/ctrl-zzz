@@ -41,6 +41,16 @@ public class UpdateWorkItemHandler : IRequestHandler<UpdateWorkItemCommand, Resu
             }
         }
 
+        // Validate reporter exists if provided
+        if (request.ReporterId.HasValue)
+        {
+            var reporterExists = await _userRepository.ExistsAsync(request.ReporterId.Value, cancellationToken);
+            if (!reporterExists)
+            {
+                return Result.Fail<WorkItemDto>("Reporter user not found");
+            }
+        }
+
         // Validate sprint exists if provided
         if (request.SprintId.HasValue)
         {
@@ -61,6 +71,7 @@ public class UpdateWorkItemHandler : IRequestHandler<UpdateWorkItemCommand, Resu
         workItem.RemainingEstimateMinutes = request.RemainingEstimateMinutes;
         workItem.TimeLoggedMinutes = request.TimeLoggedMinutes;
         workItem.AssigneeId = request.AssigneeId;
+        workItem.ReporterId = request.ReporterId;
         workItem.SprintId = request.SprintId;
         workItem.UpdatedAt = DateTime.UtcNow;
 
@@ -81,6 +92,7 @@ public class UpdateWorkItemHandler : IRequestHandler<UpdateWorkItemCommand, Resu
             TimeLoggedMinutes = workItem.TimeLoggedMinutes,
             ProjectId = workItem.ProjectId,
             AssigneeId = workItem.AssigneeId,
+            ReporterId = workItem.ReporterId,
             ParentId = workItem.ParentId,
             SprintId = workItem.SprintId,
             CreatedAt = workItem.CreatedAt,

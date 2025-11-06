@@ -13,5 +13,6 @@ public class UpdateWorkItemDto
     public int? RemainingEstimateMinutes { get; set; }
     public int? TimeLoggedMinutes { get; set; }
     public Guid? AssigneeId { get; set; }
+    public Guid? ReporterId { get; set; }
     public Guid? SprintId { get; set; }
 }

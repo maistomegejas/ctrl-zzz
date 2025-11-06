@@ -45,6 +45,16 @@ public class CreateWorkItemHandler : IRequestHandler<CreateWorkItemCommand, Resu
             }
         }
 
+        // Validate reporter exists if provided
+        if (request.ReporterId.HasValue)
+        {
+            var reporterExists = await _userRepository.ExistsAsync(request.ReporterId.Value, cancellationToken);
+            if (!reporterExists)
+            {
+                return Result.Fail<WorkItemDto>("Reporter user not found");
+            }
+        }
+
         // Validate parent exists if provided
         if (request.ParentId.HasValue)
         {
@@ -77,6 +87,7 @@ public class CreateWorkItemHandler : IRequestHandler<CreateWorkItemCommand, Resu
             StoryPoints = request.StoryPoints,
             ProjectId = request.ProjectId,
             AssigneeId = request.AssigneeId,
+            ReporterId = request.ReporterId,
             ParentId = request.ParentId,
             SprintId = request.SprintId,
             CreatedAt = DateTime.UtcNow
@@ -99,6 +110,7 @@ public class CreateWorkItemHandler : IRequestHandler<CreateWorkItemCommand, Resu
             TimeLoggedMinutes = workItem.TimeLoggedMinutes,
             ProjectId = workItem.ProjectId,
             AssigneeId = workItem.AssigneeId,
+            ReporterId = workItem.ReporterId,
             ParentId = workItem.ParentId,
             SprintId = workItem.SprintId,
             CreatedAt = workItem.CreatedAt,
