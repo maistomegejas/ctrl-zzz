@@ -4,7 +4,8 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchProjectById } from '../features/projectsSlice'
 import { fetchWorkItems, createWorkItem, updateWorkItem, deleteWorkItem } from '../features/workItemsSlice'
 import { fetchSprints } from '../features/sprintsSlice'
-import { CreateWorkItemDto, UpdateWorkItemDto, WorkItem, WorkItemType, Priority, WorkItemStatus } from '../types'
+import { CreateWorkItemDto, UpdateWorkItemDto, WorkItem, WorkItemType, Priority, WorkItemStatus, Comment } from '../types'
+import { commentService } from '../services/commentService'
 
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -40,6 +41,10 @@ export default function ProjectDetailPage() {
     assigneeId: undefined,
     sprintId: undefined,
   })
+
+  const [comments, setComments] = useState<Record<string, Comment[]>>({})
+  const [expandedComments, setExpandedComments] = useState<Record<string, boolean>>({})
+  const [newCommentContent, setNewCommentContent] = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (id) {
@@ -94,6 +99,47 @@ export default function ProjectDetailPage() {
   const handleDelete = async (workItemId: string) => {
     if (confirm('Are you sure you want to delete this work item?')) {
       await dispatch(deleteWorkItem(workItemId))
+    }
+  }
+
+  const toggleComments = async (workItemId: string) => {
+    const isExpanded = expandedComments[workItemId]
+    setExpandedComments({ ...expandedComments, [workItemId]: !isExpanded })
+
+    // Fetch comments if expanding and not already loaded
+    if (!isExpanded && !comments[workItemId]) {
+      try {
+        const response = await commentService.getAll(workItemId)
+        setComments({ ...comments, [workItemId]: response.data })
+      } catch (error) {
+        console.error('Failed to fetch comments:', error)
+      }
+    }
+  }
+
+  const handleAddComment = async (workItemId: string) => {
+    const content = newCommentContent[workItemId]
+    if (!content || !content.trim()) return
+
+    try {
+      const response = await commentService.create({ content, workItemId })
+      const updatedComments = [...(comments[workItemId] || []), response.data]
+      setComments({ ...comments, [workItemId]: updatedComments })
+      setNewCommentContent({ ...newCommentContent, [workItemId]: '' })
+    } catch (error) {
+      console.error('Failed to create comment:', error)
+    }
+  }
+
+  const handleDeleteComment = async (workItemId: string, commentId: string) => {
+    if (!confirm('Are you sure you want to delete this comment?')) return
+
+    try {
+      await commentService.delete(commentId)
+      const updatedComments = comments[workItemId].filter(c => c.id !== commentId)
+      setComments({ ...comments, [workItemId]: updatedComments })
+    } catch (error) {
+      console.error('Failed to delete comment:', error)
     }
   }
 
@@ -425,6 +471,60 @@ export default function ProjectDetailPage() {
                     Delete
                   </button>
                 </div>
+              </div>
+
+              {/* Comments Section */}
+              <div className="mt-4 border-t pt-4">
+                <button
+                  onClick={() => toggleComments(item.id)}
+                  className="btn btn-ghost btn-sm"
+                >
+                  {expandedComments[item.id] ? '▼' : '▶'} Comments ({comments[item.id]?.length || 0})
+                </button>
+
+                {expandedComments[item.id] && (
+                  <div className="mt-4 space-y-3">
+                    {/* Comment List */}
+                    {comments[item.id]?.map((comment) => (
+                      <div key={comment.id} className="bg-base-200 p-3 rounded-lg">
+                        <div className="flex justify-between items-start">
+                          <p className="text-sm">{comment.content}</p>
+                          <button
+                            onClick={() => handleDeleteComment(item.id, comment.id)}
+                            className="btn btn-ghost btn-xs"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        <p className="text-xs text-base-content/60 mt-1">
+                          {new Date(comment.createdAt).toLocaleString()}
+                        </p>
+                      </div>
+                    ))}
+
+                    {/* Add Comment Form */}
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Add a comment..."
+                        className="input input-bordered input-sm flex-1"
+                        value={newCommentContent[item.id] || ''}
+                        onChange={(e) => setNewCommentContent({ ...newCommentContent, [item.id]: e.target.value })}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            handleAddComment(item.id)
+                          }
+                        }}
+                      />
+                      <button
+                        onClick={() => handleAddComment(item.id)}
+                        className="btn btn-primary btn-sm"
+                      >
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

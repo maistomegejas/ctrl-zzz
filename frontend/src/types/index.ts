@@ -122,3 +122,17 @@ export interface UpdateSprintDto {
   goal?: string
   endDate?: string
 }
+
+export interface Comment {
+  id: string
+  content: string
+  workItemId: string
+  userId?: string
+  createdAt: string
+  updatedAt?: string
+}
+
+export interface CreateCommentDto {
+  content: string
+  workItemId: string
+}
