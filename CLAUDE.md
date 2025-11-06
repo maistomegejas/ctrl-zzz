@@ -379,34 +379,33 @@ public abstract class BaseEntity
 ## Development Workflow
 
 **IMPORTANT FOR CLAUDE (AI ASSISTANT):**
-- **YOU must create database migrations and commit them** before pushing code
-- User only runs `start-dev.ps1` which applies existing migrations
-- DO NOT tell user to manually run `dotnet ef migrations add` commands
+- **start-dev.ps1 now handles EVERYTHING automatically**
+- When you add/modify entities, just commit the code changes
+- User runs `start-dev.ps1` which auto-detects pending model changes, creates migrations, commits them, and applies to DB
+- DO NOT tell user to manually run `dotnet ef` commands
+- DO NOT manually create migrations yourself (dotnet not available in Claude's environment)
 
 ### Workflow Steps:
 
 1. **Create entity** in Core/Entities
 2. **Add EF configuration** in Infrastructure/Data/Configurations or ApplicationDbContext
-3. **CREATE MIGRATION** (CLAUDE does this):
-   ```bash
-   cd backend/CtrlZzz.Web
-   dotnet ef migrations add MigrationName --project ../CtrlZzz.Infrastructure --startup-project . --output-dir Migrations
-   cd ../..
-   ```
-4. **Commit migration files** to git (in `backend/CtrlZzz.Infrastructure/Migrations/`)
-5. **Create MediatR command/query** in Core/Features
-6. **Add validator** for command
-7. **Write unit tests** for handlers and validators
-8. **Create controller endpoint** that calls MediatR
-9. **Frontend: Add Redux slice** and async thunks
-10. **Frontend: Create components** and hook up to Redux
-11. **Run tests**: `dotnet test` (must pass before commit)
-12. **Commit and push** to feature branch
+3. **Create MediatR command/query** in Core/Features
+4. **Add validator** for command
+5. **Write unit tests** for handlers and validators
+6. **Create controller endpoint** that calls MediatR
+7. **Frontend: Add Redux slice** and async thunks
+8. **Frontend: Create components** and hook up to Redux
+9. **Run tests**: `dotnet test` (must pass before commit)
+10. **Commit and push** entity changes to feature branch
 
 **User workflow after pulling:**
 - User runs `.\start-dev.ps1`
-- Script automatically applies migrations from `Migrations/` folder
-- No manual database commands needed
+- Script automatically:
+  1. Detects pending model changes
+  2. Creates migration with timestamp
+  3. Commits migration to git
+  4. Applies migration to database
+- **Zero manual commands needed**
 
 ## Unit Testing (CRITICAL)
 
