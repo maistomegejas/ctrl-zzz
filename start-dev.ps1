@@ -22,15 +22,10 @@ Set-Location backend/CtrlZzz.Web
 dotnet ef database update --project ../CtrlZzz.Infrastructure --startup-project .
 Set-Location $originalLocation
 
-# Install frontend dependencies if needed
-Write-Host "Checking frontend dependencies..." -ForegroundColor Yellow
+# Install frontend dependencies
+Write-Host "Installing frontend dependencies..." -ForegroundColor Yellow
 Set-Location frontend
-if (-not (Test-Path "node_modules")) {
-    Write-Host "node_modules not found. Running npm install..." -ForegroundColor Yellow
-    npm install
-} else {
-    Write-Host "Dependencies up to date." -ForegroundColor Green
-}
+npm install
 Set-Location $originalLocation
 
 # Start backend process
