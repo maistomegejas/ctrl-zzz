@@ -379,9 +379,10 @@ public abstract class BaseEntity
 ## Development Workflow
 
 **IMPORTANT FOR CLAUDE (AI ASSISTANT):**
-- **start-dev.ps1 now handles EVERYTHING automatically**
+- **start-dev.ps1 auto-creates migrations and updates DB**
 - When you add/modify entities, just commit the code changes
-- User runs `start-dev.ps1` which auto-detects pending model changes, creates migrations, commits them, and applies to DB
+- User runs `start-dev.ps1` which auto-detects pending model changes, creates migrations, and applies to DB
+- User commits and pushes migration files themselves
 - DO NOT tell user to manually run `dotnet ef` commands
 - DO NOT manually create migrations yourself (dotnet not available in Claude's environment)
 
@@ -402,10 +403,9 @@ public abstract class BaseEntity
 - User runs `.\start-dev.ps1`
 - Script automatically:
   1. Detects pending model changes
-  2. Creates migration with timestamp
-  3. Commits migration to git
-  4. Applies migration to database
-- **Zero manual commands needed**
+  2. Creates migration with timestamp (if changes exist)
+  3. Applies migration to database
+- User commits and pushes migration files manually
 
 ## Unit Testing (CRITICAL)
 

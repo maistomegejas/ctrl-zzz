@@ -14,12 +14,7 @@ Set-Location backend/CtrlZzz.Web
 if (-not (Test-Path $migrationsFolder) -or (Get-ChildItem $migrationsFolder -Filter "*.cs" | Measure-Object).Count -eq 0) {
     Write-Host "No migrations found. Creating initial migration..." -ForegroundColor Yellow
     dotnet ef migrations add InitialCreate --project ../CtrlZzz.Infrastructure --startup-project . --output-dir Migrations
-
-    # Stage and commit the migration
-    Set-Location ../..
-    git add backend/CtrlZzz.Infrastructure/Migrations/
-    git commit -m "Add InitialCreate migration (auto-generated)" --no-verify
-    Set-Location backend/CtrlZzz.Web
+    Write-Host "InitialCreate migration created. Commit it to git when ready." -ForegroundColor Cyan
 }
 else {
     # Try to create a migration to check for pending changes
@@ -41,12 +36,7 @@ else {
     }
     else {
         Write-Host "Pending model changes detected. Migration created: $migrationName" -ForegroundColor Yellow
-
-        # Stage and commit the migration
-        Set-Location ../..
-        git add backend/CtrlZzz.Infrastructure/Migrations/
-        git commit -m "Add $migrationName (auto-generated)" --no-verify
-        Set-Location backend/CtrlZzz.Web
+        Write-Host "Commit the migration to git when ready." -ForegroundColor Cyan
     }
 }
 
