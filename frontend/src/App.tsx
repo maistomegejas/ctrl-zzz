@@ -3,6 +3,7 @@ import ProjectsPage from './pages/ProjectsPage'
 import ProjectDetailPage from './pages/ProjectDetailPage'
 import SprintsPage from './pages/SprintsPage'
 import BoardPage from './pages/BoardPage'
+import IssueDetailPage from './pages/IssueDetailPage'
 import Sidebar from './components/Sidebar'
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
             <Route path="/projects/:id" element={<ProjectDetailPage />} />
             <Route path="/projects/:id/board" element={<BoardPage />} />
             <Route path="/projects/:projectId/sprints" element={<SprintsPage />} />
+            <Route path="/issues/:id" element={<IssueDetailPage />} />
           </Routes>
         </div>
       </div>

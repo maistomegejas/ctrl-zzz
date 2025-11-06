@@ -448,7 +448,14 @@ export default function ProjectDetailPage() {
             <div className="card-body">
               <div className="flex justify-between items-start">
                 <div className="flex-1">
-                  <h3 className="card-title">{item.title}</h3>
+                  <h3 className="card-title">
+                    <button
+                      onClick={() => navigate(`/issues/${item.id}`)}
+                      className="text-left hover:text-blue-600 transition-colors"
+                    >
+                      {item.title}
+                    </button>
+                  </h3>
                   {item.description && (
                     <p className="text-sm text-base-content/70 mt-2">{item.description}</p>
                   )}
