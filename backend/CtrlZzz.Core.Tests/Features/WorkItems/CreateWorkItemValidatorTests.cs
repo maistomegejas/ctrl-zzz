@@ -21,7 +21,8 @@ public class CreateWorkItemValidatorTests
             StoryPoints: 3,
             ProjectId: Guid.NewGuid(),
             AssigneeId: Guid.NewGuid(),
-            ParentId: null
+            ParentId: null,
+            SprintId: null
         );
 
         // Act
@@ -43,7 +44,8 @@ public class CreateWorkItemValidatorTests
             StoryPoints: null,
             ProjectId: Guid.NewGuid(),
             AssigneeId: null,
-            ParentId: null
+            ParentId: null,
+            SprintId: null
         );
 
         // Act
@@ -66,7 +68,8 @@ public class CreateWorkItemValidatorTests
             StoryPoints: null,
             ProjectId: Guid.Empty,
             AssigneeId: null,
-            ParentId: null
+            ParentId: null,
+            SprintId: null
         );
 
         // Act
@@ -89,7 +92,8 @@ public class CreateWorkItemValidatorTests
             StoryPoints: -1,
             ProjectId: Guid.NewGuid(),
             AssigneeId: null,
-            ParentId: null
+            ParentId: null,
+            SprintId: null
         );
 
         // Act

@@ -13,6 +13,7 @@ public class CreateWorkItemHandlerTests
     private readonly Mock<IRepository<WorkItem>> _workItemRepository;
     private readonly Mock<IRepository<Project>> _projectRepository;
     private readonly Mock<IRepository<User>> _userRepository;
+    private readonly Mock<IRepository<Sprint>> _sprintRepository;
     private readonly CreateWorkItemHandler _handler;
 
     public CreateWorkItemHandlerTests()
@@ -20,7 +21,8 @@ public class CreateWorkItemHandlerTests
         _workItemRepository = new Mock<IRepository<WorkItem>>();
         _projectRepository = new Mock<IRepository<Project>>();
         _userRepository = new Mock<IRepository<User>>();
-        _handler = new CreateWorkItemHandler(_workItemRepository.Object, _projectRepository.Object, _userRepository.Object);
+        _sprintRepository = new Mock<IRepository<Sprint>>();
+        _handler = new CreateWorkItemHandler(_workItemRepository.Object, _projectRepository.Object, _userRepository.Object, _sprintRepository.Object);
     }
 
     [Fact]
@@ -36,7 +38,8 @@ public class CreateWorkItemHandlerTests
             StoryPoints: 3,
             ProjectId: projectId,
             AssigneeId: null,
-            ParentId: null
+            ParentId: null,
+            SprintId: null
         );
 
         _projectRepository.Setup(x => x.ExistsAsync(projectId, It.IsAny<CancellationToken>()))
@@ -72,7 +75,8 @@ public class CreateWorkItemHandlerTests
             StoryPoints: null,
             ProjectId: projectId,
             AssigneeId: null,
-            ParentId: null
+            ParentId: null,
+            SprintId: null
         );
 
         _projectRepository.Setup(x => x.ExistsAsync(projectId, It.IsAny<CancellationToken>()))

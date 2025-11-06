@@ -31,7 +31,7 @@ public class CreateSprintHandlerTests
             .ReturnsAsync(true);
 
         _sprintRepository.Setup(r => r.AddAsync(It.IsAny<Sprint>(), It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
+            .ReturnsAsync((Sprint s, CancellationToken ct) => s);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
