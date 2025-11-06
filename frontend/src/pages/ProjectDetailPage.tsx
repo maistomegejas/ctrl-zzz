@@ -538,6 +538,24 @@ export default function ProjectDetailPage() {
                 </div>
               </div>
 
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Parent Issue (for subtasks)</span>
+                </label>
+                <select
+                  className="select select-bordered"
+                  value={formData.parentId || ''}
+                  onChange={(e) => setFormData({ ...formData, parentId: e.target.value || undefined })}
+                >
+                  <option value="">No Parent</option>
+                  {workItems.filter(item => item.type !== 4).map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {getTypeLabel(item.type)} - {item.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="card-actions justify-end">
                 <button type="submit" className="btn btn-primary">
                   Create Issue
