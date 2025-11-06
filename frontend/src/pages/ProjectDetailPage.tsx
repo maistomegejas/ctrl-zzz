@@ -58,172 +58,191 @@ export default function ProjectDetailPage() {
     return ['To Do', 'In Progress', 'In Review', 'Done', 'Blocked'][status]
   }
 
+  const getStatusBadgeClass = (status: WorkItemStatus) => {
+    const classes = ['badge-ghost', 'badge-info', 'badge-warning', 'badge-success', 'badge-error']
+    return classes[status]
+  }
+
   const getPriorityLabel = (priority: Priority) => {
     return ['Low', 'Medium', 'High', 'Critical', 'Blocker'][priority]
+  }
+
+  const getPriorityBadgeClass = (priority: Priority) => {
+    const classes = ['badge-ghost', 'badge-info', 'badge-warning', 'badge-error', 'badge-error']
+    return classes[priority]
   }
 
   const getTypeLabel = (type: WorkItemType) => {
     return ['Epic', 'Story', 'Task', 'Bug', 'Subtask'][type]
   }
 
+  const getTypeBadgeClass = (type: WorkItemType) => {
+    const classes = ['badge-secondary', 'badge-accent', 'badge-primary', 'badge-error', 'badge-ghost']
+    return classes[type]
+  }
+
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <button
-        onClick={() => navigate('/projects')}
-        style={{
-          marginBottom: '20px',
-          padding: '8px 16px',
-          backgroundColor: '#ddd',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-        }}
-      >
+    <div className="container mx-auto px-4 py-8">
+      <button onClick={() => navigate('/projects')} className="btn btn-ghost mb-6">
         ← Back to Projects
       </button>
 
       {selectedProject && (
-        <div style={{ marginBottom: '30px' }}>
-          <h1>{selectedProject.name}</h1>
-          <p style={{ color: '#666' }}>
-            <strong>{selectedProject.key}</strong>
-          </p>
-          {selectedProject.description && <p>{selectedProject.description}</p>}
+        <div className="mb-8">
+          <div className="flex items-center gap-4 mb-2">
+            <h1 className="text-4xl font-bold">{selectedProject.name}</h1>
+            <div className="badge badge-lg badge-secondary">{selectedProject.key}</div>
+          </div>
+          {selectedProject.description && (
+            <p className="text-base-content/70">{selectedProject.description}</p>
+          )}
         </div>
       )}
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2>Work Items</h2>
-        <button
-          onClick={() => setShowCreateForm(!showCreateForm)}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-          }}
-        >
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Work Items</h2>
+        <button onClick={() => setShowCreateForm(!showCreateForm)} className="btn btn-primary">
           {showCreateForm ? 'Cancel' : '+ New Work Item'}
         </button>
       </div>
 
       {showCreateForm && (
-        <div style={{
-          backgroundColor: '#f9f9f9',
-          padding: '20px',
-          borderRadius: '8px',
-          marginBottom: '20px',
-        }}>
-          <h3>Create Work Item</h3>
-          <form onSubmit={handleCreate}>
-            <input
-              type="text"
-              placeholder="Title"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              required
-              style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ddd' }}
-            />
-            <textarea
-              placeholder="Description (optional)"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ddd', minHeight: '80px' }}
-            />
-            <select
-              value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: Number(e.target.value) as WorkItemType })}
-              style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ddd' }}
-            >
-              <option value={WorkItemType.Epic}>Epic</option>
-              <option value={WorkItemType.Story}>Story</option>
-              <option value={WorkItemType.Task}>Task</option>
-              <option value={WorkItemType.Bug}>Bug</option>
-              <option value={WorkItemType.Subtask}>Subtask</option>
-            </select>
-            <select
-              value={formData.priority}
-              onChange={(e) => setFormData({ ...formData, priority: Number(e.target.value) as Priority })}
-              style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ddd' }}
-            >
-              <option value={Priority.Low}>Low</option>
-              <option value={Priority.Medium}>Medium</option>
-              <option value={Priority.High}>High</option>
-              <option value={Priority.Critical}>Critical</option>
-              <option value={Priority.Blocker}>Blocker</option>
-            </select>
-            <button
-              type="submit"
-              style={{
-                padding: '10px 20px',
-                backgroundColor: '#4CAF50',
-                color: 'white',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-              }}
-            >
-              Create Work Item
-            </button>
-          </form>
+        <div className="card bg-base-200 shadow-xl mb-8">
+          <div className="card-body">
+            <h3 className="card-title">Create Work Item</h3>
+            <form onSubmit={handleCreate} className="space-y-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Title</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter work item title"
+                  className="input input-bordered"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Description</span>
+                </label>
+                <textarea
+                  className="textarea textarea-bordered h-24"
+                  placeholder="Work item description (optional)"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Type</span>
+                  </label>
+                  <select
+                    className="select select-bordered"
+                    value={formData.type}
+                    onChange={(e) => setFormData({ ...formData, type: Number(e.target.value) as WorkItemType })}
+                  >
+                    <option value={WorkItemType.Epic}>Epic</option>
+                    <option value={WorkItemType.Story}>Story</option>
+                    <option value={WorkItemType.Task}>Task</option>
+                    <option value={WorkItemType.Bug}>Bug</option>
+                    <option value={WorkItemType.Subtask}>Subtask</option>
+                  </select>
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Priority</span>
+                  </label>
+                  <select
+                    className="select select-bordered"
+                    value={formData.priority}
+                    onChange={(e) => setFormData({ ...formData, priority: Number(e.target.value) as Priority })}
+                  >
+                    <option value={Priority.Low}>Low</option>
+                    <option value={Priority.Medium}>Medium</option>
+                    <option value={Priority.High}>High</option>
+                    <option value={Priority.Critical}>Critical</option>
+                    <option value={Priority.Blocker}>Blocker</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Story Points</span>
+                </label>
+                <input
+                  type="number"
+                  placeholder="Optional"
+                  className="input input-bordered"
+                  value={formData.storyPoints || ''}
+                  onChange={(e) => setFormData({ ...formData, storyPoints: e.target.value ? Number(e.target.value) : undefined })}
+                  min="0"
+                />
+              </div>
+
+              <div className="card-actions justify-end">
+                <button type="submit" className="btn btn-primary">
+                  Create Work Item
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
-      {loading && <p>Loading work items...</p>}
+      {loading && (
+        <div className="flex justify-center">
+          <span className="loading loading-spinner loading-lg"></span>
+        </div>
+      )}
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <div className="space-y-4">
         {workItems.map((item) => (
-          <div
-            key={item.id}
-            style={{
-              backgroundColor: 'white',
-              padding: '15px',
-              borderRadius: '8px',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div style={{ flex: 1 }}>
-              <h4 style={{ margin: 0, marginBottom: '5px' }}>{item.title}</h4>
-              {item.description && <p style={{ color: '#888', fontSize: '14px', margin: 0 }}>{item.description}</p>}
-              <div style={{ marginTop: '10px', display: 'flex', gap: '10px', fontSize: '12px' }}>
-                <span style={{ padding: '2px 8px', backgroundColor: '#e3f2fd', borderRadius: '4px' }}>
-                  {getTypeLabel(item.type)}
-                </span>
-                <span style={{ padding: '2px 8px', backgroundColor: '#f3e5f5', borderRadius: '4px' }}>
-                  {getPriorityLabel(item.priority)}
-                </span>
-                <span style={{ padding: '2px 8px', backgroundColor: '#fff3e0', borderRadius: '4px' }}>
-                  {getStatusLabel(item.status)}
-                </span>
+          <div key={item.id} className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+            <div className="card-body">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <h3 className="card-title">{item.title}</h3>
+                  {item.description && (
+                    <p className="text-sm text-base-content/70 mt-2">{item.description}</p>
+                  )}
+                  <div className="flex gap-2 mt-4 flex-wrap">
+                    <div className={`badge ${getTypeBadgeClass(item.type)}`}>
+                      {getTypeLabel(item.type)}
+                    </div>
+                    <div className={`badge ${getPriorityBadgeClass(item.priority)}`}>
+                      {getPriorityLabel(item.priority)}
+                    </div>
+                    <div className={`badge ${getStatusBadgeClass(item.status)}`}>
+                      {getStatusLabel(item.status)}
+                    </div>
+                    {item.storyPoints !== null && item.storyPoints !== undefined && (
+                      <div className="badge badge-outline">
+                        {item.storyPoints} SP
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <button onClick={() => handleDelete(item.id)} className="btn btn-error btn-sm">
+                  Delete
+                </button>
               </div>
             </div>
-            <button
-              onClick={() => handleDelete(item.id)}
-              style={{
-                padding: '5px 10px',
-                backgroundColor: '#f44336',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '12px',
-              }}
-            >
-              Delete
-            </button>
           </div>
         ))}
       </div>
 
       {workItems.length === 0 && !loading && (
-        <p style={{ textAlign: 'center', color: '#888', marginTop: '40px' }}>
-          No work items yet. Create your first work item!
-        </p>
+        <div className="text-center py-16">
+          <p className="text-lg text-base-content/60">No work items yet. Create your first work item!</p>
+        </div>
       )}
     </div>
   )

@@ -14,7 +14,7 @@ export default function ProjectsPage() {
     name: '',
     key: '',
     description: '',
-    ownerId: '', // Will need to get this from a user selector later
+    ownerId: '',
   })
 
   useEffect(() => {
@@ -35,130 +35,144 @@ export default function ProjectsPage() {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <h1>Projects</h1>
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-bold">Projects</h1>
         <button
           onClick={() => setShowCreateForm(!showCreateForm)}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-          }}
+          className="btn btn-primary"
         >
           {showCreateForm ? 'Cancel' : '+ New Project'}
         </button>
       </div>
 
       {showCreateForm && (
-        <div style={{
-          backgroundColor: '#f9f9f9',
-          padding: '20px',
-          borderRadius: '8px',
-          marginBottom: '20px',
-        }}>
-          <h3>Create New Project</h3>
-          <form onSubmit={handleCreate}>
-            <input
-              type="text"
-              placeholder="Project Name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
-              style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ddd' }}
-            />
-            <input
-              type="text"
-              placeholder="Project Key (e.g., PROJ)"
-              value={formData.key}
-              onChange={(e) => setFormData({ ...formData, key: e.target.value.toUpperCase() })}
-              required
-              style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ddd' }}
-            />
-            <textarea
-              placeholder="Description (optional)"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ddd', minHeight: '80px' }}
-            />
-            <input
-              type="text"
-              placeholder="Owner User ID (paste from Swagger)"
-              value={formData.ownerId}
-              onChange={(e) => setFormData({ ...formData, ownerId: e.target.value })}
-              required
-              style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ddd' }}
-            />
-            <button
-              type="submit"
-              style={{
-                padding: '10px 20px',
-                backgroundColor: '#4CAF50',
-                color: 'white',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-              }}
-            >
-              Create Project
-            </button>
-          </form>
+        <div className="card bg-base-200 shadow-xl mb-8">
+          <div className="card-body">
+            <h2 className="card-title">Create New Project</h2>
+            <form onSubmit={handleCreate} className="space-y-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Project Name</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter project name"
+                  className="input input-bordered"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Project Key</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., PROJ"
+                  className="input input-bordered"
+                  value={formData.key}
+                  onChange={(e) => setFormData({ ...formData, key: e.target.value.toUpperCase() })}
+                  required
+                />
+                <label className="label">
+                  <span className="label-text-alt">Uppercase letters only</span>
+                </label>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Description</span>
+                </label>
+                <textarea
+                  className="textarea textarea-bordered h-24"
+                  placeholder="Project description (optional)"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                />
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Owner User ID</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Paste user ID from Swagger"
+                  className="input input-bordered"
+                  value={formData.ownerId}
+                  onChange={(e) => setFormData({ ...formData, ownerId: e.target.value })}
+                  required
+                />
+                <label className="label">
+                  <span className="label-text-alt">Create a user first in Swagger if needed</span>
+                </label>
+              </div>
+
+              <div className="card-actions justify-end">
+                <button type="submit" className="btn btn-primary">
+                  Create Project
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
-      {loading && <p>Loading projects...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {loading && (
+        <div className="flex justify-center">
+          <span className="loading loading-spinner loading-lg"></span>
+        </div>
+      )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+      {error && (
+        <div className="alert alert-error">
+          <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{error}</span>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.map((project) => (
-          <div
-            key={project.id}
-            style={{
-              backgroundColor: 'white',
-              padding: '20px',
-              borderRadius: '8px',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-              cursor: 'pointer',
-            }}
-          >
-            <div onClick={() => navigate(`/projects/${project.id}`)}>
-              <h3>{project.name}</h3>
-              <p style={{ color: '#666', fontSize: '14px', marginBottom: '10px' }}>
-                <strong>{project.key}</strong>
-              </p>
+          <div key={project.id} className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+            <div className="card-body">
+              <h2 className="card-title">
+                {project.name}
+                <div className="badge badge-secondary">{project.key}</div>
+              </h2>
               {project.description && (
-                <p style={{ color: '#888', fontSize: '14px' }}>{project.description}</p>
+                <p className="text-sm text-base-content/70">{project.description}</p>
               )}
+              <div className="card-actions justify-end mt-4">
+                <button
+                  onClick={() => navigate(`/projects/${project.id}`)}
+                  className="btn btn-primary btn-sm"
+                >
+                  Open
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleDelete(project.id)
+                  }}
+                  className="btn btn-error btn-sm"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                handleDelete(project.id)
-              }}
-              style={{
-                marginTop: '10px',
-                padding: '5px 10px',
-                backgroundColor: '#f44336',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '12px',
-              }}
-            >
-              Delete
-            </button>
           </div>
         ))}
       </div>
 
       {projects.length === 0 && !loading && (
-        <p style={{ textAlign: 'center', color: '#888', marginTop: '40px' }}>
-          No projects yet. Create your first project!
-        </p>
+        <div className="text-center py-16">
+          <p className="text-lg text-base-content/60">No projects yet. Create your first project!</p>
+        </div>
       )}
     </div>
   )
