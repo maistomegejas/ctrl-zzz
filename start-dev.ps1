@@ -8,18 +8,45 @@ $originalLocation = Get-Location
 Write-Host "Checking database migrations..." -ForegroundColor Yellow
 $migrationsFolder = "$PWD/backend/CtrlZzz.Infrastructure/Migrations"
 
-# Check if migrations exist, if not create initial migration
+Set-Location backend/CtrlZzz.Web
+
+# Check if there are pending model changes
+Write-Host "Checking for pending model changes..." -ForegroundColor Yellow
+$pendingChanges = dotnet ef migrations has-pending-model-changes --project ../CtrlZzz.Infrastructure --startup-project . 2>&1
+$hasPendingChanges = $LASTEXITCODE -eq 0 -and $pendingChanges -match "Changes"
+
+# If no migrations exist at all, create initial migration
 if (-not (Test-Path $migrationsFolder) -or (Get-ChildItem $migrationsFolder -Filter "*.cs" | Measure-Object).Count -eq 0) {
     Write-Host "No migrations found. Creating initial migration..." -ForegroundColor Yellow
-    Set-Location backend/CtrlZzz.Web
     dotnet ef migrations add InitialCreate --project ../CtrlZzz.Infrastructure --startup-project . --output-dir Migrations
-    Set-Location $originalLocation
+
+    # Stage and commit the migration
+    Set-Location ../..
+    git add backend/CtrlZzz.Infrastructure/Migrations/
+    git commit -m "Add InitialCreate migration (auto-generated)" --no-verify
+    Set-Location backend/CtrlZzz.Web
+}
+# If there are pending model changes, create a new migration
+elseif ($hasPendingChanges) {
+    Write-Host "Pending model changes detected. Creating migration..." -ForegroundColor Yellow
+
+    # Generate migration name with timestamp
+    $timestamp = Get-Date -Format "yyyyMMddHHmmss"
+    $migrationName = "Migration_$timestamp"
+
+    dotnet ef migrations add $migrationName --project ../CtrlZzz.Infrastructure --startup-project . --output-dir Migrations
+
+    # Stage and commit the migration
+    Set-Location ../..
+    git add backend/CtrlZzz.Infrastructure/Migrations/
+    git commit -m "Add $migrationName (auto-generated)" --no-verify
+    Set-Location backend/CtrlZzz.Web
 }
 
 # Apply migrations to database
 Write-Host "Applying database migrations..." -ForegroundColor Yellow
-Set-Location backend/CtrlZzz.Web
 dotnet ef database update --project ../CtrlZzz.Infrastructure --startup-project .
+
 Set-Location $originalLocation
 
 # Install frontend dependencies
