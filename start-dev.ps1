@@ -10,11 +10,6 @@ $migrationsFolder = "$PWD/backend/CtrlZzz.Infrastructure/Migrations"
 
 Set-Location backend/CtrlZzz.Web
 
-# Check if there are pending model changes
-Write-Host "Checking for pending model changes..." -ForegroundColor Yellow
-$pendingChanges = dotnet ef migrations has-pending-model-changes --project ../CtrlZzz.Infrastructure --startup-project . 2>&1
-$hasPendingChanges = $LASTEXITCODE -eq 0 -and $pendingChanges -match "Changes"
-
 # If no migrations exist at all, create initial migration
 if (-not (Test-Path $migrationsFolder) -or (Get-ChildItem $migrationsFolder -Filter "*.cs" | Measure-Object).Count -eq 0) {
     Write-Host "No migrations found. Creating initial migration..." -ForegroundColor Yellow
@@ -26,21 +21,33 @@ if (-not (Test-Path $migrationsFolder) -or (Get-ChildItem $migrationsFolder -Fil
     git commit -m "Add InitialCreate migration (auto-generated)" --no-verify
     Set-Location backend/CtrlZzz.Web
 }
-# If there are pending model changes, create a new migration
-elseif ($hasPendingChanges) {
-    Write-Host "Pending model changes detected. Creating migration..." -ForegroundColor Yellow
+else {
+    # Try to create a migration to check for pending changes
+    Write-Host "Checking for pending model changes..." -ForegroundColor Yellow
 
     # Generate migration name with timestamp
     $timestamp = Get-Date -Format "yyyyMMddHHmmss"
     $migrationName = "Migration_$timestamp"
 
-    dotnet ef migrations add $migrationName --project ../CtrlZzz.Infrastructure --startup-project . --output-dir Migrations
+    # Capture output to check if changes were detected
+    $output = dotnet ef migrations add $migrationName --project ../CtrlZzz.Infrastructure --startup-project . --output-dir Migrations 2>&1
 
-    # Stage and commit the migration
-    Set-Location ../..
-    git add backend/CtrlZzz.Infrastructure/Migrations/
-    git commit -m "Add $migrationName (auto-generated)" --no-verify
-    Set-Location backend/CtrlZzz.Web
+    # Check if migration was actually created (EF says "No changes" if there are none)
+    if ($output -match "No changes" -or $output -match "no model changes") {
+        Write-Host "No pending model changes detected." -ForegroundColor Green
+
+        # Remove the empty migration if it was created
+        dotnet ef migrations remove --project ../CtrlZzz.Infrastructure --startup-project . --force 2>&1 | Out-Null
+    }
+    else {
+        Write-Host "Pending model changes detected. Migration created: $migrationName" -ForegroundColor Yellow
+
+        # Stage and commit the migration
+        Set-Location ../..
+        git add backend/CtrlZzz.Infrastructure/Migrations/
+        git commit -m "Add $migrationName (auto-generated)" --no-verify
+        Set-Location backend/CtrlZzz.Web
+    }
 }
 
 # Apply migrations to database
