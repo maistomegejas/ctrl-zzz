@@ -139,3 +139,20 @@ export interface CreateCommentDto {
   content: string
   workItemId: string
 }
+
+export interface LoginDto {
+  email: string
+  password: string
+}
+
+export interface RegisterDto {
+  email: string
+  name: string
+  password: string
+}
+
+export interface AuthResponse {
+  token: string
+  refreshToken: string
+  user: User
+}

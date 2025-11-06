@@ -13,20 +13,21 @@ export default function MyIssuesPage() {
 
   const { workItems, loading } = useAppSelector((state) => state.workItems)
   const { projects } = useAppSelector((state) => state.projects)
+  const { user } = useAppSelector((state) => state.auth)
 
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [sortBy, setSortBy] = useState<SortOption>('priority')
 
   useEffect(() => {
     // Fetch all work items for all projects
-    // TODO: When auth is added, filter by current user's assigneeId
     projects.forEach((project) => {
       dispatch(fetchWorkItems(project.id))
     })
   }, [projects, dispatch])
 
   const filteredAndSortedIssues = useMemo(() => {
-    let filtered = workItems
+    // Filter by logged-in user
+    let filtered = workItems.filter(item => item.assigneeId === user?.id)
 
     // Apply status filter
     if (statusFilter === 'open') {
@@ -57,7 +58,7 @@ export default function MyIssuesPage() {
     })
 
     return sorted
-  }, [workItems, statusFilter, sortBy])
+  }, [workItems, statusFilter, sortBy, user?.id])
 
   const getTypeLabel = (type: WorkItemType) => ['Epic', 'Story', 'Task', 'Bug', 'Subtask'][type]
   const getPriorityLabel = (priority: Priority) => ['Low', 'Medium', 'High', 'Critical', 'Blocker'][priority]

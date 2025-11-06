@@ -229,6 +229,12 @@ export default function ProjectDetailPage() {
               View Board
             </button>
             <button
+              onClick={() => navigate(`/projects/${id}/planning`)}
+              className="btn btn-secondary btn-sm"
+            >
+              Sprint Planning
+            </button>
+            <button
               onClick={() => navigate(`/projects/${id}/sprints`)}
               className="btn btn-outline btn-sm"
             >

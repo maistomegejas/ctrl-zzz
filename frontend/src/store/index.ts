@@ -3,6 +3,7 @@ import projectsReducer from '../features/projectsSlice'
 import workItemsReducer from '../features/workItemsSlice'
 import sprintsReducer from '../features/sprintsSlice'
 import usersReducer from '../features/usersSlice'
+import authReducer from '../features/authSlice'
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     workItems: workItemsReducer,
     sprints: sprintsReducer,
     users: usersReducer,
+    auth: authReducer,
   },
 })
 

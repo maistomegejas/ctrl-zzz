@@ -1,21 +1,31 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { logout } from '../features/authSlice'
 
 export default function Sidebar() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+  const { user } = useAppSelector((state) => state.auth)
 
   const isActive = (path: string) => {
     return location.pathname === path || location.pathname.startsWith(path + '/')
   }
 
+  const handleLogout = () => {
+    dispatch(logout())
+    navigate('/login')
+  }
+
   return (
-    <div className="w-64 bg-white border-r border-gray-200 min-h-screen">
+    <div className="w-64 bg-white border-r border-gray-200 min-h-screen flex flex-col">
       <div className="p-6">
         <Link to="/projects" className="text-2xl font-bold text-blue-600">
           CTRL-ZZZ
         </Link>
       </div>
 
-      <nav className="px-3">
+      <nav className="px-3 flex-1">
         <Link
           to="/projects"
           className={`flex items-center gap-3 px-3 py-2 rounded-lg mb-1 transition-colors ${
@@ -119,6 +129,41 @@ export default function Sidebar() {
           </a>
         </div>
       </nav>
+
+      {/* User Profile and Logout */}
+      <div className="border-t border-gray-200 p-4">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="avatar placeholder">
+            <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center">
+              <span className="text-lg">{user?.name?.charAt(0).toUpperCase() || 'U'}</span>
+            </div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900 truncate">{user?.name || 'User'}</p>
+            <p className="text-xs text-gray-500 truncate">{user?.email || ''}</p>
+          </div>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="btn btn-outline btn-sm w-full"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+          Logout
+        </button>
+      </div>
     </div>
   )
 }
