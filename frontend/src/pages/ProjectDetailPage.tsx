@@ -96,6 +96,14 @@ export default function ProjectDetailPage() {
           {selectedProject.description && (
             <p className="text-base-content/70">{selectedProject.description}</p>
           )}
+          <div className="mt-4">
+            <button
+              onClick={() => navigate(`/projects/${id}/sprints`)}
+              className="btn btn-outline btn-sm"
+            >
+              Manage Sprints
+            </button>
+          </div>
         </div>
       )}
 

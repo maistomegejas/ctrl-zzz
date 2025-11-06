@@ -81,3 +81,29 @@ export interface CreateUserDto {
   name: string
   password: string
 }
+
+export interface Sprint {
+  id: string
+  name: string
+  goal?: string
+  startDate?: string
+  endDate?: string
+  isActive: boolean
+  isCompleted: boolean
+  projectId: string
+  createdAt: string
+  updatedAt?: string
+}
+
+export interface CreateSprintDto {
+  name: string
+  goal?: string
+  endDate?: string
+  projectId: string
+}
+
+export interface UpdateSprintDto {
+  name: string
+  goal?: string
+  endDate?: string
+}

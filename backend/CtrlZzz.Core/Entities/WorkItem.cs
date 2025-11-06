@@ -30,4 +30,8 @@ public class WorkItem : BaseEntity
     public Guid? ParentId { get; set; }
     public WorkItem? Parent { get; set; }
     public ICollection<WorkItem> Children { get; set; } = new List<WorkItem>();
+
+    // Sprint relation
+    public Guid? SprintId { get; set; }
+    public Sprint? Sprint { get; set; }
 }
