@@ -353,6 +353,44 @@ export default function ProjectDetailPage() {
                 </select>
               </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Assignee</span>
+                  </label>
+                  <select
+                    className="select select-bordered"
+                    value={editFormData.assigneeId || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, assigneeId: e.target.value || undefined })}
+                  >
+                    <option value="">Unassigned</option>
+                    {users.map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Reporter</span>
+                  </label>
+                  <select
+                    className="select select-bordered"
+                    value={editFormData.reporterId || ''}
+                    onChange={(e) => setEditFormData({ ...editFormData, reporterId: e.target.value || undefined })}
+                  >
+                    <option value="">No Reporter</option>
+                    {users.map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               <div className="card-actions justify-end">
                 <button type="submit" className="btn btn-primary">
                   Update Issue
@@ -460,6 +498,44 @@ export default function ProjectDetailPage() {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Assignee</span>
+                  </label>
+                  <select
+                    className="select select-bordered"
+                    value={formData.assigneeId || ''}
+                    onChange={(e) => setFormData({ ...formData, assigneeId: e.target.value || undefined })}
+                  >
+                    <option value="">Unassigned</option>
+                    {users.map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Reporter</span>
+                  </label>
+                  <select
+                    className="select select-bordered"
+                    value={formData.reporterId || ''}
+                    onChange={(e) => setFormData({ ...formData, reporterId: e.target.value || undefined })}
+                  >
+                    <option value="">No Reporter</option>
+                    {users.map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div className="card-actions justify-end">
