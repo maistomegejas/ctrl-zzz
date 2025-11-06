@@ -203,9 +203,9 @@ export default function ProjectDetailPage() {
       )}
 
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Work Items</h2>
+        <h2 className="text-2xl font-bold">Issues</h2>
         <button onClick={() => setShowCreateForm(!showCreateForm)} className="btn btn-primary">
-          {showCreateForm ? 'Cancel' : '+ New Work Item'}
+          {showCreateForm ? 'Cancel' : '+ New Issue'}
         </button>
       </div>
 
@@ -213,7 +213,7 @@ export default function ProjectDetailPage() {
         <div className="card bg-base-200 shadow-xl mb-8">
           <div className="card-body">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="card-title">Edit Work Item</h3>
+              <h3 className="card-title">Edit Issue</h3>
               <button
                 type="button"
                 onClick={() => setEditingWorkItem(null)}
@@ -229,7 +229,7 @@ export default function ProjectDetailPage() {
                 </label>
                 <input
                   type="text"
-                  placeholder="Enter work item title"
+                  placeholder="Enter issue title"
                   className="input input-bordered"
                   value={editFormData.title}
                   onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
@@ -243,7 +243,7 @@ export default function ProjectDetailPage() {
                 </label>
                 <textarea
                   className="textarea textarea-bordered h-24"
-                  placeholder="Work item description (optional)"
+                  placeholder="Issue description (optional)"
                   value={editFormData.description}
                   onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
                 />
@@ -319,7 +319,7 @@ export default function ProjectDetailPage() {
 
               <div className="card-actions justify-end">
                 <button type="submit" className="btn btn-primary">
-                  Update Work Item
+                  Update Issue
                 </button>
               </div>
             </form>
@@ -330,7 +330,7 @@ export default function ProjectDetailPage() {
       {showCreateForm && (
         <div className="card bg-base-200 shadow-xl mb-8">
           <div className="card-body">
-            <h3 className="card-title">Create Work Item</h3>
+            <h3 className="card-title">Create Issue</h3>
             <form onSubmit={handleCreate} className="space-y-4">
               <div className="form-control">
                 <label className="label">
@@ -338,7 +338,7 @@ export default function ProjectDetailPage() {
                 </label>
                 <input
                   type="text"
-                  placeholder="Enter work item title"
+                  placeholder="Enter issue title"
                   className="input input-bordered"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -352,7 +352,7 @@ export default function ProjectDetailPage() {
                 </label>
                 <textarea
                   className="textarea textarea-bordered h-24"
-                  placeholder="Work item description (optional)"
+                  placeholder="Issue description (optional)"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 />
@@ -428,7 +428,7 @@ export default function ProjectDetailPage() {
 
               <div className="card-actions justify-end">
                 <button type="submit" className="btn btn-primary">
-                  Create Work Item
+                  Create Issue
                 </button>
               </div>
             </form>

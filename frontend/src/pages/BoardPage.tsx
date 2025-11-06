@@ -66,7 +66,7 @@ export default function BoardPage() {
       return
     }
 
-    // Update work item status
+    // Update issue status
     await dispatch(updateWorkItem({
       id: draggedItem.id,
       data: {
