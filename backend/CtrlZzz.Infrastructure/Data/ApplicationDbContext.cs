@@ -66,7 +66,7 @@ public class ApplicationDbContext : DbContext
             entity.HasOne(e => e.Sprint)
                 .WithMany(e => e.WorkItems)
                 .HasForeignKey(e => e.SprintId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         // Sprint configuration
