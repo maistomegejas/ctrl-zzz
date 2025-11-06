@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
-import { WorkItem, CreateWorkItemDto } from '../types'
+import { WorkItem, CreateWorkItemDto, UpdateWorkItemDto } from '../types'
 import { workItemService } from '../services/workItemService'
 
 interface WorkItemsState {
@@ -26,6 +26,14 @@ export const createWorkItem = createAsyncThunk(
   'workItems/create',
   async (data: CreateWorkItemDto) => {
     const response = await workItemService.create(data)
+    return response.data
+  }
+)
+
+export const updateWorkItem = createAsyncThunk(
+  'workItems/update',
+  async ({ id, data }: { id: string; data: UpdateWorkItemDto }) => {
+    const response = await workItemService.update(id, data)
     return response.data
   }
 )
@@ -64,6 +72,13 @@ const workItemsSlice = createSlice({
       // Create work item
       .addCase(createWorkItem.fulfilled, (state, action: PayloadAction<WorkItem>) => {
         state.workItems.push(action.payload)
+      })
+      // Update work item
+      .addCase(updateWorkItem.fulfilled, (state, action: PayloadAction<WorkItem>) => {
+        const index = state.workItems.findIndex(w => w.id === action.payload.id)
+        if (index !== -1) {
+          state.workItems[index] = action.payload
+        }
       })
       // Delete work item
       .addCase(deleteWorkItem.fulfilled, (state, action: PayloadAction<string>) => {

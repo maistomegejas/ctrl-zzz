@@ -1,5 +1,5 @@
 import { api } from './api'
-import { WorkItem, CreateWorkItemDto, WorkItemStatus } from '../types'
+import { WorkItem, CreateWorkItemDto, UpdateWorkItemDto, WorkItemStatus } from '../types'
 
 export const workItemService = {
   getAll: (params?: {
@@ -13,7 +13,7 @@ export const workItemService = {
   create: (data: CreateWorkItemDto) =>
     api.post<WorkItem>('/workitems', data),
 
-  update: (id: string, data: Partial<WorkItem>) =>
+  update: (id: string, data: UpdateWorkItemDto) =>
     api.put<WorkItem>(`/workitems/${id}`, data),
 
   delete: (id: string) => api.delete(`/workitems/${id}`),

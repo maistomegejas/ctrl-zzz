@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchProjectById } from '../features/projectsSlice'
 import { fetchWorkItems, createWorkItem, deleteWorkItem } from '../features/workItemsSlice'
+import { fetchSprints } from '../features/sprintsSlice'
 import { CreateWorkItemDto, WorkItemType, Priority, WorkItemStatus } from '../types'
 
 export default function ProjectDetailPage() {
@@ -12,6 +13,7 @@ export default function ProjectDetailPage() {
 
   const { selectedProject } = useAppSelector((state) => state.projects)
   const { workItems, loading } = useAppSelector((state) => state.workItems)
+  const { sprints } = useAppSelector((state) => state.sprints)
 
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [formData, setFormData] = useState<CreateWorkItemDto>({
@@ -23,12 +25,14 @@ export default function ProjectDetailPage() {
     projectId: id || '',
     assigneeId: undefined,
     parentId: undefined,
+    sprintId: undefined,
   })
 
   useEffect(() => {
     if (id) {
       dispatch(fetchProjectById(id))
       dispatch(fetchWorkItems(id))
+      dispatch(fetchSprints(id))
     }
   }, [id, dispatch])
 
@@ -45,6 +49,7 @@ export default function ProjectDetailPage() {
       projectId: id || '',
       assigneeId: undefined,
       parentId: undefined,
+      sprintId: undefined,
     })
   }
 
@@ -193,6 +198,24 @@ export default function ProjectDetailPage() {
                   onChange={(e) => setFormData({ ...formData, storyPoints: e.target.value ? Number(e.target.value) : undefined })}
                   min="0"
                 />
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Sprint</span>
+                </label>
+                <select
+                  className="select select-bordered"
+                  value={formData.sprintId || ''}
+                  onChange={(e) => setFormData({ ...formData, sprintId: e.target.value || undefined })}
+                >
+                  <option value="">No Sprint</option>
+                  {sprints.map((sprint) => (
+                    <option key={sprint.id} value={sprint.id}>
+                      {sprint.name} {sprint.isActive ? '(Active)' : ''}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="card-actions justify-end">

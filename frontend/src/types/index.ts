@@ -54,6 +54,7 @@ export interface WorkItem {
   projectId: string
   assigneeId?: string
   parentId?: string
+  sprintId?: string
   createdAt: string
   updatedAt?: string
 }
@@ -74,6 +75,20 @@ export interface CreateWorkItemDto {
   projectId: string
   assigneeId?: string
   parentId?: string
+  sprintId?: string
+}
+
+export interface UpdateWorkItemDto {
+  title: string
+  description?: string
+  status: WorkItemStatus
+  priority: Priority
+  storyPoints?: number
+  originalEstimateMinutes?: number
+  remainingEstimateMinutes?: number
+  timeLoggedMinutes?: number
+  assigneeId?: string
+  sprintId?: string
 }
 
 export interface CreateUserDto {
