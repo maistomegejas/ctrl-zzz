@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchProjectById } from '../features/projectsSlice'
 import { fetchSprints, createSprint, deleteSprint, startSprint, completeSprint } from '../features/sprintsSlice'
-import { CreateSprintDto } from '../types'
+import { CreateSprintDto, Sprint } from '../types'
 
 export default function SprintsPage() {
   const { projectId } = useParams<{ projectId: string }>()
@@ -20,6 +20,9 @@ export default function SprintsPage() {
     endDate: '',
     projectId: projectId || '',
   })
+  const [startSprintModal, setStartSprintModal] = useState<Sprint | null>(null)
+  const [completeSprintModal, setCompleteSprintModal] = useState<Sprint | null>(null)
+  const [deleteSprintModal, setDeleteSprintModal] = useState<Sprint | null>(null)
 
   useEffect(() => {
     if (projectId) {
@@ -39,21 +42,24 @@ export default function SprintsPage() {
     setFormData({ name: '', goal: '', endDate: '', projectId: projectId || '' })
   }
 
-  const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this sprint?')) {
-      await dispatch(deleteSprint(id))
+  const confirmDelete = async () => {
+    if (deleteSprintModal) {
+      await dispatch(deleteSprint(deleteSprintModal.id))
+      setDeleteSprintModal(null)
     }
   }
 
-  const handleStart = async (id: string) => {
-    if (confirm('Start this sprint?')) {
-      await dispatch(startSprint(id))
+  const confirmStart = async () => {
+    if (startSprintModal) {
+      await dispatch(startSprint(startSprintModal.id))
+      setStartSprintModal(null)
     }
   }
 
-  const handleComplete = async (id: string) => {
-    if (confirm('Complete this sprint?')) {
-      await dispatch(completeSprint(id))
+  const confirmComplete = async () => {
+    if (completeSprintModal) {
+      await dispatch(completeSprint(completeSprintModal.id))
+      setCompleteSprintModal(null)
     }
   }
 
@@ -183,7 +189,7 @@ export default function SprintsPage() {
                 <div className="flex gap-2">
                   {!sprint.isActive && !sprint.isCompleted && (
                     <button
-                      onClick={() => handleStart(sprint.id)}
+                      onClick={() => setStartSprintModal(sprint)}
                       className="btn btn-success btn-sm"
                     >
                       Start
@@ -191,14 +197,14 @@ export default function SprintsPage() {
                   )}
                   {sprint.isActive && !sprint.isCompleted && (
                     <button
-                      onClick={() => handleComplete(sprint.id)}
+                      onClick={() => setCompleteSprintModal(sprint)}
                       className="btn btn-warning btn-sm"
                     >
                       Complete
                     </button>
                   )}
                   <button
-                    onClick={() => handleDelete(sprint.id)}
+                    onClick={() => setDeleteSprintModal(sprint)}
                     className="btn btn-error btn-sm"
                   >
                     Delete
@@ -213,6 +219,78 @@ export default function SprintsPage() {
       {sprints.length === 0 && !loading && (
         <div className="text-center py-16">
           <p className="text-lg text-base-content/60">No sprints yet. Create your first sprint!</p>
+        </div>
+      )}
+
+      {/* Start Sprint Modal */}
+      {startSprintModal && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg mb-4">Start Sprint</h3>
+            <p className="py-4">
+              Are you sure you want to start <span className="font-semibold">{startSprintModal.name}</span>?
+            </p>
+            <p className="text-sm text-base-content/60 mb-4">
+              This will mark the sprint as active and set the start date to now.
+            </p>
+            <div className="modal-action">
+              <button onClick={() => setStartSprintModal(null)} className="btn btn-ghost">
+                Cancel
+              </button>
+              <button onClick={confirmStart} className="btn btn-success">
+                Start Sprint
+              </button>
+            </div>
+          </div>
+          <div className="modal-backdrop" onClick={() => setStartSprintModal(null)}></div>
+        </div>
+      )}
+
+      {/* Complete Sprint Modal */}
+      {completeSprintModal && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg mb-4">Complete Sprint</h3>
+            <p className="py-4">
+              Are you sure you want to complete <span className="font-semibold">{completeSprintModal.name}</span>?
+            </p>
+            <p className="text-sm text-base-content/60 mb-4">
+              This will mark the sprint as completed. This action cannot be undone.
+            </p>
+            <div className="modal-action">
+              <button onClick={() => setCompleteSprintModal(null)} className="btn btn-ghost">
+                Cancel
+              </button>
+              <button onClick={confirmComplete} className="btn btn-warning">
+                Complete Sprint
+              </button>
+            </div>
+          </div>
+          <div className="modal-backdrop" onClick={() => setCompleteSprintModal(null)}></div>
+        </div>
+      )}
+
+      {/* Delete Sprint Modal */}
+      {deleteSprintModal && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg mb-4">Delete Sprint</h3>
+            <p className="py-4">
+              Are you sure you want to delete <span className="font-semibold">{deleteSprintModal.name}</span>?
+            </p>
+            <p className="text-sm text-error mb-4">
+              This action cannot be undone. All work items in this sprint will remain but will no longer be assigned to it.
+            </p>
+            <div className="modal-action">
+              <button onClick={() => setDeleteSprintModal(null)} className="btn btn-ghost">
+                Cancel
+              </button>
+              <button onClick={confirmDelete} className="btn btn-error">
+                Delete
+              </button>
+            </div>
+          </div>
+          <div className="modal-backdrop" onClick={() => setDeleteSprintModal(null)}></div>
         </div>
       )}
     </div>
