@@ -17,7 +17,7 @@
 ## Solution Structure
 
 ```
-src/
+backend/
 ├── CtrlZzz.Core/                      # Domain + Application
 │   ├── Entities/                      # Domain entities
 │   │   ├── BaseEntity.cs
@@ -495,7 +495,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins("http://localhost:3001")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -687,10 +687,10 @@ public class WorkItemConfiguration : IEntityTypeConfiguration<WorkItem>
 
 ```bash
 # Add migration
-dotnet ef migrations add InitialCreate --project src/CtrlZzz.Infrastructure --startup-project src/CtrlZzz.Web
+dotnet ef migrations add InitialCreate --project backend/CtrlZzz.Infrastructure --startup-project backend/CtrlZzz.Web
 
 # Update database
-dotnet ef database update --project src/CtrlZzz.Infrastructure --startup-project src/CtrlZzz.Web
+dotnet ef database update --project backend/CtrlZzz.Infrastructure --startup-project backend/CtrlZzz.Web
 ```
 
 ---

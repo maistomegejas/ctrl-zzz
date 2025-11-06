@@ -103,7 +103,7 @@ CTRL-ZZZ is a modern project management system inspired by Jira. The system allo
 
 ### Backend Structure
 ```
-src/
+backend/
 ├── CtrlZzz.Core/              # Domain + Application
 │   ├── Entities/              # Domain entities
 │   ├── Enums/                 # Enumerations
@@ -378,14 +378,121 @@ public abstract class BaseEntity
 
 ## Development Workflow
 
+**IMPORTANT FOR CLAUDE (AI ASSISTANT):**
+- **start-dev.ps1 auto-creates migrations and updates DB**
+- When you add/modify entities, just commit the code changes
+- User runs `start-dev.ps1` which auto-detects pending model changes, creates migrations, and applies to DB
+- User commits and pushes migration files themselves
+- DO NOT tell user to manually run `dotnet ef` commands
+- DO NOT manually create migrations yourself (dotnet not available in Claude's environment)
+
+### Workflow Steps:
+
 1. **Create entity** in Core/Entities
-2. **Add EF configuration** in Infrastructure/Data/Configurations
-3. **Create migration**: `dotnet ef migrations add MigrationName`
-4. **Create MediatR command/query** in Core/Features
-5. **Add validator** for command
+2. **Add EF configuration** in Infrastructure/Data/Configurations or ApplicationDbContext
+3. **Create MediatR command/query** in Core/Features
+4. **Add validator** for command
+5. **Write unit tests** for handlers and validators
 6. **Create controller endpoint** that calls MediatR
 7. **Frontend: Add Redux slice** and async thunks
 8. **Frontend: Create components** and hook up to Redux
+9. **Run tests**: `dotnet test` (must pass before commit)
+10. **Commit and push** entity changes to feature branch
+
+**User workflow after pulling:**
+- User runs `.\start-dev.ps1`
+- Script automatically:
+  1. Detects pending model changes
+  2. Creates migration with timestamp (if changes exist)
+  3. Applies migration to database
+- User commits and pushes migration files manually
+
+## Unit Testing (CRITICAL)
+
+**Unit tests are VERY IMPORTANT and MUST be written for all business logic.**
+
+### Test Project Structure
+```
+backend/
+├── CtrlZzz.Core.Tests/          # Tests for Core layer
+├── CtrlZzz.Infrastructure.Tests/ # Tests for Infrastructure
+└── CtrlZzz.Web.Tests/           # Integration tests for API
+```
+
+### Testing Requirements
+
+1. **Separate test projects** - DO NOT mix tests with source code
+2. **Run tests BEFORE every commit** - Tests must pass before pushing
+3. **Test coverage for**:
+   - MediatR command/query handlers
+   - Validators
+   - Domain entity logic
+   - Repository implementations
+   - API endpoints (integration tests)
+
+### Testing Stack
+- **xUnit** - Test framework
+- **Moq** - Mocking library
+- **FluentAssertions** - Assertion library
+- **AutoFixture** - Test data generation
+
+### Pre-Commit Checklist
+```bash
+# Run all tests
+dotnet test
+
+# Only commit if all tests pass
+git add -A
+git commit -m "Your message"
+git push
+```
+
+**NEVER commit code without running tests first.**
+
+## Git Workflow (IMPORTANT)
+
+**ALWAYS push changes to a feature branch, NEVER directly to main.**
+
+### Branch Naming Convention
+All feature branches MUST follow this pattern:
+```
+claude/<feature-name>-<session-id>
+```
+
+Example: `claude/dice-roll-setup-011CUpMxvoWCSRdtoGde9Z5x`
+
+### Workflow Steps
+
+1. **Create feature branch** from main:
+```bash
+git checkout -b claude/<feature-name>-011CUpMxvoWCSRdtoGde9Z5x
+```
+
+2. **Make changes and commit**:
+```bash
+git add -A
+git commit -m "Descriptive commit message"
+```
+
+3. **Push to remote feature branch** (REQUIRED after every change):
+```bash
+git push -u origin claude/<feature-name>-011CUpMxvoWCSRdtoGde9Z5x
+```
+
+4. **User merges to main** via Pull Request or manually
+
+5. **Delete feature branch** after merge:
+```bash
+git branch -d claude/<feature-name>-011CUpMxvoWCSRdtoGde9Z5x
+git push origin --delete claude/<feature-name>-011CUpMxvoWCSRdtoGde9Z5x
+```
+
+### Important Notes
+- ❌ NEVER push directly to `main` - it will fail with 403 error
+- ✅ ALWAYS push to `claude/*-sessionId` branches
+- ✅ Push to remote after EVERY significant change
+- ✅ This makes changes visible on GitHub immediately
+- User handles merging to main and branch cleanup
 
 ## Docker Setup
 
@@ -401,7 +508,7 @@ services:
       - "1433:1433"
 
   api:
-    build: ./src/CtrlZzz.Web
+    build: ./backend/CtrlZzz.Web
     ports:
       - "5000:80"
     environment:
@@ -412,23 +519,25 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "5173:5173"
+      - "3001:3001"
     depends_on:
       - api
 ```
 
 ## Next Steps (Focus on Jira Clone)
 
-1. Setup solution structure
-2. Create domain entities
+1. ✅ Setup solution structure
+2. ✅ Create domain entities
 3. Setup EF Core + migrations
-4. Implement auth with JWT
-5. Create first MediatR handlers (Projects CRUD)
-6. Setup React + Redux + DaisyUI
-7. Create basic UI components
-8. Implement boards with drag & drop
-9. Complete all Jira features (sprints, work items, etc.)
-10. **LATER:** Add AI features and SignalR real-time updates
+4. Setup unit test projects (xUnit)
+5. Implement auth with JWT
+6. Create first MediatR handlers (Projects CRUD)
+7. Write unit tests for handlers and validators
+8. Setup React + Redux + DaisyUI
+9. Create basic UI components
+10. Implement boards with drag & drop
+11. Complete all Jira features (sprints, work items, etc.)
+12. **LATER:** Add AI features and SignalR real-time updates
 
 ---
 
