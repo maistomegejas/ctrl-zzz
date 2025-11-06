@@ -4,7 +4,6 @@ using CtrlZzz.Core.Features.Users.DTOs;
 using CtrlZzz.Core.Interfaces;
 using FluentResults;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace CtrlZzz.Core.Features.Auth.Commands.Login;
 
