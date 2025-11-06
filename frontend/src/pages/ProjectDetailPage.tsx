@@ -62,6 +62,26 @@ export default function ProjectDetailPage() {
     }
   }, [id, dispatch, users])
 
+  // Load all comments for all work items
+  useEffect(() => {
+    const loadAllComments = async () => {
+      const commentsMap: Record<string, Comment[]> = {}
+      for (const item of workItems) {
+        try {
+          const response = await commentService.getAll(item.id)
+          commentsMap[item.id] = response.data
+        } catch (error) {
+          console.error(`Failed to fetch comments for work item ${item.id}:`, error)
+        }
+      }
+      setComments(commentsMap)
+    }
+
+    if (workItems.length > 0) {
+      loadAllComments()
+    }
+  }, [workItems.length])
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
     await dispatch(createWorkItem({ ...formData, projectId: id! }))
@@ -194,9 +214,9 @@ export default function ProjectDetailPage() {
 
       {selectedProject && (
         <div className="mb-8">
-          <div className="flex items-center gap-4 mb-2">
+          <div className="flex items-center gap-4 mb-2 flex-wrap">
             <h1 className="text-4xl font-bold">{selectedProject.name}</h1>
-            <div className="badge badge-lg badge-secondary">{selectedProject.key}</div>
+            <div className="badge badge-lg badge-secondary whitespace-nowrap">{selectedProject.key}</div>
           </div>
           {selectedProject.description && (
             <p className="text-base-content/70">{selectedProject.description}</p>
