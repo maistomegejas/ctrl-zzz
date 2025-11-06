@@ -66,6 +66,31 @@ export default function Sidebar() {
           My Issues
         </Link>
 
+        <Link
+          to="/backlog"
+          className={`flex items-center gap-3 px-3 py-2 rounded-lg mb-1 transition-colors ${
+            isActive('/backlog')
+              ? 'bg-blue-50 text-blue-600 font-medium'
+              : 'text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 10h16M4 14h16M4 18h16"
+            />
+          </svg>
+          Backlog
+        </Link>
+
         <div className="mt-6 px-3">
           <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
             Resources
