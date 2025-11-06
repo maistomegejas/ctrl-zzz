@@ -57,12 +57,12 @@ public class ApplicationDbContext : DbContext
             entity.HasOne(e => e.Assignee)
                 .WithMany(e => e.AssignedWorkItems)
                 .HasForeignKey(e => e.AssigneeId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(e => e.Reporter)
                 .WithMany()
                 .HasForeignKey(e => e.ReporterId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(e => e.Parent)
                 .WithMany(e => e.Children)
@@ -101,7 +101,7 @@ public class ApplicationDbContext : DbContext
             entity.HasOne(e => e.User)
                 .WithMany()
                 .HasForeignKey(e => e.UserId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 
