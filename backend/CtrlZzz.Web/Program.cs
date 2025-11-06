@@ -1,6 +1,7 @@
 using CtrlZzz.Core.Interfaces;
 using CtrlZzz.Infrastructure.Data;
 using CtrlZzz.Infrastructure.Repositories;
+using CtrlZzz.Infrastructure.Services;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +23,9 @@ builder.Services.AddValidatorsFromAssembly(typeof(CtrlZzz.Core.Entities.BaseEnti
 
 // Add Repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+// Add JWT Service
+builder.Services.AddScoped<IJwtService, JwtService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
