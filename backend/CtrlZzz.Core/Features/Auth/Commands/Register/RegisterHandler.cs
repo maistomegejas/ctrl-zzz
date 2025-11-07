@@ -10,11 +10,19 @@ namespace CtrlZzz.Core.Features.Auth.Commands.Register;
 public class RegisterHandler : IRequestHandler<RegisterCommand, Result<AuthResponseDto>>
 {
     private readonly IRepository<User> _userRepository;
+    private readonly IRepository<Role> _roleRepository;
+    private readonly IRepository<UserRole> _userRoleRepository;
     private readonly IJwtService _jwtService;
 
-    public RegisterHandler(IRepository<User> userRepository, IJwtService jwtService)
+    public RegisterHandler(
+        IRepository<User> userRepository,
+        IRepository<Role> roleRepository,
+        IRepository<UserRole> userRoleRepository,
+        IJwtService jwtService)
     {
         _userRepository = userRepository;
+        _roleRepository = roleRepository;
+        _userRoleRepository = userRoleRepository;
         _jwtService = jwtService;
     }
 
@@ -40,6 +48,23 @@ public class RegisterHandler : IRequestHandler<RegisterCommand, Result<AuthRespo
         };
 
         await _userRepository.AddAsync(user, cancellationToken);
+
+        // Assign Viewer role to new users by default
+        var allRoles = await _roleRepository.GetAllAsync(cancellationToken);
+        var viewerRole = allRoles.FirstOrDefault(r => r.Name == "Viewer" && !r.IsDeleted);
+
+        if (viewerRole != null)
+        {
+            var userRole = new UserRole
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                RoleId = viewerRole.Id,
+                CreatedAt = DateTime.UtcNow,
+                IsDeleted = false
+            };
+            await _userRoleRepository.AddAsync(userRole, cancellationToken);
+        }
 
         // Generate tokens
         var token = _jwtService.GenerateToken(user);

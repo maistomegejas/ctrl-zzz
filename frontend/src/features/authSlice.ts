@@ -6,6 +6,8 @@ interface AuthState {
   user: User | null
   token: string | null
   refreshToken: string | null
+  permissions: string[]
+  roles: string[]
   loading: boolean
   error: string | null
 }
@@ -14,9 +16,16 @@ const initialState: AuthState = {
   user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
   token: localStorage.getItem('token'),
   refreshToken: localStorage.getItem('refreshToken'),
+  permissions: localStorage.getItem('permissions') ? JSON.parse(localStorage.getItem('permissions')!) : [],
+  roles: localStorage.getItem('roles') ? JSON.parse(localStorage.getItem('roles')!) : [],
   loading: false,
   error: null,
 }
+
+export const fetchCurrentUser = createAsyncThunk('auth/fetchCurrentUser', async () => {
+  const response = await authService.getCurrentUser()
+  return response.data
+})
 
 export const login = createAsyncThunk('auth/login', async (credentials: LoginDto) => {
   const response = await authService.login(credentials)
@@ -36,9 +45,13 @@ const authSlice = createSlice({
       state.user = null
       state.token = null
       state.refreshToken = null
+      state.permissions = []
+      state.roles = []
       localStorage.removeItem('user')
       localStorage.removeItem('token')
       localStorage.removeItem('refreshToken')
+      localStorage.removeItem('permissions')
+      localStorage.removeItem('roles')
     },
     setCredentials: (state, action: PayloadAction<{ user: User; token: string; refreshToken: string }>) => {
       state.user = action.payload.user
@@ -84,6 +97,12 @@ const authSlice = createSlice({
       .addCase(register.rejected, (state, action) => {
         state.loading = false
         state.error = action.error.message || 'Registration failed'
+      })
+      .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+        state.permissions = action.payload.permissions
+        state.roles = action.payload.roles
+        localStorage.setItem('permissions', JSON.stringify(action.payload.permissions))
+        localStorage.setItem('roles', JSON.stringify(action.payload.roles))
       })
   },
 })

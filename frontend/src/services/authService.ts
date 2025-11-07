@@ -8,4 +8,6 @@ export const authService = {
 
   refresh: (refreshToken: string) =>
     api.post<AuthResponse>('/auth/refresh', { refreshToken }),
+
+  getCurrentUser: () => api.get<{ userId: string; email: string; permissions: string[]; roles: string[] }>('/auth/me'),
 }

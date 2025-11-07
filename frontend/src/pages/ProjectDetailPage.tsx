@@ -7,6 +7,7 @@ import { fetchSprints } from '../features/sprintsSlice'
 import { fetchUsers } from '../features/usersSlice'
 import { CreateWorkItemDto, UpdateWorkItemDto, WorkItem, WorkItemType, Priority, WorkItemStatus, Comment } from '../types'
 import { commentService } from '../services/commentService'
+import ConfirmModal from '../components/ConfirmModal'
 
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -49,6 +50,19 @@ export default function ProjectDetailPage() {
   const [comments, setComments] = useState<Record<string, Comment[]>>({})
   const [expandedComments, setExpandedComments] = useState<Record<string, boolean>>({})
   const [newCommentContent, setNewCommentContent] = useState<Record<string, string>>({})
+  const [deleteWorkItemConfirm, setDeleteWorkItemConfirm] = useState<{ show: boolean; workItemId: string | null }>({
+    show: false,
+    workItemId: null,
+  })
+  const [deleteCommentConfirm, setDeleteCommentConfirm] = useState<{
+    show: boolean
+    workItemId: string | null
+    commentId: string | null
+  }>({
+    show: false,
+    workItemId: null,
+    commentId: null,
+  })
 
   useEffect(() => {
     if (id) {
@@ -126,10 +140,19 @@ export default function ProjectDetailPage() {
     }
   }
 
-  const handleDelete = async (workItemId: string) => {
-    if (confirm('Are you sure you want to delete this work item?')) {
-      await dispatch(deleteWorkItem(workItemId))
+  const handleDeleteClick = (workItemId: string) => {
+    setDeleteWorkItemConfirm({ show: true, workItemId })
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (deleteWorkItemConfirm.workItemId) {
+      await dispatch(deleteWorkItem(deleteWorkItemConfirm.workItemId))
     }
+    setDeleteWorkItemConfirm({ show: false, workItemId: null })
+  }
+
+  const handleDeleteCancel = () => {
+    setDeleteWorkItemConfirm({ show: false, workItemId: null })
   }
 
   const toggleComments = async (workItemId: string) => {
@@ -161,16 +184,27 @@ export default function ProjectDetailPage() {
     }
   }
 
-  const handleDeleteComment = async (workItemId: string, commentId: string) => {
-    if (!confirm('Are you sure you want to delete this comment?')) return
+  const handleDeleteCommentClick = (workItemId: string, commentId: string) => {
+    setDeleteCommentConfirm({ show: true, workItemId, commentId })
+  }
 
-    try {
-      await commentService.delete(commentId)
-      const updatedComments = comments[workItemId].filter(c => c.id !== commentId)
-      setComments({ ...comments, [workItemId]: updatedComments })
-    } catch (error) {
-      console.error('Failed to delete comment:', error)
+  const handleDeleteCommentConfirm = async () => {
+    if (deleteCommentConfirm.commentId && deleteCommentConfirm.workItemId) {
+      try {
+        await commentService.delete(deleteCommentConfirm.commentId)
+        const updatedComments = comments[deleteCommentConfirm.workItemId].filter(
+          (c) => c.id !== deleteCommentConfirm.commentId
+        )
+        setComments({ ...comments, [deleteCommentConfirm.workItemId]: updatedComments })
+      } catch (error) {
+        console.error('Failed to delete comment:', error)
+      }
     }
+    setDeleteCommentConfirm({ show: false, workItemId: null, commentId: null })
+  }
+
+  const handleDeleteCommentCancel = () => {
+    setDeleteCommentConfirm({ show: false, workItemId: null, commentId: null })
   }
 
   const getStatusLabel = (status: WorkItemStatus) => {
@@ -619,7 +653,7 @@ export default function ProjectDetailPage() {
                   <button onClick={() => handleEdit(item)} className="btn btn-primary btn-sm">
                     Edit
                   </button>
-                  <button onClick={() => handleDelete(item.id)} className="btn btn-error btn-sm">
+                  <button onClick={() => handleDeleteClick(item.id)} className="btn btn-error btn-sm">
                     Delete
                   </button>
                 </div>
@@ -652,7 +686,7 @@ export default function ProjectDetailPage() {
                             <p className="text-sm">{comment.content}</p>
                           </div>
                           <button
-                            onClick={() => handleDeleteComment(item.id, comment.id)}
+                            onClick={() => handleDeleteCommentClick(item.id, comment.id)}
                             className="btn btn-ghost btn-xs"
                           >
                             ✕
@@ -695,6 +729,26 @@ export default function ProjectDetailPage() {
           <p className="text-lg text-base-content/60">No work items yet. Create your first work item!</p>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={deleteWorkItemConfirm.show}
+        title="Delete Work Item"
+        message="Are you sure you want to delete this work item? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+      />
+
+      <ConfirmModal
+        isOpen={deleteCommentConfirm.show}
+        title="Delete Comment"
+        message="Are you sure you want to delete this comment? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDeleteCommentConfirm}
+        onCancel={handleDeleteCommentCancel}
+      />
     </div>
   )
 }

@@ -644,6 +644,7 @@ public class ApplicationDbContext : DbContext
             new { Id = GenerateDeterministicGuid("perm-projects-create"), Name = "Projects.Create", Description = "Create projects", Resource = "Projects", Action = "Create" },
             new { Id = GenerateDeterministicGuid("perm-projects-edit"), Name = "Projects.Edit", Description = "Edit projects", Resource = "Projects", Action = "Edit" },
             new { Id = GenerateDeterministicGuid("perm-projects-delete"), Name = "Projects.Delete", Description = "Delete projects", Resource = "Projects", Action = "Delete" },
+            new { Id = GenerateDeterministicGuid("perm-projects-viewall"), Name = "Projects.ViewAll", Description = "View all projects", Resource = "Projects", Action = "ViewAll" },
             new { Id = GenerateDeterministicGuid("perm-projects-members"), Name = "Projects.ManageMembers", Description = "Manage project members", Resource = "Projects", Action = "ManageMembers" },
             new { Id = GenerateDeterministicGuid("perm-workitems-create"), Name = "WorkItems.Create", Description = "Create work items", Resource = "WorkItems", Action = "Create" },
             new { Id = GenerateDeterministicGuid("perm-workitems-edit"), Name = "WorkItems.Edit", Description = "Edit work items", Resource = "WorkItems", Action = "Edit" },
@@ -678,6 +679,7 @@ public class ApplicationDbContext : DbContext
             (adminRoleId, GenerateDeterministicGuid("perm-projects-create")),
             (adminRoleId, GenerateDeterministicGuid("perm-projects-edit")),
             (adminRoleId, GenerateDeterministicGuid("perm-projects-delete")),
+            (adminRoleId, GenerateDeterministicGuid("perm-projects-viewall")),
             (adminRoleId, GenerateDeterministicGuid("perm-projects-members")),
             (adminRoleId, GenerateDeterministicGuid("perm-workitems-create")),
             (adminRoleId, GenerateDeterministicGuid("perm-workitems-edit")),
@@ -690,6 +692,7 @@ public class ApplicationDbContext : DbContext
             (pmRoleId, GenerateDeterministicGuid("perm-users-view")), // View users
             (pmRoleId, GenerateDeterministicGuid("perm-projects-create")), // Create projects
             (pmRoleId, GenerateDeterministicGuid("perm-projects-edit")), // Edit projects
+            (pmRoleId, GenerateDeterministicGuid("perm-projects-viewall")), // View all projects
             (pmRoleId, GenerateDeterministicGuid("perm-projects-members")), // Manage members
             (pmRoleId, GenerateDeterministicGuid("perm-workitems-create")), // Create work items
             (pmRoleId, GenerateDeterministicGuid("perm-workitems-edit")), // Edit work items

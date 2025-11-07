@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchProjects, createProject, deleteProject } from '../features/projectsSlice'
 import { CreateProjectDto } from '../types'
+import ConfirmModal from '../components/ConfirmModal'
 
 export default function ProjectsPage() {
   const dispatch = useAppDispatch()
@@ -16,6 +17,10 @@ export default function ProjectsPage() {
     description: '',
     ownerId: '',
   })
+  const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; projectId: string | null }>({
+    show: false,
+    projectId: null,
+  })
 
   useEffect(() => {
     dispatch(fetchProjects())
@@ -28,10 +33,19 @@ export default function ProjectsPage() {
     setFormData({ name: '', key: '', description: '', ownerId: '' })
   }
 
-  const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this project?')) {
-      await dispatch(deleteProject(id))
+  const handleDeleteClick = (id: string) => {
+    setDeleteConfirm({ show: true, projectId: id })
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (deleteConfirm.projectId) {
+      await dispatch(deleteProject(deleteConfirm.projectId))
     }
+    setDeleteConfirm({ show: false, projectId: null })
+  }
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirm({ show: false, projectId: null })
   }
 
   return (
@@ -205,7 +219,7 @@ export default function ProjectsPage() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
-                        handleDelete(project.id)
+                        handleDeleteClick(project.id)
                       }}
                       className="text-xs text-red-600 hover:text-red-800 font-medium"
                     >
@@ -218,6 +232,16 @@ export default function ProjectsPage() {
           </div>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={deleteConfirm.show}
+        title="Delete Project"
+        message="Are you sure you want to delete this project? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+      />
     </div>
   )
 }

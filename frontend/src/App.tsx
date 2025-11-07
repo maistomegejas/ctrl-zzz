@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useEffect } from 'react'
 import ProjectsPage from './pages/ProjectsPage'
 import ProjectDetailPage from './pages/ProjectDetailPage'
 import SprintsPage from './pages/SprintsPage'
@@ -11,7 +12,8 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import AdminPanel from './pages/AdminPanel'
 import Sidebar from './components/Sidebar'
-import { useAppSelector } from './store/hooks'
+import { useAppSelector, useAppDispatch } from './store/hooks'
+import { fetchCurrentUser } from './features/authSlice'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { token } = useAppSelector((state) => state.auth)
@@ -20,6 +22,13 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 
 function App() {
   const { token } = useAppSelector((state) => state.auth)
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchCurrentUser())
+    }
+  }, [token, dispatch])
 
   return (
     <BrowserRouter>

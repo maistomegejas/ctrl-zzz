@@ -4,4 +4,4 @@ using MediatR;
 
 namespace CtrlZzz.Core.Features.Projects.Queries.GetProjects;
 
-public record GetProjectsQuery() : IRequest<Result<List<ProjectDto>>>;
+public record GetProjectsQuery(Guid UserId) : IRequest<Result<List<ProjectDto>>>;

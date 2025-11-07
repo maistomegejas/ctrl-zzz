@@ -4,6 +4,7 @@ using CtrlZzz.Core.Features.Projects.Commands.UpdateProject;
 using CtrlZzz.Core.Features.Projects.DTOs;
 using CtrlZzz.Core.Features.Projects.Queries.GetProject;
 using CtrlZzz.Core.Features.Projects.Queries.GetProjects;
+using CtrlZzz.Core.Interfaces;
 using CtrlZzz.Web.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -17,17 +18,24 @@ namespace CtrlZzz.Web.Controllers;
 public class ProjectsController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ICurrentUserService _currentUserService;
 
-    public ProjectsController(IMediator mediator)
+    public ProjectsController(IMediator mediator, ICurrentUserService currentUserService)
     {
         _mediator = mediator;
+        _currentUserService = currentUserService;
     }
 
     [HttpGet]
-    [AllowAnonymous]
     public async Task<IActionResult> GetAll()
     {
-        var result = await _mediator.Send(new GetProjectsQuery());
+        var userId = _currentUserService.GetCurrentUserId();
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var result = await _mediator.Send(new GetProjectsQuery(userId.Value));
 
         return result.IsSuccess
             ? Ok(result.Value)
