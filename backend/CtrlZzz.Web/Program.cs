@@ -2,8 +2,13 @@ using CtrlZzz.Core.Interfaces;
 using CtrlZzz.Infrastructure.Data;
 using CtrlZzz.Infrastructure.Repositories;
 using CtrlZzz.Infrastructure.Services;
+using CtrlZzz.Web.Authorization;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +33,36 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
+
+// Add JWT Authentication
+var jwtKey = builder.Configuration["JwtSettings:SecretKey"] ?? "your-super-secret-key-change-this-in-production-min-32-chars";
+var jwtIssuer = builder.Configuration["JwtSettings:Issuer"] ?? "CtrlZzz";
+var jwtAudience = builder.Configuration["JwtSettings:Audience"] ?? "CtrlZzz";
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+    };
+});
+
+// Add custom authorization with permission-based policies
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -51,6 +86,10 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseCors();
+
+// Authentication and Authorization
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Health check endpoint
 app.MapGet("/api/health", () => new

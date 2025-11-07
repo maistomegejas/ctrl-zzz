@@ -5,13 +5,16 @@ using CtrlZzz.Core.Features.WorkItems.Commands.UpdateWorkItem;
 using CtrlZzz.Core.Features.WorkItems.DTOs;
 using CtrlZzz.Core.Features.WorkItems.Queries.GetWorkItem;
 using CtrlZzz.Core.Features.WorkItems.Queries.GetWorkItems;
+using CtrlZzz.Web.Authorization;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CtrlZzz.Web.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class WorkItemsController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -22,6 +25,7 @@ public class WorkItemsController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetAll(
         [FromQuery] Guid? projectId = null,
         [FromQuery] WorkItemStatus? status = null,
@@ -35,6 +39,7 @@ public class WorkItemsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _mediator.Send(new GetWorkItemQuery(id));
@@ -45,6 +50,7 @@ public class WorkItemsController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("WorkItems.Create")]
     public async Task<IActionResult> Create([FromBody] CreateWorkItemDto dto)
     {
         var command = new CreateWorkItemCommand(
@@ -68,6 +74,7 @@ public class WorkItemsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [RequirePermission("WorkItems.Edit")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateWorkItemDto dto)
     {
         var command = new UpdateWorkItemCommand(
@@ -93,6 +100,7 @@ public class WorkItemsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [RequirePermission("WorkItems.Delete")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await _mediator.Send(new DeleteWorkItemCommand(id));

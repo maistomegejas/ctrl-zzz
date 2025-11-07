@@ -4,13 +4,16 @@ using CtrlZzz.Core.Features.Projects.Commands.UpdateProject;
 using CtrlZzz.Core.Features.Projects.DTOs;
 using CtrlZzz.Core.Features.Projects.Queries.GetProject;
 using CtrlZzz.Core.Features.Projects.Queries.GetProjects;
+using CtrlZzz.Web.Authorization;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CtrlZzz.Web.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ProjectsController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -21,6 +24,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetAll()
     {
         var result = await _mediator.Send(new GetProjectsQuery());
@@ -31,6 +35,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _mediator.Send(new GetProjectQuery(id));
@@ -41,6 +46,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("Projects.Create")]
     public async Task<IActionResult> Create([FromBody] CreateProjectDto dto)
     {
         var command = new CreateProjectCommand(dto.Name, dto.Key, dto.Description, dto.OwnerId);
@@ -52,6 +58,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [RequirePermission("Projects.Edit")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProjectDto dto)
     {
         var command = new UpdateProjectCommand(id, dto.Name, dto.Description);
@@ -63,6 +70,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [RequirePermission("Projects.Delete")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await _mediator.Send(new DeleteProjectCommand(id));

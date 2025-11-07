@@ -2,13 +2,16 @@ using CtrlZzz.Core.Features.Comments.Commands.CreateComment;
 using CtrlZzz.Core.Features.Comments.Commands.DeleteComment;
 using CtrlZzz.Core.Features.Comments.DTOs;
 using CtrlZzz.Core.Features.Comments.Queries.GetComments;
+using CtrlZzz.Web.Authorization;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CtrlZzz.Web.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CommentsController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -19,6 +22,7 @@ public class CommentsController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetAll([FromQuery] Guid workItemId)
     {
         var result = await _mediator.Send(new GetCommentsQuery(workItemId));
@@ -29,6 +33,7 @@ public class CommentsController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("Comments.Create")]
     public async Task<IActionResult> Create([FromBody] CreateCommentDto dto)
     {
         var command = new CreateCommentCommand(
@@ -44,6 +49,7 @@ public class CommentsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [RequirePermission("Comments.Create")] // Reuse same permission for simplicity
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await _mediator.Send(new DeleteCommentCommand(id));
