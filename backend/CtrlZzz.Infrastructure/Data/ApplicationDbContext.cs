@@ -699,7 +699,7 @@ public class ApplicationDbContext : DbContext
         {
             modelBuilder.Entity<RolePermission>().HasData(new RolePermission
             {
-                Id = Guid.Parse($"rrrrrrrr-rrrr-rrrr-rrrr-rrrrrrrrrr{rpIndex:D2}"),
+                Id = Guid.Parse($"rrrrrrrr-rrrr-rrrr-rrrr-rrrrrrrrrr{rpIndex:X2}"),
                 RoleId = roleId,
                 PermissionId = permId,
                 CreatedAt = DateTime.UtcNow,
