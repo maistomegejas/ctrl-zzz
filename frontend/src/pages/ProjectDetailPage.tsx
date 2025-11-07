@@ -274,6 +274,12 @@ export default function ProjectDetailPage() {
             >
               Manage Sprints
             </button>
+            <button
+              onClick={() => navigate(`/projects/${id}/settings`)}
+              className="btn btn-outline btn-sm"
+            >
+              ⚙️ Settings
+            </button>
           </div>
         </div>
       )}

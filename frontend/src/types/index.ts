@@ -40,6 +40,15 @@ export interface Project {
   updatedAt?: string
 }
 
+export interface ProjectMember {
+  id: string
+  projectId: string
+  userId: string
+  userName: string
+  userEmail: string
+  createdAt: string
+}
+
 export interface WorkItem {
   id: string
   title: string

@@ -1,8 +1,11 @@
+using CtrlZzz.Core.Features.Projects.Commands.AddProjectMember;
 using CtrlZzz.Core.Features.Projects.Commands.CreateProject;
 using CtrlZzz.Core.Features.Projects.Commands.DeleteProject;
+using CtrlZzz.Core.Features.Projects.Commands.RemoveProjectMember;
 using CtrlZzz.Core.Features.Projects.Commands.UpdateProject;
 using CtrlZzz.Core.Features.Projects.DTOs;
 using CtrlZzz.Core.Features.Projects.Queries.GetProject;
+using CtrlZzz.Core.Features.Projects.Queries.GetProjectMembers;
 using CtrlZzz.Core.Features.Projects.Queries.GetProjects;
 using CtrlZzz.Core.Interfaces;
 using CtrlZzz.Web.Authorization;
@@ -85,6 +88,39 @@ public class ProjectsController : ControllerBase
 
         return result.IsSuccess
             ? NoContent()
+            : NotFound(result.Errors);
+    }
+
+    // Project Member Management
+    [HttpGet("{id}/members")]
+    public async Task<IActionResult> GetMembers(Guid id)
+    {
+        var result = await _mediator.Send(new GetProjectMembersQuery(id));
+
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : BadRequest(result.Errors);
+    }
+
+    [HttpPost("{id}/members/{userId}")]
+    [RequirePermission("Projects.ManageMembers")]
+    public async Task<IActionResult> AddMember(Guid id, Guid userId)
+    {
+        var result = await _mediator.Send(new AddProjectMemberCommand(id, userId));
+
+        return result.IsSuccess
+            ? Ok()
+            : BadRequest(result.Errors);
+    }
+
+    [HttpDelete("{id}/members/{userId}")]
+    [RequirePermission("Projects.ManageMembers")]
+    public async Task<IActionResult> RemoveMember(Guid id, Guid userId)
+    {
+        var result = await _mediator.Send(new RemoveProjectMemberCommand(id, userId));
+
+        return result.IsSuccess
+            ? Ok()
             : NotFound(result.Errors);
     }
 }

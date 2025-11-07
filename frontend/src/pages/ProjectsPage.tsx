@@ -9,6 +9,11 @@ export default function ProjectsPage() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const { projects, loading, error } = useAppSelector((state) => state.projects)
+  const { permissions } = useAppSelector((state) => state.auth)
+
+  const hasPermission = (permission: string) => {
+    return permissions.includes(permission)
+  }
 
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [formData, setFormData] = useState<CreateProjectDto>({
@@ -56,12 +61,14 @@ export default function ProjectsPage() {
             <h1 className="text-2xl font-semibold text-gray-900">Projects</h1>
             <p className="text-sm text-gray-500 mt-1">Manage and organize your projects</p>
           </div>
-          <button
-            onClick={() => setShowCreateForm(!showCreateForm)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors"
-          >
-            {showCreateForm ? 'Cancel' : 'Create project'}
-          </button>
+          {hasPermission('Projects.Create') && (
+            <button
+              onClick={() => setShowCreateForm(!showCreateForm)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors"
+            >
+              {showCreateForm ? 'Cancel' : 'Create project'}
+            </button>
+          )}
         </div>
       </div>
 
@@ -216,15 +223,17 @@ export default function ProjectsPage() {
                     <span className="text-xs text-gray-500">
                       {new Date(project.createdAt).toLocaleDateString()}
                     </span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleDeleteClick(project.id)
-                      }}
-                      className="text-xs text-red-600 hover:text-red-800 font-medium"
-                    >
-                      Delete
-                    </button>
+                    {hasPermission('Projects.Delete') && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleDeleteClick(project.id)
+                        }}
+                        className="text-xs text-red-600 hover:text-red-800 font-medium"
+                      >
+                        Delete
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
