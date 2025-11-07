@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CtrlZzz.Infrastructure.Services;
 
-public class AuthorizationService : IAuthorizationService
+public class PermissionService : IPermissionService
 {
     private readonly ApplicationDbContext _context;
 
-    public AuthorizationService(ApplicationDbContext context)
+    public PermissionService(ApplicationDbContext context)
     {
         _context = context;
     }

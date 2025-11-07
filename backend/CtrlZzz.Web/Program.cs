@@ -33,7 +33,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
 
 // Add JWT Authentication
 var jwtKey = builder.Configuration["JwtSettings:SecretKey"] ?? "your-super-secret-key-change-this-in-production-min-32-chars";

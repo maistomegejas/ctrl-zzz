@@ -6,11 +6,11 @@ namespace CtrlZzz.Web.Authorization;
 
 public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
 {
-    private readonly IAuthorizationService _authorizationService;
+    private readonly IPermissionService _permissionService;
 
-    public PermissionAuthorizationHandler(IAuthorizationService authorizationService)
+    public PermissionAuthorizationHandler(IPermissionService permissionService)
     {
-        _authorizationService = authorizationService;
+        _permissionService = permissionService;
     }
 
     protected override async Task HandleRequirementAsync(
@@ -24,7 +24,7 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
             return;
         }
 
-        var hasPermission = await _authorizationService.HasPermissionAsync(userId, requirement.Permission);
+        var hasPermission = await _permissionService.HasPermissionAsync(userId, requirement.Permission);
 
         if (hasPermission)
         {
