@@ -28,28 +28,28 @@ export interface UserWithRoles extends User {
 
 export const adminService = {
   // User management
-  getAllUsers: () => api.get<User[]>('/api/admin/users'),
+  getAllUsers: () => api.get<User[]>('/admin/users'),
 
-  getUserById: (userId: string) => api.get<UserWithRoles>(`/api/admin/users/${userId}`),
+  getUserById: (userId: string) => api.get<UserWithRoles>(`/admin/users/${userId}`),
 
   assignRoleToUser: (userId: string, roleId: string) =>
-    api.post(`/api/admin/users/${userId}/roles/${roleId}`),
+    api.post(`/admin/users/${userId}/roles/${roleId}`),
 
   removeRoleFromUser: (userId: string, roleId: string) =>
-    api.delete(`/api/admin/users/${userId}/roles/${roleId}`),
+    api.delete(`/admin/users/${userId}/roles/${roleId}`),
 
   // Role management
-  getAllRoles: () => api.get<Role[]>('/api/admin/roles'),
+  getAllRoles: () => api.get<Role[]>('/admin/roles'),
 
   getRolePermissions: (roleId: string) =>
-    api.get<Permission[]>(`/api/admin/roles/${roleId}/permissions`),
+    api.get<Permission[]>(`/admin/roles/${roleId}/permissions`),
 
   // Permission management
-  getAllPermissions: () => api.get<Permission[]>('/api/admin/permissions'),
+  getAllPermissions: () => api.get<Permission[]>('/admin/permissions'),
 
   assignPermissionToRole: (roleId: string, permissionId: string) =>
-    api.post(`/api/admin/roles/${roleId}/permissions/${permissionId}`),
+    api.post(`/admin/roles/${roleId}/permissions/${permissionId}`),
 
   removePermissionFromRole: (roleId: string, permissionId: string) =>
-    api.delete(`/api/admin/roles/${roleId}/permissions/${permissionId}`),
+    api.delete(`/admin/roles/${roleId}/permissions/${permissionId}`),
 };
