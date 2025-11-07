@@ -13,6 +13,9 @@ export default function AdminPanel() {
   const [rolePermissions, setRolePermissions] = useState<Permission[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showCreateRole, setShowCreateRole] = useState(false);
+  const [newRoleName, setNewRoleName] = useState('');
+  const [newRoleDescription, setNewRoleDescription] = useState('');
 
   // Load initial data
   useEffect(() => {
@@ -115,6 +118,24 @@ export default function AdminPanel() {
       setError(null);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to remove permission');
+    }
+  };
+
+  const handleCreateRole = async () => {
+    if (!newRoleName.trim()) {
+      setError('Role name is required');
+      return;
+    }
+
+    try {
+      await adminService.createRole(newRoleName, newRoleDescription);
+      await loadRoles();
+      setShowCreateRole(false);
+      setNewRoleName('');
+      setNewRoleDescription('');
+      setError(null);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to create role');
     }
   };
 
@@ -246,7 +267,64 @@ export default function AdminPanel() {
           {/* Roles List */}
           <div className="card bg-base-100 shadow-xl">
             <div className="card-body">
-              <h2 className="card-title">All Roles</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="card-title">All Roles</h2>
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={() => setShowCreateRole(true)}
+                >
+                  + Create Role
+                </button>
+              </div>
+
+              {showCreateRole && (
+                <div className="mb-4 p-4 bg-base-200 rounded-lg">
+                  <h3 className="font-bold mb-2">Create New Role</h3>
+                  <div className="form-control mb-2">
+                    <label className="label">
+                      <span className="label-text">Role Name</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="input input-bordered"
+                      value={newRoleName}
+                      onChange={(e) => setNewRoleName(e.target.value)}
+                      placeholder="e.g., Contractor"
+                    />
+                  </div>
+                  <div className="form-control mb-2">
+                    <label className="label">
+                      <span className="label-text">Description</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="input input-bordered"
+                      value={newRoleDescription}
+                      onChange={(e) => setNewRoleDescription(e.target.value)}
+                      placeholder="e.g., External contractor with limited access"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      className="btn btn-success btn-sm"
+                      onClick={handleCreateRole}
+                    >
+                      Create
+                    </button>
+                    <button
+                      className="btn btn-ghost btn-sm"
+                      onClick={() => {
+                        setShowCreateRole(false);
+                        setNewRoleName('');
+                        setNewRoleDescription('');
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <div className="overflow-x-auto">
                 <table className="table table-zebra">
                   <thead>

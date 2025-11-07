@@ -41,6 +41,9 @@ export const adminService = {
   // Role management
   getAllRoles: () => api.get<Role[]>('/admin/roles'),
 
+  createRole: (name: string, description: string) =>
+    api.post<Role>('/admin/roles', { name, description }),
+
   getRolePermissions: (roleId: string) =>
     api.get<Permission[]>(`/admin/roles/${roleId}/permissions`),
 

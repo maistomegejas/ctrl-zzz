@@ -110,6 +110,23 @@ public class AdminController : ControllerBase
         return Ok(roleDtos);
     }
 
+    [HttpPost("roles")]
+    [RequirePermission("Admin.ManageRoles")]
+    public async Task<IActionResult> CreateRole([FromBody] CreateRoleDto dto)
+    {
+        var role = new Role
+        {
+            Id = Guid.NewGuid(),
+            Name = dto.Name,
+            Description = dto.Description,
+            CreatedAt = DateTime.UtcNow,
+            IsDeleted = false
+        };
+
+        await _roleRepository.AddAsync(role);
+        return Ok(new { id = role.Id, name = role.Name, description = role.Description, createdAt = role.CreatedAt });
+    }
+
     [HttpGet("roles/{roleId}/permissions")]
     [RequirePermission("Admin.ManageRoles")]
     public async Task<IActionResult> GetRolePermissions(Guid roleId)
@@ -235,3 +252,5 @@ public class AdminController : ControllerBase
         });
     }
 }
+
+public record CreateRoleDto(string Name, string Description);
