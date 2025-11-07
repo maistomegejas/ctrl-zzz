@@ -1,5 +1,7 @@
 using CtrlZzz.Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CtrlZzz.Infrastructure.Data;
 
@@ -8,6 +10,17 @@ public class ApplicationDbContext : DbContext
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
+    }
+
+    /// <summary>
+    /// Generates a deterministic GUID from a seed string using MD5 hash.
+    /// Same seed will always produce the same GUID.
+    /// </summary>
+    private static Guid GenerateDeterministicGuid(string seed)
+    {
+        using var md5 = MD5.Create();
+        var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(seed));
+        return new Guid(hash);
     }
 
     public DbSet<User> Users => Set<User>();
@@ -224,10 +237,10 @@ public class ApplicationDbContext : DbContext
     private void SeedData(ModelBuilder modelBuilder)
     {
         // Seed Users (with plain text passwords for now)
-        var adminUserId = Guid.Parse("00000000-0000-0000-0000-000000000001");
-        var user1Id = Guid.Parse("11111111-1111-1111-1111-111111111111");
-        var user2Id = Guid.Parse("22222222-2222-2222-2222-222222222222");
-        var user3Id = Guid.Parse("33333333-3333-3333-3333-333333333333");
+        var adminUserId = GenerateDeterministicGuid("user-admin-amogus");
+        var user1Id = GenerateDeterministicGuid("user-john-doe");
+        var user2Id = GenerateDeterministicGuid("user-sarah-smith");
+        var user3Id = GenerateDeterministicGuid("user-mike-johnson");
 
         modelBuilder.Entity<User>().HasData(
             // Admin user - ALWAYS SEEDED
@@ -270,8 +283,8 @@ public class ApplicationDbContext : DbContext
         );
 
         // Seed Projects
-        var project1Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
-        var project2Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+        var project1Id = GenerateDeterministicGuid("project-ecommerce");
+        var project2Id = GenerateDeterministicGuid("project-mobile-redesign");
 
         modelBuilder.Entity<Project>().HasData(
             new Project
@@ -297,10 +310,10 @@ public class ApplicationDbContext : DbContext
         );
 
         // Seed Sprints
-        var sprint1Id = Guid.Parse("99999999-9999-9999-9999-999999999991");
-        var sprint2Id = Guid.Parse("99999999-9999-9999-9999-999999999992");
-        var sprint3Id = Guid.Parse("99999999-9999-9999-9999-999999999993");
-        var sprint4Id = Guid.Parse("99999999-9999-9999-9999-999999999994");
+        var sprint1Id = GenerateDeterministicGuid("sprint-ecom-sprint1");
+        var sprint2Id = GenerateDeterministicGuid("sprint-ecom-sprint2");
+        var sprint3Id = GenerateDeterministicGuid("sprint-mobile-sprint1");
+        var sprint4Id = GenerateDeterministicGuid("sprint-mobile-sprint2");
 
         modelBuilder.Entity<Sprint>().HasData(
             new Sprint
@@ -354,16 +367,16 @@ public class ApplicationDbContext : DbContext
         );
 
         // Seed WorkItems
-        var workItem1Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01");
-        var workItem2Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee02");
-        var workItem3Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee03");
-        var workItem4Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee04");
-        var workItem5Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee05");
-        var workItem6Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee06");
-        var workItem7Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee07");
-        var workItem8Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee08");
-        var workItem9Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee09");
-        var workItem10Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee0A");
+        var workItem1Id = GenerateDeterministicGuid("workitem-auth-system");
+        var workItem2Id = GenerateDeterministicGuid("workitem-product-catalog");
+        var workItem3Id = GenerateDeterministicGuid("workitem-shopping-cart");
+        var workItem4Id = GenerateDeterministicGuid("workitem-payment-bug");
+        var workItem5Id = GenerateDeterministicGuid("workitem-image-optimization");
+        var workItem6Id = GenerateDeterministicGuid("workitem-user-research");
+        var workItem7Id = GenerateDeterministicGuid("workitem-design-system");
+        var workItem8Id = GenerateDeterministicGuid("workitem-button-component");
+        var workItem9Id = GenerateDeterministicGuid("workitem-dark-mode");
+        var workItem10Id = GenerateDeterministicGuid("workitem-navbar-ios-bug");
 
         modelBuilder.Entity<WorkItem>().HasData(
             // Project 1 - ECOM
@@ -536,7 +549,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Comment>().HasData(
             new Comment
             {
-                Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc01"),
+                Id = GenerateDeterministicGuid("comment-auth-done"),
                 Content = "Authentication is working great! All unit tests passing.",
                 WorkItemId = workItem1Id,
                 UserId = user1Id,
@@ -545,7 +558,7 @@ public class ApplicationDbContext : DbContext
             },
             new Comment
             {
-                Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc02"),
+                Id = GenerateDeterministicGuid("comment-catalog-filter"),
                 Content = "I've implemented the filtering logic. Still need to add sorting by price and rating.",
                 WorkItemId = workItem2Id,
                 UserId = user1Id,
@@ -554,7 +567,7 @@ public class ApplicationDbContext : DbContext
             },
             new Comment
             {
-                Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc03"),
+                Id = GenerateDeterministicGuid("comment-cart-progress"),
                 Content = "Working on this today. Should have a PR ready by EOD.",
                 WorkItemId = workItem3Id,
                 UserId = user2Id,
@@ -563,7 +576,7 @@ public class ApplicationDbContext : DbContext
             },
             new Comment
             {
-                Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc04"),
+                Id = GenerateDeterministicGuid("comment-payment-blocking"),
                 Content = "This is blocking the release! We need to fix this ASAP.",
                 WorkItemId = workItem4Id,
                 UserId = user2Id,
@@ -572,7 +585,7 @@ public class ApplicationDbContext : DbContext
             },
             new Comment
             {
-                Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc05"),
+                Id = GenerateDeterministicGuid("comment-payment-investigating"),
                 Content = "I'm investigating. It looks like the webhook signature validation is failing.",
                 WorkItemId = workItem4Id,
                 UserId = user3Id,
@@ -581,7 +594,7 @@ public class ApplicationDbContext : DbContext
             },
             new Comment
             {
-                Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc06"),
+                Id = GenerateDeterministicGuid("comment-research-done"),
                 Content = "Completed user interviews with 12 participants. Key insights documented in Notion.",
                 WorkItemId = workItem6Id,
                 UserId = user2Id,
@@ -590,7 +603,7 @@ public class ApplicationDbContext : DbContext
             },
             new Comment
             {
-                Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc07"),
+                Id = GenerateDeterministicGuid("comment-design-colors"),
                 Content = "Color palette looks amazing! Going with the blue/purple gradient theme.",
                 WorkItemId = workItem7Id,
                 UserId = user2Id,
@@ -599,7 +612,7 @@ public class ApplicationDbContext : DbContext
             },
             new Comment
             {
-                Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc08"),
+                Id = GenerateDeterministicGuid("comment-button-review"),
                 Content = "Button component is ready for review. Added all variants and states (hover, active, disabled).",
                 WorkItemId = workItem8Id,
                 UserId = user3Id,
@@ -609,10 +622,10 @@ public class ApplicationDbContext : DbContext
         );
 
         // Seed Roles
-        var adminRoleId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd01");
-        var pmRoleId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd02");
-        var devRoleId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03");
-        var viewerRoleId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd04");
+        var adminRoleId = GenerateDeterministicGuid("role-admin");
+        var pmRoleId = GenerateDeterministicGuid("role-projectmanager");
+        var devRoleId = GenerateDeterministicGuid("role-developer");
+        var viewerRoleId = GenerateDeterministicGuid("role-viewer");
 
         modelBuilder.Entity<Role>().HasData(
             new Role { Id = adminRoleId, Name = "Admin", Description = "Full system access", CreatedAt = DateTime.UtcNow, IsDeleted = false },
@@ -624,20 +637,20 @@ public class ApplicationDbContext : DbContext
         // Seed Permissions
         var permissions = new[]
         {
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp01"), Name = "Admin.AccessAdminPanel", Description = "Access admin panel", Resource = "Admin", Action = "Access" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp02"), Name = "Admin.ManageRoles", Description = "Manage roles", Resource = "Admin", Action = "ManageRoles" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp03"), Name = "Users.View", Description = "View users", Resource = "Users", Action = "View" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp04"), Name = "Users.Manage", Description = "Manage users", Resource = "Users", Action = "Manage" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp05"), Name = "Projects.Create", Description = "Create projects", Resource = "Projects", Action = "Create" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp06"), Name = "Projects.Edit", Description = "Edit projects", Resource = "Projects", Action = "Edit" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp07"), Name = "Projects.Delete", Description = "Delete projects", Resource = "Projects", Action = "Delete" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp08"), Name = "Projects.ManageMembers", Description = "Manage project members", Resource = "Projects", Action = "ManageMembers" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp09"), Name = "WorkItems.Create", Description = "Create work items", Resource = "WorkItems", Action = "Create" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0A"), Name = "WorkItems.Edit", Description = "Edit work items", Resource = "WorkItems", Action = "Edit" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0B"), Name = "WorkItems.Delete", Description = "Delete work items", Resource = "WorkItems", Action = "Delete" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0C"), Name = "Comments.Create", Description = "Create comments", Resource = "Comments", Action = "Create" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0D"), Name = "Sprints.Create", Description = "Create sprints", Resource = "Sprints", Action = "Create" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0E"), Name = "Sprints.Edit", Description = "Edit sprints", Resource = "Sprints", Action = "Edit" },
+            new { Id = GenerateDeterministicGuid("perm-admin-access"), Name = "Admin.AccessAdminPanel", Description = "Access admin panel", Resource = "Admin", Action = "Access" },
+            new { Id = GenerateDeterministicGuid("perm-admin-roles"), Name = "Admin.ManageRoles", Description = "Manage roles", Resource = "Admin", Action = "ManageRoles" },
+            new { Id = GenerateDeterministicGuid("perm-users-view"), Name = "Users.View", Description = "View users", Resource = "Users", Action = "View" },
+            new { Id = GenerateDeterministicGuid("perm-users-manage"), Name = "Users.Manage", Description = "Manage users", Resource = "Users", Action = "Manage" },
+            new { Id = GenerateDeterministicGuid("perm-projects-create"), Name = "Projects.Create", Description = "Create projects", Resource = "Projects", Action = "Create" },
+            new { Id = GenerateDeterministicGuid("perm-projects-edit"), Name = "Projects.Edit", Description = "Edit projects", Resource = "Projects", Action = "Edit" },
+            new { Id = GenerateDeterministicGuid("perm-projects-delete"), Name = "Projects.Delete", Description = "Delete projects", Resource = "Projects", Action = "Delete" },
+            new { Id = GenerateDeterministicGuid("perm-projects-members"), Name = "Projects.ManageMembers", Description = "Manage project members", Resource = "Projects", Action = "ManageMembers" },
+            new { Id = GenerateDeterministicGuid("perm-workitems-create"), Name = "WorkItems.Create", Description = "Create work items", Resource = "WorkItems", Action = "Create" },
+            new { Id = GenerateDeterministicGuid("perm-workitems-edit"), Name = "WorkItems.Edit", Description = "Edit work items", Resource = "WorkItems", Action = "Edit" },
+            new { Id = GenerateDeterministicGuid("perm-workitems-delete"), Name = "WorkItems.Delete", Description = "Delete work items", Resource = "WorkItems", Action = "Delete" },
+            new { Id = GenerateDeterministicGuid("perm-comments-create"), Name = "Comments.Create", Description = "Create comments", Resource = "Comments", Action = "Create" },
+            new { Id = GenerateDeterministicGuid("perm-sprints-create"), Name = "Sprints.Create", Description = "Create sprints", Resource = "Sprints", Action = "Create" },
+            new { Id = GenerateDeterministicGuid("perm-sprints-edit"), Name = "Sprints.Edit", Description = "Edit sprints", Resource = "Sprints", Action = "Edit" },
         };
 
         foreach (var perm in permissions)
@@ -658,40 +671,40 @@ public class ApplicationDbContext : DbContext
         var rolePermissions = new List<(Guid RoleId, Guid PermissionId)>
         {
             // Admin - ALL permissions
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp01")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp02")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp03")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp04")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp05")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp06")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp07")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp08")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp09")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0A")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0B")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0C")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0D")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0E")),
+            (adminRoleId, GenerateDeterministicGuid("perm-admin-access")),
+            (adminRoleId, GenerateDeterministicGuid("perm-admin-roles")),
+            (adminRoleId, GenerateDeterministicGuid("perm-users-view")),
+            (adminRoleId, GenerateDeterministicGuid("perm-users-manage")),
+            (adminRoleId, GenerateDeterministicGuid("perm-projects-create")),
+            (adminRoleId, GenerateDeterministicGuid("perm-projects-edit")),
+            (adminRoleId, GenerateDeterministicGuid("perm-projects-delete")),
+            (adminRoleId, GenerateDeterministicGuid("perm-projects-members")),
+            (adminRoleId, GenerateDeterministicGuid("perm-workitems-create")),
+            (adminRoleId, GenerateDeterministicGuid("perm-workitems-edit")),
+            (adminRoleId, GenerateDeterministicGuid("perm-workitems-delete")),
+            (adminRoleId, GenerateDeterministicGuid("perm-comments-create")),
+            (adminRoleId, GenerateDeterministicGuid("perm-sprints-create")),
+            (adminRoleId, GenerateDeterministicGuid("perm-sprints-edit")),
 
             // ProjectManager - Project and member management
-            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp03")), // View users
-            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp05")), // Create projects
-            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp06")), // Edit projects
-            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp08")), // Manage members
-            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp09")), // Create work items
-            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0A")), // Edit work items
-            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0C")), // Create comments
-            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0D")), // Create sprints
-            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0E")), // Edit sprints
+            (pmRoleId, GenerateDeterministicGuid("perm-users-view")), // View users
+            (pmRoleId, GenerateDeterministicGuid("perm-projects-create")), // Create projects
+            (pmRoleId, GenerateDeterministicGuid("perm-projects-edit")), // Edit projects
+            (pmRoleId, GenerateDeterministicGuid("perm-projects-members")), // Manage members
+            (pmRoleId, GenerateDeterministicGuid("perm-workitems-create")), // Create work items
+            (pmRoleId, GenerateDeterministicGuid("perm-workitems-edit")), // Edit work items
+            (pmRoleId, GenerateDeterministicGuid("perm-comments-create")), // Create comments
+            (pmRoleId, GenerateDeterministicGuid("perm-sprints-create")), // Create sprints
+            (pmRoleId, GenerateDeterministicGuid("perm-sprints-edit")), // Edit sprints
 
             // Developer - Work item management
-            (devRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp03")), // View users
-            (devRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp09")), // Create work items
-            (devRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0A")), // Edit work items
-            (devRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0C")), // Create comments
+            (devRoleId, GenerateDeterministicGuid("perm-users-view")), // View users
+            (devRoleId, GenerateDeterministicGuid("perm-workitems-create")), // Create work items
+            (devRoleId, GenerateDeterministicGuid("perm-workitems-edit")), // Edit work items
+            (devRoleId, GenerateDeterministicGuid("perm-comments-create")), // Create comments
 
             // Viewer - Read-only (just view users for now)
-            (viewerRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp03")), // View users
+            (viewerRoleId, GenerateDeterministicGuid("perm-users-view")), // View users
         };
 
         var rpIndex = 1;
@@ -699,7 +712,7 @@ public class ApplicationDbContext : DbContext
         {
             modelBuilder.Entity<RolePermission>().HasData(new RolePermission
             {
-                Id = Guid.Parse($"rrrrrrrr-rrrr-rrrr-rrrr-rrrrrrrrrr{rpIndex:X2}"),
+                Id = GenerateDeterministicGuid($"roleperm-{rpIndex}"),
                 RoleId = roleId,
                 PermissionId = permId,
                 CreatedAt = DateTime.UtcNow,
@@ -710,10 +723,10 @@ public class ApplicationDbContext : DbContext
 
         // Seed UserRoles - Make admin user an Admin, others are Developers
         modelBuilder.Entity<UserRole>().HasData(
-            new UserRole { Id = Guid.Parse("uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuu01"), UserId = adminUserId, RoleId = adminRoleId, CreatedAt = DateTime.UtcNow, IsDeleted = false },
-            new UserRole { Id = Guid.Parse("uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuu02"), UserId = user1Id, RoleId = devRoleId, CreatedAt = DateTime.UtcNow, IsDeleted = false },
-            new UserRole { Id = Guid.Parse("uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuu03"), UserId = user2Id, RoleId = pmRoleId, CreatedAt = DateTime.UtcNow, IsDeleted = false },
-            new UserRole { Id = Guid.Parse("uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuu04"), UserId = user3Id, RoleId = devRoleId, CreatedAt = DateTime.UtcNow, IsDeleted = false }
+            new UserRole { Id = GenerateDeterministicGuid("userrole-admin-admin"), UserId = adminUserId, RoleId = adminRoleId, CreatedAt = DateTime.UtcNow, IsDeleted = false },
+            new UserRole { Id = GenerateDeterministicGuid("userrole-john-dev"), UserId = user1Id, RoleId = devRoleId, CreatedAt = DateTime.UtcNow, IsDeleted = false },
+            new UserRole { Id = GenerateDeterministicGuid("userrole-sarah-pm"), UserId = user2Id, RoleId = pmRoleId, CreatedAt = DateTime.UtcNow, IsDeleted = false },
+            new UserRole { Id = GenerateDeterministicGuid("userrole-mike-dev"), UserId = user3Id, RoleId = devRoleId, CreatedAt = DateTime.UtcNow, IsDeleted = false }
         );
     }
 
