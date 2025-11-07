@@ -494,6 +494,64 @@ git push origin --delete claude/<feature-name>-011CUpMxvoWCSRdtoGde9Z5x
 - ✅ This makes changes visible on GitHub immediately
 - User handles merging to main and branch cleanup
 
+## Database Schema Changes & Migration Workflow
+
+### When Schema Changes (New Tables, Columns, etc.)
+
+**If you pull changes that modified the database schema, you MUST reset migrations:**
+
+1. **Delete existing migration files**:
+```powershell
+Remove-Item -Path "backend\CtrlZzz.Infrastructure\Migrations\*" -Force
+```
+
+2. **Run start-dev.ps1** (it will auto-create and apply new migrations):
+```powershell
+.\start-dev.ps1
+```
+
+The script will:
+- Detect pending model changes
+- Create a new initial migration with timestamp
+- Apply migration to database
+- Start backend and frontend
+
+3. **Commit the new migration files**:
+```bash
+git add backend/CtrlZzz.Infrastructure/Migrations/
+git commit -m "Update migrations for schema changes"
+```
+
+### When Schema Did NOT Change (UI-only changes, bug fixes, etc.)
+
+**Just pull and run:**
+```powershell
+git pull
+.\start-dev.ps1
+```
+
+The script will see no pending changes and skip migration creation.
+
+### How to Know if Schema Changed
+
+Schema changed if commits mention:
+- "Add entity", "New table", "Database schema"
+- New entities in `CtrlZzz.Core/Entities/`
+- Changes to `ApplicationDbContext.OnModelCreating()`
+- New DbSet properties in ApplicationDbContext
+
+Common schema changes:
+- ✅ Added Role, Permission, UserRole, RolePermission entities (Nov 7, 2025)
+- ✅ Added Group, GroupMember, ProjectMember entities (Nov 7, 2025)
+
+### Schema NOT Changed (safe to just pull + start-dev)
+
+- Frontend changes (React, TypeScript, UI)
+- Backend business logic (MediatR handlers, validators)
+- API endpoint changes (controllers)
+- Configuration changes (appsettings.json)
+- Bug fixes
+
 ## Docker Setup
 
 ```yaml
