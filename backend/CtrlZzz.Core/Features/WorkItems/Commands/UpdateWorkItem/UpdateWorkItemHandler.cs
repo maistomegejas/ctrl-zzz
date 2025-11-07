@@ -11,15 +11,24 @@ public class UpdateWorkItemHandler : IRequestHandler<UpdateWorkItemCommand, Resu
     private readonly IRepository<WorkItem> _workItemRepository;
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<Sprint> _sprintRepository;
+    private readonly IRepository<ProjectMember> _projectMemberRepository;
+    private readonly ICurrentUserService _currentUserService;
+    private readonly IPermissionService _permissionService;
 
     public UpdateWorkItemHandler(
         IRepository<WorkItem> workItemRepository,
         IRepository<User> userRepository,
-        IRepository<Sprint> sprintRepository)
+        IRepository<Sprint> sprintRepository,
+        IRepository<ProjectMember> projectMemberRepository,
+        ICurrentUserService currentUserService,
+        IPermissionService permissionService)
     {
         _workItemRepository = workItemRepository;
         _userRepository = userRepository;
         _sprintRepository = sprintRepository;
+        _projectMemberRepository = projectMemberRepository;
+        _currentUserService = currentUserService;
+        _permissionService = permissionService;
     }
 
     public async Task<Result<WorkItemDto>> Handle(UpdateWorkItemCommand request, CancellationToken cancellationToken)
@@ -29,6 +38,29 @@ public class UpdateWorkItemHandler : IRequestHandler<UpdateWorkItemCommand, Resu
         if (workItem == null)
         {
             return Result.Fail<WorkItemDto>("Work item not found");
+        }
+
+        var currentUserId = _currentUserService.GetCurrentUserId();
+        if (currentUserId == null)
+        {
+            return Result.Fail<WorkItemDto>("User not authenticated");
+        }
+
+        // Check if user is a project member OR has admin permission
+        var hasAdminPermission = await _permissionService.HasPermissionAsync(currentUserId.Value, "Admin.AccessAdminPanel");
+
+        if (!hasAdminPermission)
+        {
+            var projectMembers = await _projectMemberRepository.GetAllAsync(cancellationToken);
+            var isMember = projectMembers.Any(pm =>
+                pm.ProjectId == workItem.ProjectId &&
+                pm.UserId == currentUserId.Value &&
+                !pm.IsDeleted);
+
+            if (!isMember)
+            {
+                return Result.Fail<WorkItemDto>("You must be a project member to edit work items");
+            }
         }
 
         // Validate assignee exists if provided
