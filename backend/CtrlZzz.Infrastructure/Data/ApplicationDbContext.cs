@@ -363,7 +363,7 @@ public class ApplicationDbContext : DbContext
         var workItem7Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee07");
         var workItem8Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee08");
         var workItem9Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee09");
-        var workItem10Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee10");
+        var workItem10Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee0A");
 
         modelBuilder.Entity<WorkItem>().HasData(
             // Project 1 - ECOM
@@ -633,11 +633,11 @@ public class ApplicationDbContext : DbContext
             new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp07"), Name = "Projects.Delete", Description = "Delete projects", Resource = "Projects", Action = "Delete" },
             new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp08"), Name = "Projects.ManageMembers", Description = "Manage project members", Resource = "Projects", Action = "ManageMembers" },
             new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp09"), Name = "WorkItems.Create", Description = "Create work items", Resource = "WorkItems", Action = "Create" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp10"), Name = "WorkItems.Edit", Description = "Edit work items", Resource = "WorkItems", Action = "Edit" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp11"), Name = "WorkItems.Delete", Description = "Delete work items", Resource = "WorkItems", Action = "Delete" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp12"), Name = "Comments.Create", Description = "Create comments", Resource = "Comments", Action = "Create" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp13"), Name = "Sprints.Create", Description = "Create sprints", Resource = "Sprints", Action = "Create" },
-            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp14"), Name = "Sprints.Edit", Description = "Edit sprints", Resource = "Sprints", Action = "Edit" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0A"), Name = "WorkItems.Edit", Description = "Edit work items", Resource = "WorkItems", Action = "Edit" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0B"), Name = "WorkItems.Delete", Description = "Delete work items", Resource = "WorkItems", Action = "Delete" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0C"), Name = "Comments.Create", Description = "Create comments", Resource = "Comments", Action = "Create" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0D"), Name = "Sprints.Create", Description = "Create sprints", Resource = "Sprints", Action = "Create" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0E"), Name = "Sprints.Edit", Description = "Edit sprints", Resource = "Sprints", Action = "Edit" },
         };
 
         foreach (var perm in permissions)
@@ -667,11 +667,11 @@ public class ApplicationDbContext : DbContext
             (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp07")),
             (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp08")),
             (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp09")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp10")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp11")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp12")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp13")),
-            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp14")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0A")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0B")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0C")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0D")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0E")),
 
             // ProjectManager - Project and member management
             (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp03")), // View users
@@ -679,16 +679,16 @@ public class ApplicationDbContext : DbContext
             (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp06")), // Edit projects
             (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp08")), // Manage members
             (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp09")), // Create work items
-            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp10")), // Edit work items
-            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp12")), // Create comments
-            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp13")), // Create sprints
-            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp14")), // Edit sprints
+            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0A")), // Edit work items
+            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0C")), // Create comments
+            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0D")), // Create sprints
+            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0E")), // Edit sprints
 
             // Developer - Work item management
             (devRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp03")), // View users
             (devRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp09")), // Create work items
-            (devRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp10")), // Edit work items
-            (devRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp12")), // Create comments
+            (devRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0A")), // Edit work items
+            (devRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp0C")), // Create comments
 
             // Viewer - Read-only (just view users for now)
             (viewerRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp03")), // View users
