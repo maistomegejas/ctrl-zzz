@@ -101,6 +101,35 @@ export default function Sidebar() {
           Backlog
         </Link>
 
+        <div className="mt-6 mb-2">
+          <div className="h-px bg-gray-200"></div>
+        </div>
+
+        <Link
+          to="/admin"
+          className={`flex items-center gap-3 px-3 py-2 rounded-lg mb-1 transition-colors ${
+            isActive('/admin')
+              ? 'bg-purple-50 text-purple-600 font-medium'
+              : 'text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+            />
+          </svg>
+          Admin Panel
+        </Link>
+
         <div className="mt-6 px-3">
           <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
             Resources

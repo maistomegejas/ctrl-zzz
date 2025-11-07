@@ -9,6 +9,7 @@ import BacklogPage from './pages/BacklogPage'
 import SprintPlanningPage from './pages/SprintPlanningPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import AdminPanel from './pages/AdminPanel'
 import Sidebar from './components/Sidebar'
 import { useAppSelector } from './store/hooks'
 
@@ -45,6 +46,7 @@ function App() {
                     <Route path="/issues/:id" element={<IssueDetailPage />} />
                     <Route path="/my-issues" element={<MyIssuesPage />} />
                     <Route path="/backlog" element={<BacklogPage />} />
+                    <Route path="/admin" element={<AdminPanel />} />
                   </Routes>
                 </div>
               </div>
