@@ -10,4 +10,6 @@ public class User : BaseEntity
     public ICollection<Project> Projects { get; set; } = new List<Project>();
     public ICollection<WorkItem> AssignedWorkItems { get; set; } = new List<WorkItem>();
     public ICollection<ProjectMember> ProjectMemberships { get; set; } = new List<ProjectMember>();
+    public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+    public ICollection<GroupMember> GroupMemberships { get; set; } = new List<GroupMember>();
 }

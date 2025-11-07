@@ -16,6 +16,12 @@ public class ApplicationDbContext : DbContext
     public DbSet<Sprint> Sprints => Set<Sprint>();
     public DbSet<Comment> Comments => Set<Comment>();
     public DbSet<ProjectMember> ProjectMembers => Set<ProjectMember>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<Permission> Permissions => Set<Permission>();
+    public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
+    public DbSet<Group> Groups => Set<Group>();
+    public DbSet<GroupMember> GroupMembers => Set<GroupMember>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -124,23 +130,122 @@ public class ApplicationDbContext : DbContext
             entity.HasIndex(e => new { e.ProjectId, e.UserId }).IsUnique();
         });
 
+        // Role configuration
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.HasIndex(e => e.Name).IsUnique();
+        });
+
+        // Permission configuration
+        modelBuilder.Entity<Permission>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Resource).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Action).IsRequired().HasMaxLength(100);
+            entity.HasIndex(e => e.Name).IsUnique();
+        });
+
+        // UserRole configuration
+        modelBuilder.Entity<UserRole>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.User)
+                .WithMany(e => e.UserRoles)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Role)
+                .WithMany(e => e.UserRoles)
+                .HasForeignKey(e => e.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Ensure unique user-role combination
+            entity.HasIndex(e => new { e.UserId, e.RoleId }).IsUnique();
+        });
+
+        // RolePermission configuration
+        modelBuilder.Entity<RolePermission>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.Role)
+                .WithMany(e => e.RolePermissions)
+                .HasForeignKey(e => e.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Permission)
+                .WithMany(e => e.RolePermissions)
+                .HasForeignKey(e => e.PermissionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Ensure unique role-permission combination
+            entity.HasIndex(e => new { e.RoleId, e.PermissionId }).IsUnique();
+        });
+
+        // Group configuration
+        modelBuilder.Entity<Group>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+
+            entity.HasOne(e => e.Project)
+                .WithMany()
+                .HasForeignKey(e => e.ProjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // GroupMember configuration
+        modelBuilder.Entity<GroupMember>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.Group)
+                .WithMany(e => e.GroupMembers)
+                .HasForeignKey(e => e.GroupId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.User)
+                .WithMany(e => e.GroupMemberships)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Ensure unique group-user combination
+            entity.HasIndex(e => new { e.GroupId, e.UserId }).IsUnique();
+        });
+
         // Seed Data
         SeedData(modelBuilder);
     }
 
     private void SeedData(ModelBuilder modelBuilder)
     {
-        // Seed Users
+        // Seed Users (with plain text passwords for now)
+        var adminUserId = Guid.Parse("00000000-0000-0000-0000-000000000001");
         var user1Id = Guid.Parse("11111111-1111-1111-1111-111111111111");
         var user2Id = Guid.Parse("22222222-2222-2222-2222-222222222222");
         var user3Id = Guid.Parse("33333333-3333-3333-3333-333333333333");
 
         modelBuilder.Entity<User>().HasData(
+            // Admin user - ALWAYS SEEDED
+            new User
+            {
+                Id = adminUserId,
+                Name = "System Administrator",
+                Email = "amogus@gmail.com",
+                PasswordHash = "amogus", // Plain text for now
+                CreatedAt = DateTime.UtcNow.AddYears(-1),
+                IsDeleted = false
+            },
             new User
             {
                 Id = user1Id,
                 Name = "John Doe",
                 Email = "john@example.com",
+                PasswordHash = "password123",
                 CreatedAt = DateTime.UtcNow.AddMonths(-6),
                 IsDeleted = false
             },
@@ -149,6 +254,7 @@ public class ApplicationDbContext : DbContext
                 Id = user2Id,
                 Name = "Sarah Smith",
                 Email = "sarah@example.com",
+                PasswordHash = "password123",
                 CreatedAt = DateTime.UtcNow.AddMonths(-5),
                 IsDeleted = false
             },
@@ -157,6 +263,7 @@ public class ApplicationDbContext : DbContext
                 Id = user3Id,
                 Name = "Mike Johnson",
                 Email = "mike@example.com",
+                PasswordHash = "password123",
                 CreatedAt = DateTime.UtcNow.AddMonths(-4),
                 IsDeleted = false
             }
@@ -499,6 +606,114 @@ public class ApplicationDbContext : DbContext
                 CreatedAt = DateTime.UtcNow.AddDays(-1),
                 IsDeleted = false
             }
+        );
+
+        // Seed Roles
+        var adminRoleId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd01");
+        var pmRoleId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd02");
+        var devRoleId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03");
+        var viewerRoleId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd04");
+
+        modelBuilder.Entity<Role>().HasData(
+            new Role { Id = adminRoleId, Name = "Admin", Description = "Full system access", CreatedAt = DateTime.UtcNow, IsDeleted = false },
+            new Role { Id = pmRoleId, Name = "ProjectManager", Description = "Can manage projects and teams", CreatedAt = DateTime.UtcNow, IsDeleted = false },
+            new Role { Id = devRoleId, Name = "Developer", Description = "Can create and edit work items", CreatedAt = DateTime.UtcNow, IsDeleted = false },
+            new Role { Id = viewerRoleId, Name = "Viewer", Description = "Read-only access", CreatedAt = DateTime.UtcNow, IsDeleted = false }
+        );
+
+        // Seed Permissions
+        var permissions = new[]
+        {
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp01"), Name = "Admin.AccessAdminPanel", Description = "Access admin panel", Resource = "Admin", Action = "Access" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp02"), Name = "Admin.ManageRoles", Description = "Manage roles", Resource = "Admin", Action = "ManageRoles" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp03"), Name = "Users.View", Description = "View users", Resource = "Users", Action = "View" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp04"), Name = "Users.Manage", Description = "Manage users", Resource = "Users", Action = "Manage" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp05"), Name = "Projects.Create", Description = "Create projects", Resource = "Projects", Action = "Create" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp06"), Name = "Projects.Edit", Description = "Edit projects", Resource = "Projects", Action = "Edit" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp07"), Name = "Projects.Delete", Description = "Delete projects", Resource = "Projects", Action = "Delete" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp08"), Name = "Projects.ManageMembers", Description = "Manage project members", Resource = "Projects", Action = "ManageMembers" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp09"), Name = "WorkItems.Create", Description = "Create work items", Resource = "WorkItems", Action = "Create" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp10"), Name = "WorkItems.Edit", Description = "Edit work items", Resource = "WorkItems", Action = "Edit" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp11"), Name = "WorkItems.Delete", Description = "Delete work items", Resource = "WorkItems", Action = "Delete" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp12"), Name = "Comments.Create", Description = "Create comments", Resource = "Comments", Action = "Create" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp13"), Name = "Sprints.Create", Description = "Create sprints", Resource = "Sprints", Action = "Create" },
+            new { Id = Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp14"), Name = "Sprints.Edit", Description = "Edit sprints", Resource = "Sprints", Action = "Edit" },
+        };
+
+        foreach (var perm in permissions)
+        {
+            modelBuilder.Entity<Permission>().HasData(new Permission
+            {
+                Id = perm.Id,
+                Name = perm.Name,
+                Description = perm.Description,
+                Resource = perm.Resource,
+                Action = perm.Action,
+                CreatedAt = DateTime.UtcNow,
+                IsDeleted = false
+            });
+        }
+
+        // Seed RolePermissions (Admin gets all permissions)
+        var rolePermissions = new List<(Guid RoleId, Guid PermissionId)>
+        {
+            // Admin - ALL permissions
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp01")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp02")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp03")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp04")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp05")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp06")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp07")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp08")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp09")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp10")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp11")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp12")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp13")),
+            (adminRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp14")),
+
+            // ProjectManager - Project and member management
+            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp03")), // View users
+            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp05")), // Create projects
+            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp06")), // Edit projects
+            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp08")), // Manage members
+            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp09")), // Create work items
+            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp10")), // Edit work items
+            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp12")), // Create comments
+            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp13")), // Create sprints
+            (pmRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp14")), // Edit sprints
+
+            // Developer - Work item management
+            (devRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp03")), // View users
+            (devRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp09")), // Create work items
+            (devRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp10")), // Edit work items
+            (devRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp12")), // Create comments
+
+            // Viewer - Read-only (just view users for now)
+            (viewerRoleId, Guid.Parse("pppppppp-pppp-pppp-pppp-pppppppppp03")), // View users
+        };
+
+        var rpIndex = 1;
+        foreach (var (roleId, permId) in rolePermissions)
+        {
+            modelBuilder.Entity<RolePermission>().HasData(new RolePermission
+            {
+                Id = Guid.Parse($"rrrrrrrr-rrrr-rrrr-rrrr-rrrrrrrrrr{rpIndex:D2}"),
+                RoleId = roleId,
+                PermissionId = permId,
+                CreatedAt = DateTime.UtcNow,
+                IsDeleted = false
+            });
+            rpIndex++;
+        }
+
+        // Seed UserRoles - Make admin user an Admin, others are Developers
+        modelBuilder.Entity<UserRole>().HasData(
+            new UserRole { Id = Guid.Parse("uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuu01"), UserId = adminUserId, RoleId = adminRoleId, CreatedAt = DateTime.UtcNow, IsDeleted = false },
+            new UserRole { Id = Guid.Parse("uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuu02"), UserId = user1Id, RoleId = devRoleId, CreatedAt = DateTime.UtcNow, IsDeleted = false },
+            new UserRole { Id = Guid.Parse("uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuu03"), UserId = user2Id, RoleId = pmRoleId, CreatedAt = DateTime.UtcNow, IsDeleted = false },
+            new UserRole { Id = Guid.Parse("uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuu04"), UserId = user3Id, RoleId = devRoleId, CreatedAt = DateTime.UtcNow, IsDeleted = false }
         );
     }
 
