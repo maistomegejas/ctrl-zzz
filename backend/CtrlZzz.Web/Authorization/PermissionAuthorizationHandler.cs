@@ -6,11 +6,11 @@ namespace CtrlZzz.Web.Authorization;
 
 public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
 {
-    private readonly IPermissionService _permissionService;
+    private readonly IServiceProvider _serviceProvider;
 
-    public PermissionAuthorizationHandler(IPermissionService permissionService)
+    public PermissionAuthorizationHandler(IServiceProvider serviceProvider)
     {
-        _permissionService = permissionService;
+        _serviceProvider = serviceProvider;
     }
 
     protected override async Task HandleRequirementAsync(
@@ -24,7 +24,11 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
             return;
         }
 
-        var hasPermission = await _permissionService.HasPermissionAsync(userId, requirement.Permission);
+        // Create a scope to resolve scoped service from singleton handler
+        using var scope = _serviceProvider.CreateScope();
+        var permissionService = scope.ServiceProvider.GetRequiredService<IPermissionService>();
+
+        var hasPermission = await permissionService.HasPermissionAsync(userId, requirement.Permission);
 
         if (hasPermission)
         {
