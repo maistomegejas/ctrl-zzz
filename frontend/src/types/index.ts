@@ -73,7 +73,6 @@ export interface CreateProjectDto {
   name: string
   key: string
   description?: string
-  ownerId: string
 }
 
 export interface CreateWorkItemDto {

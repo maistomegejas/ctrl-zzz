@@ -9,36 +9,36 @@ namespace CtrlZzz.Core.Features.Projects.Commands.CreateProject;
 public class CreateProjectHandler : IRequestHandler<CreateProjectCommand, Result<ProjectDto>>
 {
     private readonly IRepository<Project> _projectRepository;
-    private readonly IRepository<User> _userRepository;
     private readonly IRepository<ProjectMember> _projectMemberRepository;
+    private readonly ICurrentUserService _currentUserService;
 
     public CreateProjectHandler(
         IRepository<Project> projectRepository,
-        IRepository<User> userRepository,
-        IRepository<ProjectMember> projectMemberRepository)
+        IRepository<ProjectMember> projectMemberRepository,
+        ICurrentUserService currentUserService)
     {
         _projectRepository = projectRepository;
-        _userRepository = userRepository;
         _projectMemberRepository = projectMemberRepository;
+        _currentUserService = currentUserService;
     }
 
     public async Task<Result<ProjectDto>> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
-        // Check if owner exists
-        var ownerExists = await _userRepository.ExistsAsync(request.OwnerId, cancellationToken);
-        if (!ownerExists)
+        // Get current user ID
+        var currentUserId = _currentUserService.GetCurrentUserId();
+        if (currentUserId == null)
         {
-            return Result.Fail<ProjectDto>("Owner user not found");
+            return Result.Fail<ProjectDto>("User not authenticated");
         }
 
-        // Create project
+        // Create project with current user as owner
         var project = new Project
         {
             Id = Guid.NewGuid(),
             Name = request.Name,
             Key = request.Key,
             Description = request.Description,
-            OwnerId = request.OwnerId,
+            OwnerId = currentUserId.Value,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -49,7 +49,7 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectCommand, Result
         {
             Id = Guid.NewGuid(),
             ProjectId = project.Id,
-            UserId = request.OwnerId,
+            UserId = currentUserId.Value,
             CreatedAt = DateTime.UtcNow,
             IsDeleted = false
         };

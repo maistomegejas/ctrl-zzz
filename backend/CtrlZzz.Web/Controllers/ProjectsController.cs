@@ -60,7 +60,7 @@ public class ProjectsController : ControllerBase
     [RequirePermission("Projects.Create")]
     public async Task<IActionResult> Create([FromBody] CreateProjectDto dto)
     {
-        var command = new CreateProjectCommand(dto.Name, dto.Key, dto.Description, dto.OwnerId);
+        var command = new CreateProjectCommand(dto.Name, dto.Key, dto.Description);
         var result = await _mediator.Send(command);
 
         return result.IsSuccess

@@ -20,7 +20,6 @@ export default function ProjectsPage() {
     name: '',
     key: '',
     description: '',
-    ownerId: '',
   })
   const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; projectId: string | null }>({
     show: false,
@@ -35,7 +34,7 @@ export default function ProjectsPage() {
     e.preventDefault()
     await dispatch(createProject(formData))
     setShowCreateForm(false)
-    setFormData({ name: '', key: '', description: '', ownerId: '' })
+    setFormData({ name: '', key: '', description: '' })
   }
 
   const handleDeleteClick = (id: string) => {
@@ -117,21 +116,6 @@ export default function ProjectsPage() {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Owner User ID *
-                </label>
-                <input
-                  type="text"
-                  placeholder="Paste user ID from Swagger"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={formData.ownerId}
-                  onChange={(e) => setFormData({ ...formData, ownerId: e.target.value })}
-                  required
-                />
-                <p className="text-xs text-gray-500 mt-1">Create a user first in Swagger if needed</p>
               </div>
 
               <div className="flex justify-end gap-3 pt-2">
