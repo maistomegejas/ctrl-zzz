@@ -10,11 +10,16 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectCommand, Result
 {
     private readonly IRepository<Project> _projectRepository;
     private readonly IRepository<User> _userRepository;
+    private readonly IRepository<ProjectMember> _projectMemberRepository;
 
-    public CreateProjectHandler(IRepository<Project> projectRepository, IRepository<User> userRepository)
+    public CreateProjectHandler(
+        IRepository<Project> projectRepository,
+        IRepository<User> userRepository,
+        IRepository<ProjectMember> projectMemberRepository)
     {
         _projectRepository = projectRepository;
         _userRepository = userRepository;
+        _projectMemberRepository = projectMemberRepository;
     }
 
     public async Task<Result<ProjectDto>> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
@@ -38,6 +43,18 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectCommand, Result
         };
 
         await _projectRepository.AddAsync(project, cancellationToken);
+
+        // Auto-add project owner as member
+        var projectMember = new ProjectMember
+        {
+            Id = Guid.NewGuid(),
+            ProjectId = project.Id,
+            UserId = request.OwnerId,
+            CreatedAt = DateTime.UtcNow,
+            IsDeleted = false
+        };
+
+        await _projectMemberRepository.AddAsync(projectMember, cancellationToken);
 
         // Map to DTO
         var dto = new ProjectDto

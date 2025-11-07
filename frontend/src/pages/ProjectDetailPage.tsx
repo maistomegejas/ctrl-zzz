@@ -18,6 +18,11 @@ export default function ProjectDetailPage() {
   const { workItems, loading } = useAppSelector((state) => state.workItems)
   const { sprints } = useAppSelector((state) => state.sprints)
   const { users } = useAppSelector((state) => state.users)
+  const { permissions } = useAppSelector((state) => state.auth)
+
+  const hasPermission = (permission: string) => {
+    return permissions.includes(permission)
+  }
 
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [editingWorkItem, setEditingWorkItem] = useState<WorkItem | null>(null)
@@ -286,9 +291,11 @@ export default function ProjectDetailPage() {
 
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Issues</h2>
-        <button onClick={() => setShowCreateForm(!showCreateForm)} className="btn btn-primary">
-          {showCreateForm ? 'Cancel' : '+ New Issue'}
-        </button>
+        {hasPermission('WorkItems.Create') && (
+          <button onClick={() => setShowCreateForm(!showCreateForm)} className="btn btn-primary">
+            {showCreateForm ? 'Cancel' : '+ New Issue'}
+          </button>
+        )}
       </div>
 
       {editingWorkItem && (
@@ -656,12 +663,16 @@ export default function ProjectDetailPage() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => handleEdit(item)} className="btn btn-primary btn-sm">
-                    Edit
-                  </button>
-                  <button onClick={() => handleDeleteClick(item.id)} className="btn btn-error btn-sm">
-                    Delete
-                  </button>
+                  {hasPermission('WorkItems.Edit') && (
+                    <button onClick={() => handleEdit(item)} className="btn btn-primary btn-sm">
+                      Edit
+                    </button>
+                  )}
+                  {hasPermission('WorkItems.Delete') && (
+                    <button onClick={() => handleDeleteClick(item.id)} className="btn btn-error btn-sm">
+                      Delete
+                    </button>
+                  )}
                 </div>
               </div>
 
