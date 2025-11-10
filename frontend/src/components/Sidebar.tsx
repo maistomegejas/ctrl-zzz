@@ -42,10 +42,10 @@ export default function Sidebar() {
         </svg>
       </button>
 
-      <div className="p-6">
+      <div className="p-6 flex justify-center">
         {isCollapsed ? (
-          <Link to="/projects" className="flex justify-center">
-            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+          <Link to="/projects" className="inline-block">
+            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-white font-bold text-lg">C</span>
             </div>
           </Link>
