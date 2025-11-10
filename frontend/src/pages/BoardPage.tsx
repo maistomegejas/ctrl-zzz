@@ -205,16 +205,11 @@ export default function BoardPage() {
     <div className="flex-1 h-screen overflow-hidden flex flex-col">
       {/* Header */}
       <div className="border-b border-gray-200 bg-white px-8 py-5">
-        <div className="flex items-center gap-4 mb-4">
-          <button onClick={() => navigate(`/projects/${id}`)} className="text-blue-600 hover:text-blue-800">
-            ← Back
-          </button>
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Board</h1>
-            {selectedProject && (
-              <p className="text-sm text-gray-500 mt-1">{selectedProject.name}</p>
-            )}
-          </div>
+        <div className="mb-4">
+          <h1 className="text-3xl font-bold text-gray-900">Board</h1>
+          {selectedProject && (
+            <p className="text-gray-600 mt-1">{selectedProject.name}</p>
+          )}
         </div>
 
         {/* Filters */}

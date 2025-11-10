@@ -99,23 +99,11 @@ export default function ProjectSettingsPage() {
   }
 
   return (
-    <div className="flex-1 bg-gray-50">
-      <div className="border-b border-gray-200 bg-white px-8 py-5">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => navigate(`/projects/${id}`)}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            ← Back
-          </button>
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Project Settings</h1>
-            <p className="text-sm text-gray-500 mt-1">Manage project members</p>
-          </div>
-        </div>
+    <div className="p-8 max-w-7xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Project Settings</h1>
+        <p className="text-gray-600 mt-1">Manage project members</p>
       </div>
-
-      <div className="p-8">
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <span className="text-sm text-red-800">{error}</span>
