@@ -24,11 +24,11 @@ export default function Sidebar() {
   }
 
   return (
-    <div className={`${isCollapsed ? 'w-16' : 'w-64'} bg-white border-r border-gray-200 h-full flex flex-col transition-all duration-300 relative overflow-y-auto overflow-x-hidden z-10`}>
+    <div className={`${isCollapsed ? 'w-16' : 'w-64'} bg-white border-r border-gray-200 h-full flex flex-col transition-all duration-300 relative overflow-y-auto overflow-x-hidden z-50`}>
       {/* Collapse Toggle Button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-6 z-50 bg-white border border-gray-200 rounded-full p-1 hover:bg-gray-100 transition-colors"
+        className="absolute -right-3 top-6 z-[100] bg-white border border-gray-200 rounded-full p-1 hover:bg-gray-100 transition-colors"
         title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
         <svg
