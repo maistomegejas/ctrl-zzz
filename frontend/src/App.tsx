@@ -43,9 +43,9 @@ function App() {
           path="/*"
           element={
             <PrivateRoute>
-              <div className="flex min-h-screen bg-gray-50">
+              <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
                 <Sidebar />
-                <div className="flex-1">
+                <div className="flex-1 overflow-x-hidden">
                   <Routes>
                     <Route path="/" element={<Navigate to="/projects" replace />} />
                     <Route path="/projects" element={<ProjectsPage />} />
