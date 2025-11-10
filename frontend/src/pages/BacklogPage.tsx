@@ -118,6 +118,7 @@ export default function BacklogPage() {
                   </div>
                 </div>
               </div>
+            </div>
           ))}
         </div>
     </div>
