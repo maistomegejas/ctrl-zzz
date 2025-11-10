@@ -28,7 +28,8 @@ export default function Sidebar() {
       {/* Collapse Toggle Button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-6 z-[100] bg-white border border-gray-200 rounded-full p-1 hover:bg-gray-100 transition-colors"
+        className="fixed left-[calc(var(--sidebar-width)-12px)] top-6 z-[9999] bg-white border border-gray-200 rounded-full p-1 hover:bg-gray-100 transition-colors"
+        style={{ '--sidebar-width': isCollapsed ? '64px' : '256px' } as React.CSSProperties}
         title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
         <svg
