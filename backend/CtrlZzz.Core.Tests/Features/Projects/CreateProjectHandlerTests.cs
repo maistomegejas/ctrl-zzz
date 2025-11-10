@@ -10,33 +10,39 @@ namespace CtrlZzz.Core.Tests.Features.Projects;
 public class CreateProjectHandlerTests
 {
     private readonly Mock<IRepository<Project>> _projectRepository;
-    private readonly Mock<IRepository<User>> _userRepository;
+    private readonly Mock<IRepository<ProjectMember>> _projectMemberRepository;
+    private readonly Mock<ICurrentUserService> _currentUserService;
     private readonly CreateProjectHandler _handler;
 
     public CreateProjectHandlerTests()
     {
         _projectRepository = new Mock<IRepository<Project>>();
-        _userRepository = new Mock<IRepository<User>>();
-        _handler = new CreateProjectHandler(_projectRepository.Object, _userRepository.Object);
+        _projectMemberRepository = new Mock<IRepository<ProjectMember>>();
+        _currentUserService = new Mock<ICurrentUserService>();
+        _handler = new CreateProjectHandler(
+            _projectRepository.Object,
+            _projectMemberRepository.Object,
+            _currentUserService.Object);
     }
 
     [Fact]
     public async Task Handle_ValidCommand_ShouldCreateProject()
     {
         // Arrange
-        var ownerId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
         var command = new CreateProjectCommand(
             Name: "Test Project",
             Key: "TEST",
-            Description: "Test description",
-            OwnerId: ownerId
+            Description: "Test description"
         );
 
-        _userRepository.Setup(x => x.ExistsAsync(ownerId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true);
+        _currentUserService.Setup(x => x.GetCurrentUserId()).Returns(userId);
 
         _projectRepository.Setup(x => x.AddAsync(It.IsAny<Project>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Project p, CancellationToken ct) => p);
+
+        _projectMemberRepository.Setup(x => x.AddAsync(It.IsAny<ProjectMember>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ProjectMember pm, CancellationToken ct) => pm);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -47,32 +53,30 @@ public class CreateProjectHandlerTests
         result.Value.Name.Should().Be("Test Project");
         result.Value.Key.Should().Be("TEST");
         result.Value.Description.Should().Be("Test description");
-        result.Value.OwnerId.Should().Be(ownerId);
+        result.Value.OwnerId.Should().Be(userId);
 
         _projectRepository.Verify(x => x.AddAsync(It.IsAny<Project>(), It.IsAny<CancellationToken>()), Times.Once);
+        _projectMemberRepository.Verify(x => x.AddAsync(It.IsAny<ProjectMember>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
-    public async Task Handle_OwnerNotFound_ShouldReturnFailure()
+    public async Task Handle_UserNotAuthenticated_ShouldReturnFailure()
     {
         // Arrange
-        var ownerId = Guid.NewGuid();
         var command = new CreateProjectCommand(
             Name: "Test Project",
             Key: "TEST",
-            Description: null,
-            OwnerId: ownerId
+            Description: null
         );
 
-        _userRepository.Setup(x => x.ExistsAsync(ownerId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
+        _currentUserService.Setup(x => x.GetCurrentUserId()).Returns((Guid?)null);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.IsFailed.Should().BeTrue();
-        result.Errors.Should().Contain(e => e.Message == "Owner user not found");
+        result.Errors.Should().Contain(e => e.Message == "User not authenticated");
 
         _projectRepository.Verify(x => x.AddAsync(It.IsAny<Project>(), It.IsAny<CancellationToken>()), Times.Never);
     }

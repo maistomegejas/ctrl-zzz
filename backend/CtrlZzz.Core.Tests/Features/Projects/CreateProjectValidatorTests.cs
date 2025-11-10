@@ -15,8 +15,7 @@ public class CreateProjectValidatorTests
         var command = new CreateProjectCommand(
             Name: "Test Project",
             Key: "TEST",
-            Description: "Test description",
-            OwnerId: Guid.NewGuid()
+            Description: "Test description"
         );
 
         // Act
@@ -33,8 +32,7 @@ public class CreateProjectValidatorTests
         var command = new CreateProjectCommand(
             Name: "",
             Key: "TEST",
-            Description: null,
-            OwnerId: Guid.NewGuid()
+            Description: null
         );
 
         // Act
@@ -52,8 +50,7 @@ public class CreateProjectValidatorTests
         var command = new CreateProjectCommand(
             Name: "Test Project",
             Key: "",
-            Description: null,
-            OwnerId: Guid.NewGuid()
+            Description: null
         );
 
         // Act
@@ -71,8 +68,7 @@ public class CreateProjectValidatorTests
         var command = new CreateProjectCommand(
             Name: "Test Project",
             Key: "test",
-            Description: null,
-            OwnerId: Guid.NewGuid()
+            Description: null
         );
 
         // Act
@@ -81,24 +77,5 @@ public class CreateProjectValidatorTests
         // Assert
         result.IsValid.Should().BeFalse();
         result.Errors.Should().Contain(e => e.PropertyName == "Key");
-    }
-
-    [Fact]
-    public void Validate_EmptyOwnerId_ShouldFail()
-    {
-        // Arrange
-        var command = new CreateProjectCommand(
-            Name: "Test Project",
-            Key: "TEST",
-            Description: null,
-            OwnerId: Guid.Empty
-        );
-
-        // Act
-        var result = _validator.Validate(command);
-
-        // Assert
-        result.IsValid.Should().BeFalse();
-        result.Errors.Should().Contain(e => e.PropertyName == "OwnerId");
     }
 }
