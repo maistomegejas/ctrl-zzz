@@ -731,6 +731,77 @@ public class ApplicationDbContext : DbContext
             new UserRole { Id = GenerateDeterministicGuid("userrole-sarah-pm"), UserId = user2Id, RoleId = pmRoleId, CreatedAt = DateTime.UtcNow, IsDeleted = false },
             new UserRole { Id = GenerateDeterministicGuid("userrole-mike-dev"), UserId = user3Id, RoleId = devRoleId, CreatedAt = DateTime.UtcNow, IsDeleted = false }
         );
+
+        // Seed ProjectMembers - Assign team members to projects
+        modelBuilder.Entity<ProjectMember>().HasData(
+            // E-commerce Platform members
+            new ProjectMember
+            {
+                Id = GenerateDeterministicGuid("projectmember-ecom-john"),
+                ProjectId = project1Id,
+                UserId = user1Id, // John (owner)
+                CreatedAt = DateTime.UtcNow.AddMonths(-3),
+                IsDeleted = false
+            },
+            new ProjectMember
+            {
+                Id = GenerateDeterministicGuid("projectmember-ecom-sarah"),
+                ProjectId = project1Id,
+                UserId = user2Id, // Sarah
+                CreatedAt = DateTime.UtcNow.AddMonths(-3),
+                IsDeleted = false
+            },
+            new ProjectMember
+            {
+                Id = GenerateDeterministicGuid("projectmember-ecom-mike"),
+                ProjectId = project1Id,
+                UserId = user3Id, // Mike
+                CreatedAt = DateTime.UtcNow.AddMonths(-2),
+                IsDeleted = false
+            },
+            new ProjectMember
+            {
+                Id = GenerateDeterministicGuid("projectmember-ecom-admin"),
+                ProjectId = project1Id,
+                UserId = adminUserId, // Admin has access to all projects
+                CreatedAt = DateTime.UtcNow.AddMonths(-3),
+                IsDeleted = false
+            },
+
+            // Mobile App Redesign members
+            new ProjectMember
+            {
+                Id = GenerateDeterministicGuid("projectmember-mobile-sarah"),
+                ProjectId = project2Id,
+                UserId = user2Id, // Sarah (owner)
+                CreatedAt = DateTime.UtcNow.AddMonths(-2),
+                IsDeleted = false
+            },
+            new ProjectMember
+            {
+                Id = GenerateDeterministicGuid("projectmember-mobile-mike"),
+                ProjectId = project2Id,
+                UserId = user3Id, // Mike
+                CreatedAt = DateTime.UtcNow.AddMonths(-2),
+                IsDeleted = false
+            },
+            new ProjectMember
+            {
+                Id = GenerateDeterministicGuid("projectmember-mobile-john"),
+                ProjectId = project2Id,
+                UserId = user1Id, // John
+                CreatedAt = DateTime.UtcNow.AddMonths(-1),
+                IsDeleted = false
+            },
+            new ProjectMember
+            {
+                Id = GenerateDeterministicGuid("projectmember-mobile-admin"),
+                ProjectId = project2Id,
+                UserId = adminUserId, // Admin has access to all projects
+                CreatedAt = DateTime.UtcNow.AddMonths(-2),
+                IsDeleted = false
+            }
+        );
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

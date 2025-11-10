@@ -13,6 +13,11 @@ export default function SprintsPage() {
 
   const { selectedProject } = useAppSelector((state) => state.projects)
   const { sprints, loading } = useAppSelector((state) => state.sprints)
+  const { permissions } = useAppSelector((state) => state.auth)
+
+  const hasPermission = (permission: string) => {
+    return permissions.includes(permission)
+  }
 
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [formData, setFormData] = useState<CreateSprintDto>({
@@ -76,12 +81,14 @@ export default function SprintsPage() {
           <h1 className="text-3xl font-bold text-gray-900">Sprints</h1>
           <p className="text-gray-600 mt-1">Manage sprints for {selectedProject?.name}</p>
         </div>
-        <button
-          onClick={() => setShowCreateForm(!showCreateForm)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors"
-        >
-          {showCreateForm ? 'Cancel' : '+ New Sprint'}
-        </button>
+        {hasPermission('Sprints.Create') && (
+          <button
+            onClick={() => setShowCreateForm(!showCreateForm)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors"
+          >
+            {showCreateForm ? 'Cancel' : '+ New Sprint'}
+          </button>
+        )}
       </div>
 
       <Modal
@@ -155,7 +162,11 @@ export default function SprintsPage() {
 
       <div className="space-y-4">
         {sprints.map((sprint) => (
-          <div key={sprint.id} className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+          <div
+            key={sprint.id}
+            className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow cursor-pointer"
+            onClick={() => navigate(`/projects/${id}/sprint-planning/${sprint.id}`)}
+          >
             <div className="card-body">
               <div className="flex justify-between items-start">
                 <div className="flex-1">
@@ -186,8 +197,8 @@ export default function SprintsPage() {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
-                  {!sprint.isActive && !sprint.isCompleted && (
+                <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                  {hasPermission('Sprints.Edit') && !sprint.isActive && !sprint.isCompleted && (
                     <button
                       onClick={() => setStartSprintModal(sprint)}
                       className="px-3 py-1.5 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 font-medium transition-colors"
@@ -195,7 +206,7 @@ export default function SprintsPage() {
                       Start
                     </button>
                   )}
-                  {sprint.isActive && !sprint.isCompleted && (
+                  {hasPermission('Sprints.Edit') && sprint.isActive && !sprint.isCompleted && (
                     <button
                       onClick={() => setCompleteSprintModal(sprint)}
                       className="px-3 py-1.5 text-sm bg-yellow-600 text-white rounded-md hover:bg-yellow-700 font-medium transition-colors"
@@ -203,12 +214,14 @@ export default function SprintsPage() {
                       Complete
                     </button>
                   )}
-                  <button
-                    onClick={() => setDeleteSprintModal(sprint)}
-                    className="px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 font-medium transition-colors"
-                  >
-                    Delete
-                  </button>
+                  {hasPermission('Sprints.Edit') && (
+                    <button
+                      onClick={() => setDeleteSprintModal(sprint)}
+                      className="px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 font-medium transition-colors"
+                    >
+                      Delete
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

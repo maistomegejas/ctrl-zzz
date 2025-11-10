@@ -10,6 +10,12 @@ export default function TeamPage() {
   const { selectedProject } = useAppSelector((state) => state.projects)
   const { workItems } = useAppSelector((state) => state.workItems)
   const { users } = useAppSelector((state) => state.users)
+  const { permissions } = useAppSelector((state) => state.auth)
+
+  const hasPermission = (permission: string) => {
+    return permissions.includes(permission)
+  }
+
   const [showAddMember, setShowAddMember] = useState(false)
 
   useEffect(() => {
@@ -41,12 +47,14 @@ export default function TeamPage() {
       <div className="mb-8">
         <div className="flex justify-between items-center mb-2">
           <h1 className="text-3xl font-bold text-gray-900">Team</h1>
-          <button
-            onClick={() => setShowAddMember(!showAddMember)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors"
-          >
-            + Add Member
-          </button>
+          {hasPermission('Projects.ManageMembers') && (
+            <button
+              onClick={() => setShowAddMember(!showAddMember)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors"
+            >
+              + Add Member
+            </button>
+          )}
         </div>
         <p className="text-gray-600">
           Manage team members and view workload for {selectedProject?.name}
@@ -173,9 +181,11 @@ export default function TeamPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center">
-                    <button className="text-sm text-red-600 hover:text-red-800 font-medium">
-                      Remove
-                    </button>
+                    {hasPermission('Projects.ManageMembers') && (
+                      <button className="text-sm text-red-600 hover:text-red-800 font-medium">
+                        Remove
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
