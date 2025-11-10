@@ -62,8 +62,14 @@ export default function ProjectDashboard() {
   }
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-8 max-w-7xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <p className="text-gray-600 mt-1">Overview and metrics for {selectedProject?.name || 'this project'}</p>
+      </div>
+
       {/* Metric Cards */}
+      <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="text-3xl font-bold text-gray-900">{totalIssues}</div>
