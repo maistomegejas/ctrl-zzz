@@ -24,7 +24,7 @@ export default function Sidebar() {
   }
 
   return (
-    <div className={`${isCollapsed ? 'w-16' : 'w-64'} bg-white border-r border-gray-200 min-h-screen flex flex-col transition-all duration-300 relative`}>
+    <div className={`${isCollapsed ? 'w-16' : 'w-64'} bg-white border-r border-gray-200 h-full flex flex-col transition-all duration-300 relative overflow-y-auto`}>
       {/* Collapse Toggle Button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
