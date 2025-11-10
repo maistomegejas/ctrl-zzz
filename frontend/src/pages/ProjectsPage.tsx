@@ -71,6 +71,216 @@ export default function ProjectsPage() {
         </div>
       </div>
 
+      {/* TEMPORARY: Logo Showcase - Remove Later */}
+      <div className="bg-yellow-50 border-y border-yellow-200 p-8">
+        <h2 className="text-xl font-bold mb-6 text-center">Pick a Logo (1-20)</h2>
+        <div className="grid grid-cols-10 gap-6 max-w-7xl mx-auto">
+
+          {/* Logo 1: Simple Circle CZ */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="20" fill="#2563EB"/>
+              <text x="20" y="26" fontSize="16" fontWeight="bold" fill="white" textAnchor="middle">CZ</text>
+            </svg>
+            <span className="text-xs font-bold">1</span>
+          </div>
+
+          {/* Logo 2: Rounded Square */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <rect width="40" height="40" rx="8" fill="#2563EB"/>
+              <text x="20" y="26" fontSize="16" fontWeight="bold" fill="white" textAnchor="middle">CZ</text>
+            </svg>
+            <span className="text-xs font-bold">2</span>
+          </div>
+
+          {/* Logo 3: Keyboard Key */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <rect x="2" y="4" width="36" height="32" rx="4" fill="#2563EB"/>
+              <rect x="2" y="4" width="36" height="4" rx="2" fill="#1e40af"/>
+              <text x="20" y="26" fontSize="14" fontWeight="bold" fill="white" textAnchor="middle">CZ</text>
+            </svg>
+            <span className="text-xs font-bold">3</span>
+          </div>
+
+          {/* Logo 4: Hexagon */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <path d="M20 2 L35 11 L35 29 L20 38 L5 29 L5 11 Z" fill="#2563EB"/>
+              <text x="20" y="25" fontSize="14" fontWeight="bold" fill="white" textAnchor="middle">CZ</text>
+            </svg>
+            <span className="text-xs font-bold">4</span>
+          </div>
+
+          {/* Logo 5: ZZZ Sleep Theme */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <rect width="40" height="40" rx="8" fill="#2563EB"/>
+              <text x="8" y="16" fontSize="12" fontWeight="bold" fill="white">Z</text>
+              <text x="16" y="24" fontSize="14" fontWeight="bold" fill="white">Z</text>
+              <text x="24" y="32" fontSize="16" fontWeight="bold" fill="white">Z</text>
+            </svg>
+            <span className="text-xs font-bold">5</span>
+          </div>
+
+          {/* Logo 6: Ctrl Key Style */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <rect width="40" height="40" rx="6" fill="#1e293b" stroke="#64748b" strokeWidth="2"/>
+              <text x="20" y="18" fontSize="10" fontWeight="bold" fill="#94a3b8" textAnchor="middle">CTRL</text>
+              <text x="20" y="30" fontSize="12" fontWeight="bold" fill="white" textAnchor="middle">Z</text>
+            </svg>
+            <span className="text-xs font-bold">6</span>
+          </div>
+
+          {/* Logo 7: Minimal C+Z */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <rect width="40" height="40" rx="8" fill="#2563EB"/>
+              <text x="12" y="26" fontSize="18" fontWeight="bold" fill="white">C</text>
+              <text x="25" y="26" fontSize="18" fontWeight="bold" fill="white">Z</text>
+              <line x1="20" y1="12" x2="20" y2="32" stroke="white" strokeWidth="2"/>
+            </svg>
+            <span className="text-xs font-bold">7</span>
+          </div>
+
+          {/* Logo 8: Diamond */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <rect x="20" y="20" width="24" height="24" transform="rotate(45 20 20)" fill="#2563EB"/>
+              <text x="20" y="25" fontSize="14" fontWeight="bold" fill="white" textAnchor="middle">CZ</text>
+            </svg>
+            <span className="text-xs font-bold">8</span>
+          </div>
+
+          {/* Logo 9: Stacked Letters */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <rect width="40" height="40" rx="8" fill="#2563EB"/>
+              <text x="20" y="18" fontSize="14" fontWeight="bold" fill="white" textAnchor="middle">C</text>
+              <rect x="8" y="20" width="24" height="2" fill="white"/>
+              <text x="20" y="32" fontSize="14" fontWeight="bold" fill="white" textAnchor="middle">Z</text>
+            </svg>
+            <span className="text-xs font-bold">9</span>
+          </div>
+
+          {/* Logo 10: Badge Style */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="18" fill="#2563EB" stroke="#1e40af" strokeWidth="3"/>
+              <text x="20" y="26" fontSize="16" fontWeight="bold" fill="white" textAnchor="middle">CZ</text>
+            </svg>
+            <span className="text-xs font-bold">10</span>
+          </div>
+
+          {/* Logo 11: Corner Brackets */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <rect width="40" height="40" rx="8" fill="#2563EB"/>
+              <path d="M8 8 L12 8 L12 10 L10 10 L10 12 L8 12 Z M28 8 L32 8 L32 12 L30 12 L30 10 L28 10 Z M8 28 L10 28 L10 30 L12 30 L12 32 L8 32 Z M30 30 L30 32 L28 32 L28 30 L30 30 L32 30 L32 28 L30 28 Z" fill="white"/>
+              <text x="20" y="26" fontSize="14" fontWeight="bold" fill="white" textAnchor="middle">CZ</text>
+            </svg>
+            <span className="text-xs font-bold">11</span>
+          </div>
+
+          {/* Logo 12: Abstract Geometric */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <rect width="40" height="40" rx="8" fill="#2563EB"/>
+              <path d="M10 10 L30 10 L20 20 Z" fill="#1e40af"/>
+              <path d="M10 30 L30 30 L20 20 Z" fill="white"/>
+              <text x="20" y="23" fontSize="10" fontWeight="bold" fill="#2563EB" textAnchor="middle">CZ</text>
+            </svg>
+            <span className="text-xs font-bold">12</span>
+          </div>
+
+          {/* Logo 13: Gradient Circle */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style={{stopColor: '#3b82f6', stopOpacity: 1}} />
+                  <stop offset="100%" style={{stopColor: '#1e40af', stopOpacity: 1}} />
+                </linearGradient>
+              </defs>
+              <circle cx="20" cy="20" r="20" fill="url(#grad1)"/>
+              <text x="20" y="26" fontSize="16" fontWeight="bold" fill="white" textAnchor="middle">CZ</text>
+            </svg>
+            <span className="text-xs font-bold">13</span>
+          </div>
+
+          {/* Logo 14: Minimal Lines */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <rect width="40" height="40" rx="8" fill="#2563EB"/>
+              <path d="M12 12 L22 12 M12 12 L12 22 M22 12 L12 22" stroke="white" strokeWidth="2" fill="none"/>
+              <path d="M28 18 L28 28 M18 28 L28 28 M18 18 L28 28" stroke="white" strokeWidth="2" fill="none"/>
+            </svg>
+            <span className="text-xs font-bold">14</span>
+          </div>
+
+          {/* Logo 15: Monogram Overlap */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <rect width="40" height="40" rx="8" fill="#2563EB"/>
+              <text x="14" y="26" fontSize="22" fontWeight="bold" fill="white" opacity="0.7">C</text>
+              <text x="22" y="26" fontSize="22" fontWeight="bold" fill="white">Z</text>
+            </svg>
+            <span className="text-xs font-bold">15</span>
+          </div>
+
+          {/* Logo 16: Square in Square */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <rect width="40" height="40" rx="8" fill="#2563EB"/>
+              <rect x="10" y="10" width="20" height="20" rx="4" fill="none" stroke="white" strokeWidth="2"/>
+              <text x="20" y="26" fontSize="12" fontWeight="bold" fill="white" textAnchor="middle">CZ</text>
+            </svg>
+            <span className="text-xs font-bold">16</span>
+          </div>
+
+          {/* Logo 17: Lightning Bolt */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <rect width="40" height="40" rx="8" fill="#2563EB"/>
+              <path d="M22 8 L16 22 L20 22 L18 32 L26 18 L22 18 Z" fill="#fbbf24"/>
+              <text x="20" y="38" fontSize="8" fontWeight="bold" fill="white" textAnchor="middle">CZ</text>
+            </svg>
+            <span className="text-xs font-bold">17</span>
+          </div>
+
+          {/* Logo 18: Simple Square Frame */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <rect width="40" height="40" fill="white" stroke="#2563EB" strokeWidth="3"/>
+              <text x="20" y="26" fontSize="16" fontWeight="bold" fill="#2563EB" textAnchor="middle">CZ</text>
+            </svg>
+            <span className="text-xs font-bold">18</span>
+          </div>
+
+          {/* Logo 19: Pill Shape */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <rect x="5" y="10" width="30" height="20" rx="10" fill="#2563EB"/>
+              <text x="20" y="25" fontSize="14" fontWeight="bold" fill="white" textAnchor="middle">CZ</text>
+            </svg>
+            <span className="text-xs font-bold">19</span>
+          </div>
+
+          {/* Logo 20: Minimal Square Dot */}
+          <div className="flex flex-col items-center gap-2">
+            <svg className="w-12 h-12" viewBox="0 0 40 40">
+              <rect width="40" height="40" rx="8" fill="#2563EB"/>
+              <circle cx="32" cy="8" r="4" fill="#ef4444"/>
+              <text x="20" y="28" fontSize="18" fontWeight="bold" fill="white" textAnchor="middle">CZ</text>
+            </svg>
+            <span className="text-xs font-bold">20</span>
+          </div>
+
+        </div>
+      </div>
+
       <div className="p-8">
         {showCreateForm && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
