@@ -45,9 +45,14 @@ export default function Sidebar() {
       <div className="p-6 flex justify-center">
         {isCollapsed ? (
           <Link to="/projects" className="inline-block">
-            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-white font-bold text-lg">C</span>
-            </div>
+            <svg className="w-10 h-10 flex-shrink-0" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Rounded square background */}
+              <rect width="40" height="40" rx="8" fill="#2563EB"/>
+              {/* Stylized CZ */}
+              <path d="M12 13C12 12.4477 12.4477 12 13 12H20C20.5523 12 21 12.4477 21 13C21 13.5523 20.5523 14 20 14H15.4142L20.7071 19.2929C21.0976 19.6834 21.0976 20.3166 20.7071 20.7071C20.3166 21.0976 19.6834 21.0976 19.2929 20.7071L14 15.4142V20C14 20.5523 13.5523 21 13 21C12.4477 21 12 20.5523 12 20V13Z" fill="white"/>
+              <path d="M27 19C20.9249 19 19 20.9249 19 27C19 27.5523 19.4477 28 20 28C20.5523 28 21 27.5523 21 27C21 22.0751 22.0751 21 27 21C27.5523 21 28 20.5523 28 20C28 19.4477 27.5523 19 27 19Z" fill="white"/>
+              <path d="M26 24L21 29M26 29L21 24" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
           </Link>
         ) : (
           <Link to="/projects" className="text-2xl font-bold text-blue-600 block">
