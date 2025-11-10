@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchWorkItems } from '../features/workItemsSlice'
 import { fetchSprints } from '../features/sprintsSlice'
 import { fetchUsers } from '../features/usersSlice'
+import { fetchProjectById } from '../features/projectsSlice'
 import { WorkItemStatus, WorkItemType } from '../types'
 
 export default function ProjectDashboard() {
@@ -14,9 +15,11 @@ export default function ProjectDashboard() {
   const { workItems } = useAppSelector((state) => state.workItems)
   const { sprints } = useAppSelector((state) => state.sprints)
   const { users } = useAppSelector((state) => state.users)
+  const { selectedProject } = useAppSelector((state) => state.projects)
 
   useEffect(() => {
     if (id) {
+      dispatch(fetchProjectById(id))
       dispatch(fetchWorkItems(id))
       dispatch(fetchSprints(id))
     }
@@ -213,6 +216,7 @@ export default function ProjectDashboard() {
             View Reports
           </button>
         </div>
+      </div>
       </div>
     </div>
   )
