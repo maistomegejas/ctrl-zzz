@@ -14,8 +14,5 @@ public class CreateProjectValidator : AbstractValidator<CreateProjectCommand>
             .NotEmpty().WithMessage("Project key is required")
             .MaximumLength(10).WithMessage("Project key cannot exceed 10 characters")
             .Matches("^[A-Z]+$").WithMessage("Project key must be uppercase letters only");
-
-        RuleFor(x => x.OwnerId)
-            .NotEmpty().WithMessage("Owner is required");
     }
 }
