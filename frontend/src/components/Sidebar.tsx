@@ -43,9 +43,17 @@ export default function Sidebar() {
       </button>
 
       <div className="p-6">
-        <Link to="/projects" className={`text-2xl font-bold text-blue-600 block ${isCollapsed ? 'text-center' : ''}`}>
-          {isCollapsed ? 'CZ' : 'CTRL-ZZZ'}
-        </Link>
+        {isCollapsed ? (
+          <Link to="/projects" className="flex justify-center">
+            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-lg">C</span>
+            </div>
+          </Link>
+        ) : (
+          <Link to="/projects" className="text-2xl font-bold text-blue-600 block">
+            CTRL-ZZZ
+          </Link>
+        )}
       </div>
 
       <nav className="px-3 flex-1 overflow-y-auto">
