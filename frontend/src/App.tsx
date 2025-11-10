@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import ProjectsPage from './pages/ProjectsPage'
 import ProjectDetailPage from './pages/ProjectDetailPage'
+import ProjectDashboard from './pages/ProjectDashboard'
 import ProjectSettingsPage from './pages/ProjectSettingsPage'
 import SprintsPage from './pages/SprintsPage'
 import BoardPage from './pages/BoardPage'
@@ -13,6 +14,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import AdminPanel from './pages/AdminPanel'
 import Sidebar from './components/Sidebar'
+import ProjectLayout from './layouts/ProjectLayout'
 import { useAppSelector, useAppDispatch } from './store/hooks'
 import { fetchCurrentUser } from './features/authSlice'
 
@@ -49,14 +51,24 @@ function App() {
                   <Routes>
                     <Route path="/" element={<Navigate to="/projects" replace />} />
                     <Route path="/projects" element={<ProjectsPage />} />
-                    <Route path="/projects/:id" element={<ProjectDetailPage />} />
-                    <Route path="/projects/:id/settings" element={<ProjectSettingsPage />} />
-                    <Route path="/projects/:id/board" element={<BoardPage />} />
-                    <Route path="/projects/:id/planning" element={<SprintPlanningPage />} />
-                    <Route path="/projects/:projectId/sprints" element={<SprintsPage />} />
+
+                    {/* Project Routes with Layout */}
+                    <Route path="/projects/:id" element={<ProjectLayout />}>
+                      <Route index element={<ProjectDashboard />} />
+                      <Route path="issues" element={<ProjectDetailPage />} />
+                      <Route path="board" element={<BoardPage />} />
+                      <Route path="backlog" element={<BacklogPage />} />
+                      <Route path="sprints" element={<SprintsPage />} />
+                      <Route path="planning" element={<SprintPlanningPage />} />
+                      <Route path="team" element={<div className="p-8">Team view coming soon...</div>} />
+                      <Route path="docs" element={<div className="p-8">Documentation coming soon...</div>} />
+                      <Route path="reports" element={<div className="p-8">Reports coming soon...</div>} />
+                      <Route path="settings" element={<ProjectSettingsPage />} />
+                    </Route>
+
+                    {/* Other Routes */}
                     <Route path="/issues/:id" element={<IssueDetailPage />} />
                     <Route path="/my-issues" element={<MyIssuesPage />} />
-                    <Route path="/backlog" element={<BacklogPage />} />
                     <Route path="/admin" element={<AdminPanel />} />
                   </Routes>
                 </div>

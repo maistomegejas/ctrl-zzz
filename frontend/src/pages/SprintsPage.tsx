@@ -7,7 +7,7 @@ import { CreateSprintDto, Sprint } from '../types'
 import Modal from '../components/Modal'
 
 export default function SprintsPage() {
-  const { projectId } = useParams<{ projectId: string }>()
+  const { id } = useParams<{ id: string }>()
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
@@ -19,28 +19,28 @@ export default function SprintsPage() {
     name: '',
     goal: '',
     endDate: '',
-    projectId: projectId || '',
+    projectId: id || '',
   })
   const [startSprintModal, setStartSprintModal] = useState<Sprint | null>(null)
   const [completeSprintModal, setCompleteSprintModal] = useState<Sprint | null>(null)
   const [deleteSprintModal, setDeleteSprintModal] = useState<Sprint | null>(null)
 
   useEffect(() => {
-    if (projectId) {
-      dispatch(fetchProjectById(projectId))
-      dispatch(fetchSprints(projectId))
+    if (id) {
+      dispatch(fetchProjectById(id))
+      dispatch(fetchSprints(id))
     }
-  }, [projectId, dispatch])
+  }, [id, dispatch])
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
     await dispatch(createSprint({
       ...formData,
-      projectId: projectId!,
+      projectId: id!,
       endDate: formData.endDate || undefined,
     }))
     setShowCreateForm(false)
-    setFormData({ name: '', goal: '', endDate: '', projectId: projectId || '' })
+    setFormData({ name: '', goal: '', endDate: '', projectId: id || '' })
   }
 
   const confirmDelete = async () => {
@@ -71,7 +71,7 @@ export default function SprintsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <button onClick={() => navigate(`/projects/${projectId}`)} className="btn btn-ghost mb-6">
+      <button onClick={() => navigate(`/projects/${id}`)} className="btn btn-ghost mb-6">
         ← Back to Project
       </button>
 
