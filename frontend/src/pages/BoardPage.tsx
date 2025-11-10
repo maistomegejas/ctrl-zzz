@@ -289,13 +289,13 @@ export default function BoardPage() {
         </div>
       )}
 
-      <div className="flex gap-4 p-6 flex-1 overflow-x-auto">
+      <div className="flex gap-4 p-6 flex-1 overflow-hidden">
         {viewMode === 'status' && statuses.map((status) => {
           const items = getItemsByStatus(status.value)
           return (
             <div
               key={status.value}
-              className="flex-shrink-0 w-80"
+              className="flex-1 min-w-[240px]"
               onDragOver={handleDragOver}
               onDrop={() => handleDrop(status.value)}
             >
@@ -321,7 +321,7 @@ export default function BoardPage() {
         {viewMode === 'assignee' && assigneeList.map((assignee) => {
           const items = getItemsByAssignee(assignee.id)
           return (
-            <div key={assignee.id} className="flex-shrink-0 w-80">
+            <div key={assignee.id} className="flex-1 min-w-[240px]">
               <div className="bg-purple-100 rounded-lg p-4 h-full flex flex-col">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="font-semibold text-gray-900">{assignee.name}</h2>
@@ -344,7 +344,7 @@ export default function BoardPage() {
         {viewMode === 'priority' && priorities.map((priority) => {
           const items = getItemsByPriority(priority.value)
           return (
-            <div key={priority.value} className="flex-shrink-0 w-80">
+            <div key={priority.value} className="flex-1 min-w-[240px]">
               <div className={`${priority.color} rounded-lg p-4 h-full flex flex-col`}>
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="font-semibold text-gray-900">{priority.label}</h2>

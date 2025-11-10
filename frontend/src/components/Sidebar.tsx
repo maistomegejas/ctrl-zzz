@@ -43,7 +43,7 @@ export default function Sidebar() {
       </button>
 
       <div className="p-6">
-        <Link to="/projects" className={`text-2xl font-bold text-blue-600 ${isCollapsed ? 'text-center' : ''}`}>
+        <Link to="/projects" className={`text-2xl font-bold text-blue-600 block ${isCollapsed ? 'text-center' : ''}`}>
           {isCollapsed ? 'CZ' : 'CTRL-ZZZ'}
         </Link>
       </div>
