@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchProjects, createProject, deleteProject } from '../features/projectsSlice'
 import { CreateProjectDto } from '../types'
 import ConfirmModal from '../components/ConfirmModal'
-import LogoShowcase from '../components/LogoShowcase'
 
 export default function ProjectsPage() {
   const dispatch = useAppDispatch()
@@ -71,8 +70,6 @@ export default function ProjectsPage() {
           )}
         </div>
       </div>
-
-      <LogoShowcase />
 
       <div className="p-8">
         {showCreateForm && (
