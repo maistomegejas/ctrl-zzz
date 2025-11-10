@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { adminService, User, Role, Permission, UserWithRoles } from '../services/adminService';
+import { projectService } from '../services/projectService';
+import { Project, ProjectMember } from '../types';
 
-type TabType = 'users' | 'roles' | 'permissions';
+type TabType = 'users' | 'roles' | 'permissions' | 'projects';
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<TabType>('users');
@@ -16,6 +18,12 @@ export default function AdminPanel() {
   const [showCreateRole, setShowCreateRole] = useState(false);
   const [newRoleName, setNewRoleName] = useState('');
   const [newRoleDescription, setNewRoleDescription] = useState('');
+
+  // Project assignment state
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [projectMembers, setProjectMembers] = useState<ProjectMember[]>([]);
+  const [selectedUserIdForProject, setSelectedUserIdForProject] = useState<string>('');
 
   // Load initial data
   useEffect(() => {
@@ -139,6 +147,65 @@ export default function AdminPanel() {
     }
   };
 
+  // Project assignment functions
+  const loadProjects = async () => {
+    try {
+      const response = await projectService.getAll();
+      setProjects(response.data);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to load projects');
+    }
+  };
+
+  const loadProjectMembers = async (projectId: string) => {
+    try {
+      setLoading(true);
+      const response = await projectService.getMembers(projectId);
+      setProjectMembers(response.data);
+      setError(null);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to load project members');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelectProject = async (project: Project) => {
+    setSelectedProject(project);
+    await loadProjectMembers(project.id);
+  };
+
+  const handleAddMemberToProject = async () => {
+    if (!selectedUserIdForProject || !selectedProject) return;
+
+    try {
+      await projectService.addMember(selectedProject.id, selectedUserIdForProject);
+      await loadProjectMembers(selectedProject.id);
+      setSelectedUserIdForProject('');
+      setError(null);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to add member to project');
+    }
+  };
+
+  const handleRemoveMemberFromProject = async (userId: string) => {
+    if (!selectedProject) return;
+
+    try {
+      await projectService.removeMember(selectedProject.id, userId);
+      await loadProjectMembers(selectedProject.id);
+      setError(null);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to remove member from project');
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'projects' && projects.length === 0) {
+      loadProjects();
+    }
+  }, [activeTab]);
+
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">Admin Panel</h1>
@@ -168,6 +235,12 @@ export default function AdminPanel() {
           onClick={() => setActiveTab('permissions')}
         >
           Permissions
+        </button>
+        <button
+          className={`tab ${activeTab === 'projects' ? 'tab-active' : ''}`}
+          onClick={() => setActiveTab('projects')}
+        >
+          Projects
         </button>
       </div>
 
@@ -448,6 +521,109 @@ export default function AdminPanel() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Projects Tab */}
+      {activeTab === 'projects' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Projects List */}
+          <div className="card bg-base-100 shadow-xl">
+            <div className="card-body">
+              <h2 className="card-title">All Projects</h2>
+              {loading && <span className="loading loading-spinner"></span>}
+              <div className="overflow-x-auto">
+                <table className="table table-zebra">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Key</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {projects.map((project) => (
+                      <tr key={project.id}>
+                        <td>{project.name}</td>
+                        <td><span className="badge badge-secondary">{project.key}</span></td>
+                        <td>
+                          <button
+                            className="btn btn-sm btn-primary"
+                            onClick={() => handleSelectProject(project)}
+                          >
+                            Manage Members
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          {/* Project Members */}
+          <div className="card bg-base-100 shadow-xl">
+            <div className="card-body">
+              <h2 className="card-title">Project Members</h2>
+              {selectedProject ? (
+                <div>
+                  <div className="mb-4">
+                    <p><strong>Project:</strong> {selectedProject.name}</p>
+                    <p className="text-sm text-gray-500">{selectedProject.key}</p>
+                  </div>
+
+                  <h3 className="font-bold mb-2">Current Members ({projectMembers.length}):</h3>
+                  <div className="space-y-2 mb-4 max-h-64 overflow-y-auto">
+                    {projectMembers.map((member) => (
+                      <div key={member.id} className="flex items-center justify-between p-2 bg-base-200 rounded">
+                        <div>
+                          <p className="font-semibold">{member.userName}</p>
+                          <p className="text-xs text-gray-500">{member.userEmail}</p>
+                        </div>
+                        <button
+                          className="btn btn-xs btn-error"
+                          onClick={() => handleRemoveMemberFromProject(member.userId)}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                    {projectMembers.length === 0 && (
+                      <p className="text-gray-500">No members assigned to this project</p>
+                    )}
+                  </div>
+
+                  <h3 className="font-bold mb-2">Add Member:</h3>
+                  <div className="flex gap-2">
+                    <select
+                      className="select select-bordered flex-1"
+                      value={selectedUserIdForProject}
+                      onChange={(e) => setSelectedUserIdForProject(e.target.value)}
+                    >
+                      <option value="">Select a user...</option>
+                      {users
+                        .filter((user) => !projectMembers.some((member) => member.userId === user.id))
+                        .map((user) => (
+                          <option key={user.id} value={user.id}>
+                            {user.name} ({user.email})
+                          </option>
+                        ))}
+                    </select>
+                    <button
+                      className="btn btn-success"
+                      onClick={handleAddMemberToProject}
+                      disabled={!selectedUserIdForProject}
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-gray-500">Select a project to manage its members</p>
+              )}
             </div>
           </div>
         </div>
