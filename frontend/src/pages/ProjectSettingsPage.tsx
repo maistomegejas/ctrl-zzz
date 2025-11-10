@@ -173,7 +173,6 @@ export default function ProjectSettingsPage() {
             )}
           </div>
         </div>
-      </div>
 
       <ConfirmModal
         isOpen={removeConfirm.show}
