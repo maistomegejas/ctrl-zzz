@@ -165,7 +165,7 @@ export default function SprintsPage() {
           <div
             key={sprint.id}
             className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow cursor-pointer"
-            onClick={() => navigate(`/projects/${id}/sprint-planning/${sprint.id}`)}
+            onClick={() => navigate(`/projects/${id}/sprints/${sprint.id}`)}
           >
             <div className="card-body">
               <div className="flex justify-between items-start">

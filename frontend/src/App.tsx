@@ -11,6 +11,7 @@ import IssueDetailPage from './pages/IssueDetailPage'
 import MyIssuesPage from './pages/MyIssuesPage'
 import BacklogPage from './pages/BacklogPage'
 import SprintPlanningPage from './pages/SprintPlanningPage'
+import SprintDetailPage from './pages/SprintDetailPage'
 import TeamPage from './pages/TeamPage'
 import DocsPage from './pages/DocsPage'
 import ReportsPage from './pages/ReportsPage'
@@ -61,6 +62,7 @@ function App() {
                     <Route path="/projects/:id/board" element={<BoardPage />} />
                     <Route path="/projects/:id/backlog" element={<BacklogPage />} />
                     <Route path="/projects/:id/sprints" element={<SprintsPage />} />
+                    <Route path="/projects/:id/sprints/:sprintId" element={<SprintDetailPage />} />
                     <Route path="/projects/:id/planning" element={<SprintPlanningPage />} />
                     <Route path="/projects/:id/team" element={<TeamPage />} />
                     <Route path="/projects/:id/docs" element={<DocsPage />} />
