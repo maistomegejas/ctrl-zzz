@@ -8,6 +8,7 @@ import { fetchUsers } from '../features/usersSlice'
 import { CreateWorkItemDto, UpdateWorkItemDto, WorkItem, WorkItemType, Priority, WorkItemStatus, Comment } from '../types'
 import { commentService } from '../services/commentService'
 import ConfirmModal from '../components/ConfirmModal'
+import Modal from '../components/Modal'
 
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -454,11 +455,13 @@ export default function ProjectDetailPage() {
         </div>
       )}
 
-      {showCreateForm && (
-        <div className="card bg-base-200 shadow-xl mb-8">
-          <div className="card-body">
-            <h3 className="card-title">Create Issue</h3>
-            <form onSubmit={handleCreate} className="space-y-4">
+      <Modal
+        isOpen={showCreateForm}
+        onClose={() => setShowCreateForm(false)}
+        title="Create New Issue"
+        size="lg"
+      >
+        <form onSubmit={handleCreate} className="space-y-4">
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">Title</span>
@@ -609,15 +612,20 @@ export default function ProjectDetailPage() {
                 </select>
               </div>
 
-              <div className="card-actions justify-end">
+              <div className="flex justify-end gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateForm(false)}
+                  className="btn btn-ghost"
+                >
+                  Cancel
+                </button>
                 <button type="submit" className="btn btn-primary">
                   Create Issue
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </Modal>
 
       {loading && (
         <div className="flex justify-center">

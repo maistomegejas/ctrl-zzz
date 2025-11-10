@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchProjects, createProject, deleteProject } from '../features/projectsSlice'
 import { CreateProjectDto } from '../types'
 import ConfirmModal from '../components/ConfirmModal'
+import Modal from '../components/Modal'
 
 export default function ProjectsPage() {
   const dispatch = useAppDispatch()
@@ -71,11 +72,13 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      <div className="p-8">
-        {showCreateForm && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
-            <h3 className="text-lg font-semibold mb-4">Create new project</h3>
-            <form onSubmit={handleCreate} className="space-y-4">
+      <Modal
+        isOpen={showCreateForm}
+        onClose={() => setShowCreateForm(false)}
+        title="Create New Project"
+        size="md"
+      >
+        <form onSubmit={handleCreate} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Project name *
@@ -118,7 +121,7 @@ export default function ProjectsPage() {
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-2">
+              <div className="flex justify-end gap-3 pt-4">
                 <button
                   type="button"
                   onClick={() => setShowCreateForm(false)}
@@ -134,9 +137,9 @@ export default function ProjectsPage() {
                 </button>
               </div>
             </form>
-          </div>
-        )}
+      </Modal>
 
+      <div className="p-8">
         {loading && (
           <div className="flex justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>

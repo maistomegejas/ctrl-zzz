@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchProjectById } from '../features/projectsSlice'
 import { fetchSprints, createSprint, deleteSprint, startSprint, completeSprint } from '../features/sprintsSlice'
 import { CreateSprintDto, Sprint } from '../types'
+import Modal from '../components/Modal'
 
 export default function SprintsPage() {
   const { projectId } = useParams<{ projectId: string }>()
@@ -91,11 +92,13 @@ export default function SprintsPage() {
         </button>
       </div>
 
-      {showCreateForm && (
-        <div className="card bg-base-200 shadow-xl mb-8">
-          <div className="card-body">
-            <h3 className="card-title">Create Sprint</h3>
-            <form onSubmit={handleCreate} className="space-y-4">
+      <Modal
+        isOpen={showCreateForm}
+        onClose={() => setShowCreateForm(false)}
+        title="Create New Sprint"
+        size="md"
+      >
+        <form onSubmit={handleCreate} className="space-y-4">
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">Sprint Name</span>
@@ -137,15 +140,20 @@ export default function SprintsPage() {
                 </label>
               </div>
 
-              <div className="card-actions justify-end">
+              <div className="flex justify-end gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateForm(false)}
+                  className="btn btn-ghost"
+                >
+                  Cancel
+                </button>
                 <button type="submit" className="btn btn-primary">
                   Create Sprint
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </Modal>
 
       {loading && (
         <div className="flex justify-center">
