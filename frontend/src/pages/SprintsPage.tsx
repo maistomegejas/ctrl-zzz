@@ -70,7 +70,7 @@ export default function SprintsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="p-8 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Sprints</h1>
@@ -136,11 +136,11 @@ export default function SprintsPage() {
                 <button
                   type="button"
                   onClick={() => setShowCreateForm(false)}
-                  className="btn btn-ghost"
+                  className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 font-medium transition-colors"
                 >
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary">
+                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors">
                   Create Sprint
                 </button>
               </div>
@@ -190,7 +190,7 @@ export default function SprintsPage() {
                   {!sprint.isActive && !sprint.isCompleted && (
                     <button
                       onClick={() => setStartSprintModal(sprint)}
-                      className="btn btn-success btn-sm"
+                      className="px-3 py-1.5 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 font-medium transition-colors"
                     >
                       Start
                     </button>
@@ -198,14 +198,14 @@ export default function SprintsPage() {
                   {sprint.isActive && !sprint.isCompleted && (
                     <button
                       onClick={() => setCompleteSprintModal(sprint)}
-                      className="btn btn-warning btn-sm"
+                      className="px-3 py-1.5 text-sm bg-yellow-600 text-white rounded-md hover:bg-yellow-700 font-medium transition-colors"
                     >
                       Complete
                     </button>
                   )}
                   <button
                     onClick={() => setDeleteSprintModal(sprint)}
-                    className="btn btn-error btn-sm"
+                    className="px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 font-medium transition-colors"
                   >
                     Delete
                   </button>
@@ -234,10 +234,10 @@ export default function SprintsPage() {
               This will mark the sprint as active and set the start date to now.
             </p>
             <div className="modal-action">
-              <button onClick={() => setStartSprintModal(null)} className="btn btn-ghost">
+              <button onClick={() => setStartSprintModal(null)} className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 font-medium transition-colors">
                 Cancel
               </button>
-              <button onClick={confirmStart} className="btn btn-success">
+              <button onClick={confirmStart} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 font-medium transition-colors">
                 Start Sprint
               </button>
             </div>
@@ -258,10 +258,10 @@ export default function SprintsPage() {
               This will mark the sprint as completed. This action cannot be undone.
             </p>
             <div className="modal-action">
-              <button onClick={() => setCompleteSprintModal(null)} className="btn btn-ghost">
+              <button onClick={() => setCompleteSprintModal(null)} className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 font-medium transition-colors">
                 Cancel
               </button>
-              <button onClick={confirmComplete} className="btn btn-warning">
+              <button onClick={confirmComplete} className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 font-medium transition-colors">
                 Complete Sprint
               </button>
             </div>
@@ -282,10 +282,10 @@ export default function SprintsPage() {
               This action cannot be undone. All work items in this sprint will remain but will no longer be assigned to it.
             </p>
             <div className="modal-action">
-              <button onClick={() => setDeleteSprintModal(null)} className="btn btn-ghost">
+              <button onClick={() => setDeleteSprintModal(null)} className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 font-medium transition-colors">
                 Cancel
               </button>
-              <button onClick={confirmDelete} className="btn btn-error">
+              <button onClick={confirmDelete} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 font-medium transition-colors">
                 Delete
               </button>
             </div>

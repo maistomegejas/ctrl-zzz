@@ -247,14 +247,17 @@ export default function ProjectDetailPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="p-8 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Issues</h1>
           <p className="text-gray-600 mt-1">Manage issues for {selectedProject?.name}</p>
         </div>
         {hasPermission('WorkItems.Create') && (
-          <button onClick={() => setShowCreateForm(!showCreateForm)} className="btn btn-primary">
+          <button
+            onClick={() => setShowCreateForm(!showCreateForm)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors"
+          >
             {showCreateForm ? 'Cancel' : '+ New Issue'}
           </button>
         )}
@@ -268,7 +271,7 @@ export default function ProjectDetailPage() {
               <button
                 type="button"
                 onClick={() => setEditingWorkItem(null)}
-                className="btn btn-ghost btn-sm"
+                className="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 font-medium transition-colors"
               >
                 Cancel
               </button>
@@ -407,7 +410,7 @@ export default function ProjectDetailPage() {
               </div>
 
               <div className="card-actions justify-end">
-                <button type="submit" className="btn btn-primary">
+                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors">
                   Update Issue
                 </button>
               </div>
@@ -577,11 +580,11 @@ export default function ProjectDetailPage() {
                 <button
                   type="button"
                   onClick={() => setShowCreateForm(false)}
-                  className="btn btn-ghost"
+                  className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 font-medium transition-colors"
                 >
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary">
+                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors">
                   Create Issue
                 </button>
               </div>
@@ -633,12 +636,12 @@ export default function ProjectDetailPage() {
                 </div>
                 <div className="flex gap-2">
                   {hasPermission('WorkItems.Edit') && (
-                    <button onClick={() => handleEdit(item)} className="btn btn-primary btn-sm">
+                    <button onClick={() => handleEdit(item)} className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors">
                       Edit
                     </button>
                   )}
                   {hasPermission('WorkItems.Delete') && (
-                    <button onClick={() => handleDeleteClick(item.id)} className="btn btn-error btn-sm">
+                    <button onClick={() => handleDeleteClick(item.id)} className="px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 font-medium transition-colors">
                       Delete
                     </button>
                   )}
@@ -649,7 +652,7 @@ export default function ProjectDetailPage() {
               <div className="mt-4 border-t pt-4">
                 <button
                   onClick={() => toggleComments(item.id)}
-                  className="btn btn-ghost btn-sm"
+                  className="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 font-medium transition-colors"
                 >
                   {expandedComments[item.id] ? '▼' : '▶'} Comments ({comments[item.id]?.length || 0})
                 </button>
@@ -673,7 +676,7 @@ export default function ProjectDetailPage() {
                           </div>
                           <button
                             onClick={() => handleDeleteCommentClick(item.id, comment.id)}
-                            className="btn btn-ghost btn-xs"
+                            className="px-2 py-1 text-xs border border-gray-300 rounded-md hover:bg-gray-50 font-medium transition-colors"
                           >
                             ✕
                           </button>
@@ -697,7 +700,7 @@ export default function ProjectDetailPage() {
                       />
                       <button
                         onClick={() => handleAddComment(item.id)}
-                        className="btn btn-primary btn-sm"
+                        className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors"
                       >
                         Add
                       </button>
