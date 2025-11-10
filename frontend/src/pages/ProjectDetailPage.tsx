@@ -248,50 +248,11 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <button onClick={() => navigate('/projects')} className="btn btn-ghost mb-6">
-        ← Back to Projects
-      </button>
-
-      {selectedProject && (
-        <div className="mb-8">
-          <div className="flex items-center gap-4 mb-2 flex-wrap">
-            <h1 className="text-4xl font-bold">{selectedProject.name}</h1>
-            <div className="badge badge-lg badge-secondary whitespace-nowrap">{selectedProject.key}</div>
-          </div>
-          {selectedProject.description && (
-            <p className="text-base-content/70">{selectedProject.description}</p>
-          )}
-          <div className="mt-4 flex gap-2">
-            <button
-              onClick={() => navigate(`/projects/${id}/board`)}
-              className="btn btn-primary btn-sm"
-            >
-              View Board
-            </button>
-            <button
-              onClick={() => navigate(`/projects/${id}/planning`)}
-              className="btn btn-secondary btn-sm"
-            >
-              Sprint Planning
-            </button>
-            <button
-              onClick={() => navigate(`/projects/${id}/sprints`)}
-              className="btn btn-outline btn-sm"
-            >
-              Manage Sprints
-            </button>
-            <button
-              onClick={() => navigate(`/projects/${id}/settings`)}
-              className="btn btn-outline btn-sm"
-            >
-              ⚙️ Settings
-            </button>
-          </div>
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Issues</h1>
+          <p className="text-gray-600 mt-1">Manage issues for {selectedProject?.name}</p>
         </div>
-      )}
-
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Issues</h2>
         {hasPermission('WorkItems.Create') && (
           <button onClick={() => setShowCreateForm(!showCreateForm)} className="btn btn-primary">
             {showCreateForm ? 'Cancel' : '+ New Issue'}

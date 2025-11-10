@@ -129,12 +129,9 @@ export default function SprintPlanningPage() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-8 py-6">
-          <button onClick={() => navigate(`/projects/${id}`)} className="text-blue-600 hover:text-blue-800 text-sm mb-2">
-            ← Back to Project
-          </button>
           <h1 className="text-3xl font-bold text-gray-900">Sprint Planning</h1>
           {selectedProject && (
-            <p className="text-gray-500 mt-1">{selectedProject.name}</p>
+            <p className="text-gray-500 mt-1">Plan sprints for {selectedProject.name}</p>
           )}
         </div>
       </div>

@@ -11,6 +11,9 @@ import IssueDetailPage from './pages/IssueDetailPage'
 import MyIssuesPage from './pages/MyIssuesPage'
 import BacklogPage from './pages/BacklogPage'
 import SprintPlanningPage from './pages/SprintPlanningPage'
+import TeamPage from './pages/TeamPage'
+import DocsPage from './pages/DocsPage'
+import ReportsPage from './pages/ReportsPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import AdminPanel from './pages/AdminPanel'
@@ -59,9 +62,9 @@ function App() {
                     <Route path="/projects/:id/backlog" element={<BacklogPage />} />
                     <Route path="/projects/:id/sprints" element={<SprintsPage />} />
                     <Route path="/projects/:id/planning" element={<SprintPlanningPage />} />
-                    <Route path="/projects/:id/team" element={<div className="p-8">Team view coming soon...</div>} />
-                    <Route path="/projects/:id/docs" element={<div className="p-8">Documentation coming soon...</div>} />
-                    <Route path="/projects/:id/reports" element={<div className="p-8">Reports coming soon...</div>} />
+                    <Route path="/projects/:id/team" element={<TeamPage />} />
+                    <Route path="/projects/:id/docs" element={<DocsPage />} />
+                    <Route path="/projects/:id/reports" element={<ReportsPage />} />
                     <Route path="/projects/:id/settings" element={<ProjectSettingsPage />} />
 
                     {/* Other Routes */}

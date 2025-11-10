@@ -71,23 +71,15 @@ export default function SprintsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <button onClick={() => navigate(`/projects/${id}`)} className="btn btn-ghost mb-6">
-        ← Back to Project
-      </button>
-
-      {selectedProject && (
-        <div className="mb-8">
-          <div className="flex items-center gap-4 mb-2">
-            <h1 className="text-4xl font-bold">Sprints</h1>
-            <div className="badge badge-lg badge-secondary">{selectedProject.key}</div>
-          </div>
-          <p className="text-base-content/70">{selectedProject.name}</p>
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Sprints</h1>
+          <p className="text-gray-600 mt-1">Manage sprints for {selectedProject?.name}</p>
         </div>
-      )}
-
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Sprint Management</h2>
-        <button onClick={() => setShowCreateForm(!showCreateForm)} className="btn btn-primary">
+        <button
+          onClick={() => setShowCreateForm(!showCreateForm)}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium transition-colors"
+        >
           {showCreateForm ? 'Cancel' : '+ New Sprint'}
         </button>
       </div>
