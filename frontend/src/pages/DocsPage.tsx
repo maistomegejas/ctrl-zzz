@@ -1,56 +1,49 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import Modal from '../components/Modal'
-
-interface Doc {
-  id: string
-  title: string
-  content: string
-  category: string
-  createdAt: string
-  updatedAt?: string
-}
+import { documentService } from '../services/documentService'
+import { Document } from '../types'
 
 export default function DocsPage() {
   const { id } = useParams<{ id: string }>()
 
-  // Mock data - in real app this would come from backend
-  const [docs, setDocs] = useState<Doc[]>([
-    {
-      id: '1',
-      title: 'Getting Started',
-      content: '# Getting Started\n\nWelcome to the project! This guide will help you get up and running.\n\n## Prerequisites\n\n- Node.js 18+\n- Git\n\n## Installation\n\n```bash\nnpm install\nnpm run dev\n```',
-      category: 'Setup',
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: '2',
-      title: 'API Documentation',
-      content: '# API Documentation\n\n## Authentication\n\nAll API requests require authentication using JWT tokens.\n\n## Endpoints\n\n### GET /api/projects\nReturns list of all projects.',
-      category: 'Development',
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: '3',
-      title: 'Architecture Overview',
-      content: '# Architecture Overview\n\n## Frontend\n- React + TypeScript\n- Redux Toolkit\n- Tailwind CSS\n\n## Backend\n- ASP.NET Core\n- Entity Framework\n- SQL Server',
-      category: 'Development',
-      createdAt: new Date().toISOString()
-    }
-  ])
-
-  const [selectedDoc, setSelectedDoc] = useState<Doc | null>(docs[0] || null)
+  const [docs, setDocs] = useState<Document[]>([])
+  const [loading, setLoading] = useState(false)
+  const [selectedDoc, setSelectedDoc] = useState<Document | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [editContent, setEditContent] = useState('')
   const [editTitle, setEditTitle] = useState('')
+  const [editCategory, setEditCategory] = useState('')
 
   const [newDoc, setNewDoc] = useState({
     title: '',
     content: '',
     category: 'General'
   })
+
+  // Load documents from backend
+  useEffect(() => {
+    const loadDocuments = async () => {
+      if (!id) return
+
+      setLoading(true)
+      try {
+        const response = await documentService.getAll(id)
+        setDocs(response.data)
+        if (response.data.length > 0 && !selectedDoc) {
+          setSelectedDoc(response.data[0])
+        }
+      } catch (error) {
+        console.error('Failed to load documents:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadDocuments()
+  }, [id])
 
   const categories = Array.from(new Set(docs.map(d => d.category)))
 
@@ -63,39 +56,60 @@ export default function DocsPage() {
     if (selectedDoc) {
       setEditTitle(selectedDoc.title)
       setEditContent(selectedDoc.content)
+      setEditCategory(selectedDoc.category)
       setIsEditing(true)
     }
   }
 
-  const handleSave = () => {
-    if (selectedDoc) {
+  const handleSave = async () => {
+    if (!selectedDoc) return
+
+    try {
+      const response = await documentService.update(selectedDoc.id, {
+        title: editTitle,
+        content: editContent,
+        category: editCategory
+      })
       const updated = docs.map(doc =>
-        doc.id === selectedDoc.id
-          ? { ...doc, title: editTitle, content: editContent, updatedAt: new Date().toISOString() }
-          : doc
+        doc.id === selectedDoc.id ? response.data : doc
       )
       setDocs(updated)
-      setSelectedDoc({ ...selectedDoc, title: editTitle, content: editContent })
+      setSelectedDoc(response.data)
       setIsEditing(false)
+    } catch (error) {
+      console.error('Failed to update document:', error)
     }
   }
 
-  const handleCreate = () => {
-    const doc: Doc = {
-      id: Date.now().toString(),
-      ...newDoc,
-      createdAt: new Date().toISOString()
+  const handleCreate = async () => {
+    if (!id) return
+
+    try {
+      const response = await documentService.create({
+        ...newDoc,
+        projectId: id
+      })
+      setDocs([...docs, response.data])
+      setSelectedDoc(response.data)
+      setShowCreateModal(false)
+      setNewDoc({ title: '', content: '', category: 'General' })
+    } catch (error) {
+      console.error('Failed to create document:', error)
     }
-    setDocs([...docs, doc])
-    setSelectedDoc(doc)
-    setShowCreateModal(false)
-    setNewDoc({ title: '', content: '', category: 'General' })
   }
 
-  const handleDelete = () => {
-    if (selectedDoc && window.confirm('Delete this document?')) {
-      setDocs(docs.filter(d => d.id !== selectedDoc.id))
-      setSelectedDoc(docs[0] || null)
+  const handleDelete = async () => {
+    if (!selectedDoc) return
+
+    if (!window.confirm('Delete this document?')) return
+
+    try {
+      await documentService.delete(selectedDoc.id)
+      const remaining = docs.filter(d => d.id !== selectedDoc.id)
+      setDocs(remaining)
+      setSelectedDoc(remaining[0] || null)
+    } catch (error) {
+      console.error('Failed to delete document:', error)
     }
   }
 
@@ -124,41 +138,49 @@ export default function DocsPage() {
 
         {/* Docs List by Category */}
         <div className="flex-1 overflow-y-auto p-4">
-          {categories.map(category => {
-            const categoryDocs = filteredDocs.filter(d => d.category === category)
-            if (categoryDocs.length === 0) return null
-
-            return (
-              <div key={category} className="mb-6">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                  {category}
-                </h3>
-                <div className="space-y-1">
-                  {categoryDocs.map(doc => (
-                    <button
-                      key={doc.id}
-                      onClick={() => {
-                        setSelectedDoc(doc)
-                        setIsEditing(false)
-                      }}
-                      className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
-                        selectedDoc?.id === doc.id
-                          ? 'bg-blue-50 text-blue-700 font-medium'
-                          : 'text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      <div className="text-sm truncate">{doc.title}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )
-          })}
-
-          {filteredDocs.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              No documents found
+          {loading ? (
+            <div className="flex justify-center py-8">
+              <span className="loading loading-spinner loading-lg"></span>
             </div>
+          ) : (
+            <>
+              {categories.map(category => {
+                const categoryDocs = filteredDocs.filter(d => d.category === category)
+                if (categoryDocs.length === 0) return null
+
+                return (
+                  <div key={category} className="mb-6">
+                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                      {category}
+                    </h3>
+                    <div className="space-y-1">
+                      {categoryDocs.map(doc => (
+                        <button
+                          key={doc.id}
+                          onClick={() => {
+                            setSelectedDoc(doc)
+                            setIsEditing(false)
+                          }}
+                          className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
+                            selectedDoc?.id === doc.id
+                              ? 'bg-blue-50 text-blue-700 font-medium'
+                              : 'text-gray-700 hover:bg-gray-100'
+                          }`}
+                        >
+                          <div className="text-sm truncate">{doc.title}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+
+              {filteredDocs.length === 0 && !loading && (
+                <div className="text-center py-8 text-gray-500">
+                  No documents found
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -223,12 +245,29 @@ export default function DocsPage() {
             <div className="flex-1 overflow-y-auto p-8">
               <div className="max-w-4xl mx-auto">
                 {isEditing ? (
-                  <textarea
-                    value={editContent}
-                    onChange={(e) => setEditContent(e.target.value)}
-                    className="w-full h-[600px] px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
-                    placeholder="Write your documentation here (Markdown supported)..."
-                  />
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                      <select
+                        value={editCategory}
+                        onChange={(e) => setEditCategory(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="General">General</option>
+                        <option value="Setup">Setup</option>
+                        <option value="Development">Development</option>
+                        <option value="Design">Design</option>
+                        <option value="Testing">Testing</option>
+                        <option value="Deployment">Deployment</option>
+                      </select>
+                    </div>
+                    <textarea
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
+                      className="w-full h-[600px] px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                      placeholder="Write your documentation here (Markdown supported)..."
+                    />
+                  </div>
                 ) : (
                   <div className="bg-white rounded-lg border border-gray-200 p-8 prose prose-blue max-w-none">
                     <pre className="whitespace-pre-wrap font-sans text-gray-800 leading-relaxed">

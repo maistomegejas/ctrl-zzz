@@ -164,3 +164,27 @@ export interface AuthResponse {
   refreshToken: string
   user: User
 }
+
+export interface Document {
+  id: string
+  title: string
+  content: string
+  category: string
+  projectId: string
+  userId?: string
+  createdAt: string
+  updatedAt?: string
+}
+
+export interface CreateDocumentDto {
+  title: string
+  content: string
+  category: string
+  projectId: string
+}
+
+export interface UpdateDocumentDto {
+  title: string
+  content: string
+  category: string
+}
